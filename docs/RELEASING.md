@@ -4,8 +4,8 @@
 
 | Branch | Channel | App on the phone | Published as |
 | --- | --- | --- | --- |
-| `master` | stable | Pie Launcher | release, tagged `v<version>` |
-| `dev` | beta | Pie Launcher Beta | pre-release, tagged `v<version>-beta.<build>` |
+| `master` | stable | Pie Launcher | release, tagged `v<upstream>.<fork>` |
+| `dev` | beta | Pie Launcher Beta | pre-release, tagged `v<upstream>.<fork>-beta.<build>` |
 | `feature/*`, `fix/*`, `ci/*` | none | - | nothing, CI only |
 
 The beta build carries the `.beta` application ID suffix, its own name and
@@ -27,6 +27,31 @@ create a release.
 On `dev` it publishes every push as `<versionName>-beta.<workflow run
 number>`. That run number is also the `versionCode`, because it only ever
 grows.
+
+## Versioning
+
+`app/build.gradle` keeps upstream's `versionCode` and `versionName`
+untouched, so merging upstream never conflicts on them. The fork's own
+revision lives in [`fork-version`](../fork-version), a file upstream will
+never have, and the workflow composes the published version from both:
+
+    upstream 1.28.0 (code 75) + fork-version 1  ->  1.28.0.1, code 75001
+
+So a release of this repository is always visibly distinct from the
+upstream release it is built from, and it is clear which upstream version
+it carries.
+
+Bump `fork-version` to publish a stable release without an upstream
+version change. After merging an upstream release there is nothing to do:
+its higher `versionCode` already raises the composed one, so
+`1.29.0.1` follows `1.28.0.1` on its own.
+
+Keep `fork-version` below 1000, which is the room the composed
+`versionCode` leaves for it.
+
+Beta versions append `-beta.<workflow run number>` to the same base, and
+use the run number alone as their `versionCode`, since the beta is a
+separate app with its own ladder.
 
 ## Setup
 
@@ -55,10 +80,8 @@ A beta: push to `dev`.
 
 A stable version:
 
-1. Add a `## <version>` section to `CHANGELOG.md`.
-2. Bump `versionCode` and `versionName` in `app/build.gradle`.
-3. Add `fastlane/metadata/android/en-US/changelogs/<versionCode>.txt`.
-4. Merge `dev` into `master`.
+1. Bump `fork-version`, unless this carries a new upstream release.
+2. Merge `dev` into `master`.
 
 To rebuild an existing release, run the workflow from the **Actions** tab
 with **force** enabled.
