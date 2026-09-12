@@ -78,16 +78,20 @@ jobs:
             base="$upstream.$fork"
             name="$base-beta.${{ github.run_number }}"
             code=${{ github.run_number }}
+            # No run number, so every push updates the same draft
+            # instead of leaving a release per feature behind.
+            tag="v$base-beta"
           else
             base="$upstream.$fork"
             name="$base"
             code=$((upstream_code * 1000 + fork))
+            tag="v$name"
           fi
           echo "name=$name" >> "$GITHUB_OUTPUT"
           echo "base=$base" >> "$GITHUB_OUTPUT"
           echo "upstream=$upstream" >> "$GITHUB_OUTPUT"
           echo "code=$code" >> "$GITHUB_OUTPUT"
-          echo "tag=v$name" >> "$GITHUB_OUTPUT"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
           echo "Building ${{ steps.channel.outputs.name }} $name (code $code)"
 
       - name: Decide whether to publish
@@ -243,6 +247,7 @@ jobs:
           body_path: release-notes.md
           prerelease: ${{ steps.channel.outputs.prerelease }}
           make_latest: ${{ steps.channel.outputs.prerelease == 'false' }}
+          draft: true
           files: |
             ${{ steps.artifacts.outputs.apk }}
             ${{ steps.artifacts.outputs.checksum }}
@@ -255,8 +260,8 @@ jobs:
         run: |
           set -euo pipefail
           gh release list --limit 100 \
-            --json tagName,isPrerelease,createdAt \
-            --jq 'map(select(.isPrerelease))
+            --json tagName,isPrerelease,isDraft,createdAt \
+            --jq 'map(select(.isPrerelease and (.isDraft | not)))
               | sort_by(.createdAt) | reverse | .[].tagName' > betas.txt
           tail -n +$((KEEP + 1)) betas.txt | while read -r tag; do
             [ -n "$tag" ] || continue

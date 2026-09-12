@@ -60,9 +60,22 @@ workflow takes the next fork revision: with `1.28.0.1` out, betas are
 last stable release rather than only what changed since the previous
 beta, so any single beta describes itself in full.
 
-Publishing a beta deletes the older ones, keeping the number set by
-`KEEP` in the workflow. Only pre-releases are ever removed, so a stable
-release cannot be pruned.
+## Drafts
+
+Both channels publish as **drafts**. The workflow builds, signs and
+uploads, then stops. Nothing is live until you press Publish in the
+release editor, and Obtainium never sees a draft.
+
+A beta draft is tagged `v<version>-beta` without a build number, so every
+push to `dev` updates that one draft rather than leaving a release behind
+per feature: the APK is replaced, the notes are regenerated, and the
+release collects the whole set of changes until you publish it.
+
+Notes are pre-filled and meant to be edited. Edit them last, once the
+features are in, because the next push regenerates the body and
+overwrites what you wrote. A draft is never pruned, only published
+pre-releases are, keeping the number set by `KEEP` in the workflow.
+Stable releases are never pruned.
 
 Stable notes list the commits since the previous stable release, not a
 `CHANGELOG.md` section: that file belongs to upstream and says nothing
