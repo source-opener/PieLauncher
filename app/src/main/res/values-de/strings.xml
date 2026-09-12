@@ -147,4 +147,5 @@
 	<string name="pick_image">Bild auswählen</string>
 	<string name="reset_icon">Icon zurücksetzen</string>
 	<string name="pick_image_failed">Bild konnte nicht gelesen werden</string>
+	<string name="import_settings_restart">Einstellungen importiert. Pie Launcher muss neu starten, um sie zu verwenden.</string>
 </resources>

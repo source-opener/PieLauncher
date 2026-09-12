@@ -147,4 +147,5 @@
 	<string name="pick_image">Afbeelding kiezen</string>
 	<string name="reset_icon">Pictogram herstellen</string>
 	<string name="pick_image_failed">Kan die afbeelding niet lezen</string>
+	<string name="import_settings_restart">Instellingen geïmporteerd. Pie Launcher moet opnieuw starten om ze te gebruiken.</string>
 </resources>

@@ -249,20 +249,6 @@ public class Apps {
 		return indexAppsAsync(context, null, null);
 	}
 
-	public boolean reload(Context context) {
-		if (indexing) {
-			return false;
-		}
-		apps.clear();
-		menuPrimary.clear();
-		menuSecondary.clear();
-		hiddenAppsStorage.invalidate();
-		PieLauncherApp.appLabels.invalidate();
-		PieLauncherApp.appTags.invalidate();
-		PieLauncherApp.appIcons.invalidate();
-		return indexAppsAsync(context);
-	}
-
 	public boolean indexAppsAsync(Context context,
 			String packageNameRestriction,
 			UserHandle userHandleRestriction) {

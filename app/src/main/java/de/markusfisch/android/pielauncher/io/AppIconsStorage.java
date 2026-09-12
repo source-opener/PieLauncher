@@ -41,8 +41,4 @@ public class AppIconsStorage {
 		PieLauncherApp.getDatabase(context).restoreAppIcons(context, icons);
 		restored = true;
 	}
-
-	public synchronized void invalidate() {
-		restored = false;
-	}
 }

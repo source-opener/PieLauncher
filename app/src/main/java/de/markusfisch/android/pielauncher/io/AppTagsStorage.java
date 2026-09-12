@@ -51,10 +51,6 @@ public class AppTagsStorage {
 		restored = true;
 	}
 
-	public synchronized void invalidate() {
-		restored = false;
-	}
-
 	private static String normalize(String value) {
 		if (value == null) {
 			return null;
