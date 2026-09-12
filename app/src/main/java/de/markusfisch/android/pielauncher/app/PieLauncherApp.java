@@ -44,6 +44,10 @@ public class PieLauncherApp extends Application {
 		return prefs;
 	}
 
+	public static synchronized void reloadPrefs(Context context) {
+		prefs = new Preferences(context.getApplicationContext());
+	}
+
 	public static synchronized Database getDatabase(Context context) {
 		if (database == null) {
 			database = new Database(context.getApplicationContext());

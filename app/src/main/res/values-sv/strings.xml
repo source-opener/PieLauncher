@@ -132,4 +132,13 @@
 	<string name="activity_not_enabled">Aktivitet ej aktiverad</string>
 	<string name="added_to_home_screen">%1$s har lagts till</string>
 	<string name="removed_from_home_screen">%1$s har tagits bort</string>
+	<string name="category_backup">Säkerhetskopia</string>
+	<string name="export_settings"><big><font color="#ffffff">Exportera inställningar</font></big>\nSpara cirkelmenyn, dolda appar, ikonkopplingar och inställningar till en fil</string>
+	<string name="import_settings"><big><font color="#ffffff">Importera inställningar</font></big>\nErsätt allt med en tidigare exporterad fil</string>
+	<string name="import_settings_confirm">Detta ersätter cirkelmenyn, dolda appar, ikonkopplingar och alla inställningar med innehållet i filen. Fortsätta?</string>
+	<string name="export_settings_done">Inställningar exporterade</string>
+	<string name="export_settings_failed">Kunde inte exportera inställningar</string>
+	<string name="import_settings_done">Inställningar importerade</string>
+	<string name="import_settings_failed">Kunde inte importera inställningar</string>
+	<string name="no_file_picker">Hittade ingen app för att välja en fil</string>
 </resources>

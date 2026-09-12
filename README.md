@@ -48,6 +48,12 @@ send some Bitcoin decimals to `bc1q2guk2rpll587aymrfadkdtpq32448x5khk5j8z`.
 	src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png"
 	alt="Get it on Google Play" height="80"></a>
 
+Builds from this repository are published as
+[GitHub releases](../../releases): stable from `master`, and a beta from
+`dev` that installs as a separate app alongside it. Add this repository's
+URL as an app in [Obtainium](https://github.com/ImranR98/Obtainium) to
+get them automatically. See [docs/RELEASING.md](docs/RELEASING.md).
+
 ## Guide
 
 ### How to use the pie menu

@@ -132,4 +132,13 @@
 	<string name="activity_not_enabled">Activiteit niet ingeschakeld</string>
 	<string name="added_to_home_screen">%1$s toegevoegd</string>
 	<string name="removed_from_home_screen">%1$s verwijderd</string>
+	<string name="category_backup">Back-up</string>
+	<string name="export_settings"><big><font color="#ffffff">Instellingen exporteren</font></big>\nPie menu, verborgen apps, pictogramkoppelingen en instellingen opslaan in een bestand</string>
+	<string name="import_settings"><big><font color="#ffffff">Instellingen importeren</font></big>\nAlles vervangen door een eerder geëxporteerd bestand</string>
+	<string name="import_settings_confirm">Dit vervangt het Pie menu, verborgen apps, pictogramkoppelingen en alle instellingen door de inhoud van het bestand. Doorgaan?</string>
+	<string name="export_settings_done">Instellingen geëxporteerd</string>
+	<string name="export_settings_failed">Kan instellingen niet exporteren</string>
+	<string name="import_settings_done">Instellingen geïmporteerd</string>
+	<string name="import_settings_failed">Kan instellingen niet importeren</string>
+	<string name="no_file_picker">Geen app gevonden om een bestand te kiezen</string>
 </resources>

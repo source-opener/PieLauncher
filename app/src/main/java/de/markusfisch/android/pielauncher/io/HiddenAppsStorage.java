@@ -42,6 +42,10 @@ public class HiddenAppsStorage {
 		restored = true;
 	}
 
+	public synchronized void invalidate() {
+		restored = false;
+	}
+
 	public synchronized void store(Context context) {
 		PieLauncherApp.getDatabase(context).storeHiddenApps(componentNames);
 	}

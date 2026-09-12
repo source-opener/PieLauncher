@@ -132,4 +132,13 @@
 	<string name="activity_not_enabled">活动未启用</string>
 	<string name="added_to_home_screen">已添加 %1$s</string>
 	<string name="removed_from_home_screen">已移除 %1$s</string>
+	<string name="category_backup">备份</string>
+	<string name="export_settings"><big><font color="#ffffff">导出设置</font></big>\n将饼状菜单、隐藏的应用程序、图标映射和设置保存到文件</string>
+	<string name="import_settings"><big><font color="#ffffff">导入设置</font></big>\n用先前导出的文件替换全部内容</string>
+	<string name="import_settings_confirm">这将用文件中的内容替换饼状菜单、隐藏的应用程序、图标映射和所有设置。是否继续？</string>
+	<string name="export_settings_done">设置已导出</string>
+	<string name="export_settings_failed">无法导出设置</string>
+	<string name="import_settings_done">设置已导入</string>
+	<string name="import_settings_failed">无法导入设置</string>
+	<string name="no_file_picker">未找到可用于选择文件的应用程序</string>
 </resources>

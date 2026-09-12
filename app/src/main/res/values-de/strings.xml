@@ -132,4 +132,13 @@
 	<string name="activity_not_enabled">Aktivität nicht aktiviert</string>
 	<string name="added_to_home_screen">%1$s hinzugefügt</string>
 	<string name="removed_from_home_screen">%1$s entfernt</string>
+	<string name="category_backup">Sicherung</string>
+	<string name="export_settings"><big><font color="#ffffff">Einstellungen exportieren</font></big>\nPie Menu, versteckte Apps, Icon-Zuordnungen und Einstellungen in eine Datei speichern</string>
+	<string name="import_settings"><big><font color="#ffffff">Einstellungen importieren</font></big>\nAlles durch eine zuvor exportierte Datei ersetzen</string>
+	<string name="import_settings_confirm">Dies ersetzt Pie Menu, versteckte Apps, Icon-Zuordnungen und alle Einstellungen durch den Inhalt der Datei. Fortfahren?</string>
+	<string name="export_settings_done">Einstellungen exportiert</string>
+	<string name="export_settings_failed">Einstellungen konnten nicht exportiert werden</string>
+	<string name="import_settings_done">Einstellungen importiert</string>
+	<string name="import_settings_failed">Einstellungen konnten nicht importiert werden</string>
+	<string name="no_file_picker">Keine App zum Auswählen einer Datei gefunden</string>
 </resources>

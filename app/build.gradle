@@ -1,5 +1,7 @@
 apply plugin: 'com.android.application'
 
+def betaNumber = System.getenv('ANDROID_BETA_NUMBER')
+
 android {
 	namespace 'de.markusfisch.android.pielauncher'
 	compileSdk sdk_version
@@ -32,5 +34,15 @@ android {
 			shrinkResources true
 			signingConfig signingConfigs.release
 		}
+
+		beta {
+			initWith release
+			applicationIdSuffix '.beta'
+			versionNameSuffix betaNumber ? "-beta.$betaNumber" : '-beta'
+		}
 	}
+}
+
+if (betaNumber) {
+	android.defaultConfig.versionCode = betaNumber.toInteger()
 }

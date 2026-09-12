@@ -132,4 +132,13 @@
 	<string name="activity_not_enabled">Atividade não ativada</string>
 	<string name="added_to_home_screen">%1$s adicionado</string>
 	<string name="removed_from_home_screen">%1$s removido</string>
+	<string name="category_backup">Backup</string>
+	<string name="export_settings"><big><font color="#ffffff">Exportar configurações</font></big>\nSalvar o menu Pie, aplicativos ocultos, mapeamentos de ícones e configurações em um arquivo</string>
+	<string name="import_settings"><big><font color="#ffffff">Importar configurações</font></big>\nSubstituir tudo por um arquivo exportado anteriormente</string>
+	<string name="import_settings_confirm">Isso substitui o menu Pie, aplicativos ocultos, mapeamentos de ícones e todas as configurações pelo conteúdo do arquivo. Continuar?</string>
+	<string name="export_settings_done">Configurações exportadas</string>
+	<string name="export_settings_failed">Não foi possível exportar as configurações</string>
+	<string name="import_settings_done">Configurações importadas</string>
+	<string name="import_settings_failed">Não foi possível importar as configurações</string>
+	<string name="no_file_picker">Nenhum aplicativo encontrado para escolher um arquivo</string>
 </resources>
