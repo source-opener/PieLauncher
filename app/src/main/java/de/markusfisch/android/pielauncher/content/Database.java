@@ -54,6 +54,7 @@ public class Database {
 	private static final String HIDDEN_APPS = "hidden_apps";
 
 	private static final String APP_LABELS = "app_labels";
+	private static final String APP_ICONS = "app_icons";
 	private static final String APP_TAGS = "app_tags";
 	private static final String TAGS = "tags";
 
@@ -84,6 +85,7 @@ public class Database {
 			HIDDEN_APPS,
 			APP_LABELS,
 			APP_TAGS,
+			APP_ICONS,
 			ICON_MAPPING_SETS,
 			ICON_MAPPINGS,
 			APP_USAGE,
@@ -778,6 +780,52 @@ public class Database {
 		}
 	}
 
+	public void restoreAppIcons(
+			Context context,
+			Map<LauncherItemKey, Bitmap> icons) {
+		icons.clear();
+		Cursor cursor = openHelper.getReadableDatabase().query(APP_ICONS,
+				new String[]{ITEM_KEY, ICON},
+				null, null, null, null, null);
+		try {
+			while (cursor.moveToNext()) {
+				LauncherItemKey key = LauncherItemKey.unflattenFromString(
+						context, cursor.getString(0));
+				byte[] blob = cursor.getBlob(1);
+				if (key == null || key.componentName == null || blob == null) {
+					continue;
+				}
+				Bitmap bitmap = BitmapFactory.decodeByteArray(
+						blob, 0, blob.length);
+				if (bitmap != null) {
+					icons.put(key, bitmap);
+				}
+			}
+		} finally {
+			cursor.close();
+		}
+	}
+
+	public void storeAppIcon(
+			Context context,
+			LauncherItemKey key,
+			Bitmap bitmap) {
+		String itemKey = LauncherItemKey.flattenToString(context,
+				key.componentName, key.userHandle);
+		SQLiteDatabase db = openHelper.getWritableDatabase();
+		if (bitmap == null) {
+			db.delete(APP_ICONS, ITEM_KEY + "=?", new String[]{itemKey});
+			return;
+		}
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+		ContentValues values = new ContentValues();
+		values.put(ITEM_KEY, itemKey);
+		values.put(ICON, out.toByteArray());
+		db.insertWithOnConflict(APP_ICONS, null, values,
+				SQLiteDatabase.CONFLICT_REPLACE);
+	}
+
 	public void restoreAppTags(
 			Context context,
 			Map<LauncherItemKey, String> tags) {
@@ -955,12 +1003,12 @@ public class Database {
 	}
 
 	private static boolean isBlob(String table, String column) {
-		return PINNED_SHORTCUTS.equals(table) && ICON.equals(column);
+		return ICON.equals(column);
 	}
 
 	private static class OpenHelper extends SQLiteOpenHelper {
 		OpenHelper(Context context) {
-			super(context, "app_cache.db", null, 6);
+			super(context, "app_cache.db", null, 7);
 		}
 
 		@Override
@@ -995,6 +1043,7 @@ public class Database {
 					COMPONENT_NAME + " TEXT PRIMARY KEY NOT NULL);");
 			createLabelsTable(db);
 			createTagsTable(db);
+			createIconsTable(db);
 			db.execSQL("CREATE TABLE " + ICON_MAPPING_SETS + " (" +
 					ICON_PACK + " TEXT PRIMARY KEY NOT NULL);");
 			db.execSQL("CREATE TABLE " + ICON_MAPPINGS + " (" +
@@ -1019,6 +1068,12 @@ public class Database {
 			db.execSQL("CREATE TABLE " + APP_TAGS + " (" +
 					ITEM_KEY + " TEXT PRIMARY KEY NOT NULL," +
 					TAGS + " TEXT NOT NULL);");
+		}
+
+		private static void createIconsTable(SQLiteDatabase db) {
+			db.execSQL("CREATE TABLE " + APP_ICONS + " (" +
+					ITEM_KEY + " TEXT PRIMARY KEY NOT NULL," +
+					ICON + " BLOB NOT NULL);");
 		}
 
 		private static void createUsageTables(SQLiteDatabase db) {
@@ -1065,6 +1120,9 @@ public class Database {
 			}
 			if (oldVersion < 6) {
 				createTagsTable(db);
+			}
+			if (oldVersion < 7) {
+				createIconsTable(db);
 			}
 		}
 

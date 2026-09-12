@@ -38,6 +38,7 @@ import java.util.List;
 
 import de.markusfisch.android.pielauncher.R;
 import de.markusfisch.android.pielauncher.activity.PickIconActivity;
+import de.markusfisch.android.pielauncher.activity.PickImageActivity;
 import de.markusfisch.android.pielauncher.activity.PreferencesActivity;
 import de.markusfisch.android.pielauncher.app.PieLauncherApp;
 import de.markusfisch.android.pielauncher.content.AppLauncher;
@@ -1080,47 +1081,53 @@ public class AppPieView extends View {
 		if (icon == null) {
 			return;
 		}
-		ArrayList<String> list = new ArrayList<>();
-		list.add(context.getString(R.string.edit_pie_menu));
-		list.add(context.getString(R.string.add_to_pie_menu));
-		list.add(context.getString(R.string.show_app_info));
-		list.add(context.getString(R.string.hide_app));
-		list.add(context.getString(R.string.rename_app));
-		list.add(context.getString(R.string.app_tags));
+		LauncherItemKey key = new LauncherItemKey(icon.componentName,
+				icon.userHandle);
+		ArrayList<String> labels = new ArrayList<>();
+		ArrayList<Runnable> actions = new ArrayList<>();
+		addOption(labels, actions, context.getString(R.string.edit_pie_menu),
+				() -> addIconInteractively(null));
+		addOption(labels, actions, context.getString(R.string.add_to_pie_menu),
+				() -> {
+					addIconInteractively(icon);
+					postDelayed(this::releaseIcon, 100);
+				});
+		addOption(labels, actions, context.getString(R.string.show_app_info),
+				() -> AppLauncher.launchAppInfo(context, icon));
+		addOption(labels, actions, context.getString(R.string.hide_app),
+				() -> PickIconActivity.askToHide(context, icon.componentName));
+		addOption(labels, actions, context.getString(R.string.rename_app),
+				() -> renameApp(context, icon));
+		addOption(labels, actions, context.getString(R.string.app_tags),
+				() -> editTags(context, icon));
+		addOption(labels, actions, context.getString(R.string.pick_image),
+				() -> PickImageActivity.start(context, key));
+		if (PieLauncherApp.appIcons.has(key)) {
+			addOption(labels, actions, context.getString(R.string.reset_icon),
+					() -> {
+						PieLauncherApp.appIcons.store(context, key, null);
+						PieLauncherApp.apps.indexAppsAsync(context);
+					});
+		}
 		if (PieLauncherApp.iconPack.hasPacks()) {
-			list.add(context.getString(R.string.change_icon));
+			addOption(labels, actions, context.getString(R.string.change_icon),
+					() -> {
+						returnToList();
+						changeIcon(context, icon);
+					});
 		}
 		OptionsDialog.show(context, R.string.edit_app,
-				list.toArray(new CharSequence[0]),
-				(view, which) -> {
-					switch (which) {
-						case 0:
-							addIconInteractively(null);
-							break;
-						case 1:
-							addIconInteractively(icon);
-							postDelayed(this::releaseIcon, 100);
-							break;
-						case 2:
-							AppLauncher.launchAppInfo(context,
-									(Apps.AppIcon) icon);
-							break;
-						case 3:
-							PickIconActivity.askToHide(context,
-									((Apps.AppIcon) icon).componentName);
-							break;
-						case 4:
-							renameApp(context, (Apps.AppIcon) icon);
-							break;
-						case 5:
-							editTags(context, (Apps.AppIcon) icon);
-							break;
-						case 6:
-							returnToList();
-							changeIcon(context, icon);
-							break;
-					}
-				});
+				labels.toArray(new CharSequence[0]),
+				(view, which) -> actions.get(which).run());
+	}
+
+	private static void addOption(
+			List<String> labels,
+			List<Runnable> actions,
+			String label,
+			Runnable action) {
+		labels.add(label);
+		actions.add(action);
 	}
 
 	private void addIconInteractively(Apps.AppIcon appIcon) {

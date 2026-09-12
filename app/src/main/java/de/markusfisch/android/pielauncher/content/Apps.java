@@ -259,6 +259,7 @@ public class Apps {
 		hiddenAppsStorage.invalidate();
 		PieLauncherApp.appLabels.invalidate();
 		PieLauncherApp.appTags.invalidate();
+		PieLauncherApp.appIcons.invalidate();
 		return indexAppsAsync(context);
 	}
 
@@ -578,6 +579,7 @@ public class Apps {
 		PieLauncherApp.iconPack.restoreMappings(context);
 		PieLauncherApp.appLabels.restore(context);
 		PieLauncherApp.appTags.restore(context);
+		PieLauncherApp.appIcons.restore(context);
 		if (AppLauncher.HAS_LAUNCHER_APP) {
 			indexProfilesApps(
 					AppLauncher.getLauncherApps(context),
@@ -687,9 +689,12 @@ public class Apps {
 			Drawable icon,
 			UserHandle userHandle) {
 		LauncherItemKey key = new LauncherItemKey(componentName, userHandle);
-		String custom = PieLauncherApp.appLabels.get(key);
-		AppIcon appIcon = new AppIcon(componentName,
-				custom != null ? custom : label, icon, userHandle);
+		String customLabel = PieLauncherApp.appLabels.get(key);
+		Bitmap customIcon = PieLauncherApp.appIcons.get(key);
+		String name = customLabel != null ? customLabel : label;
+		AppIcon appIcon = customIcon != null
+				? new AppIcon(componentName, name, customIcon, userHandle)
+				: new AppIcon(componentName, name, icon, userHandle);
 		allApps.put(key, appIcon);
 		return appIcon;
 	}
