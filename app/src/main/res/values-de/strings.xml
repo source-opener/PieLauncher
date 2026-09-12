@@ -141,4 +141,5 @@
 	<string name="import_settings_done">Einstellungen importiert</string>
 	<string name="import_settings_failed">Einstellungen konnten nicht importiert werden</string>
 	<string name="no_file_picker">Keine App zum Auswählen einer Datei gefunden</string>
+	<string name="rename_app">Umbenennen</string>
 </resources>

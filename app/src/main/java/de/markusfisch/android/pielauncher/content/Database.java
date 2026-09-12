@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -52,6 +53,8 @@ public class Database {
 
 	private static final String HIDDEN_APPS = "hidden_apps";
 
+	private static final String APP_LABELS = "app_labels";
+
 	private static final String PINNED_SHORTCUTS = "pinned_shortcuts";
 	private static final String OWNER_PACKAGE = "owner_package";
 	private static final String SHORTCUT_ID = "shortcut_id";
@@ -77,6 +80,7 @@ public class Database {
 	private static final String[] BACKUP_TABLES = {
 			MENU_ITEMS,
 			HIDDEN_APPS,
+			APP_LABELS,
 			ICON_MAPPING_SETS,
 			ICON_MAPPINGS,
 			APP_USAGE,
@@ -738,6 +742,57 @@ public class Database {
 		return um != null ? um.getUserForSerialNumber(serialNumber) : null;
 	}
 
+	public boolean hasMenu(String name) {
+		Cursor cursor = openHelper.getReadableDatabase().query(MENU_ITEMS,
+				new String[]{ITEM_KEY},
+				MENU_NAME + "=?",
+				new String[]{name},
+				null, null, null, "1");
+		try {
+			return cursor.moveToFirst();
+		} finally {
+			cursor.close();
+		}
+	}
+
+	public void restoreAppLabels(
+			Context context,
+			Map<LauncherItemKey, String> labels) {
+		labels.clear();
+		Cursor cursor = openHelper.getReadableDatabase().query(APP_LABELS,
+				new String[]{ITEM_KEY, LABEL},
+				null, null, null, null, null);
+		try {
+			while (cursor.moveToNext()) {
+				LauncherItemKey key = LauncherItemKey.unflattenFromString(
+						context, cursor.getString(0));
+				if (key != null && key.componentName != null) {
+					labels.put(key, cursor.getString(1));
+				}
+			}
+		} finally {
+			cursor.close();
+		}
+	}
+
+	public void storeAppLabel(
+			Context context,
+			LauncherItemKey key,
+			String label) {
+		String itemKey = LauncherItemKey.flattenToString(context,
+				key.componentName, key.userHandle);
+		SQLiteDatabase db = openHelper.getWritableDatabase();
+		if (label == null) {
+			db.delete(APP_LABELS, ITEM_KEY + "=?", new String[]{itemKey});
+			return;
+		}
+		ContentValues values = new ContentValues();
+		values.put(ITEM_KEY, itemKey);
+		values.put(LABEL, label);
+		db.insertWithOnConflict(APP_LABELS, null, values,
+				SQLiteDatabase.CONFLICT_REPLACE);
+	}
+
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	public JSONObject exportTables() throws JSONException {
 		SQLiteDatabase db = openHelper.getReadableDatabase();
@@ -768,17 +823,35 @@ public class Database {
 				if (rows == null) {
 					continue;
 				}
+				Set<String> columns = columnsOf(db, table);
 				db.delete(table, null, null);
 				for (int i = 0, len = rows.length(); i < len; ++i) {
-					db.insertWithOnConflict(table, null,
-							jsonToRow(table, rows.getJSONObject(i)),
-							SQLiteDatabase.CONFLICT_REPLACE);
+					ContentValues values = jsonToRow(table, columns,
+							rows.getJSONObject(i));
+					if (values.size() > 0) {
+						db.insertWithOnConflict(table, null, values,
+								SQLiteDatabase.CONFLICT_REPLACE);
+					}
 				}
 			}
 			db.setTransactionSuccessful();
 		} finally {
 			db.endTransaction();
 		}
+	}
+
+	private static Set<String> columnsOf(SQLiteDatabase db, String table) {
+		Set<String> columns = new HashSet<>();
+		Cursor cursor = db.rawQuery("PRAGMA table_info(" + table + ")", null);
+		try {
+			int nameIndex = cursor.getColumnIndex("name");
+			while (cursor.moveToNext()) {
+				columns.add(cursor.getString(nameIndex));
+			}
+		} finally {
+			cursor.close();
+		}
+		return columns;
 	}
 
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -809,11 +882,16 @@ public class Database {
 		return row;
 	}
 
-	private static ContentValues jsonToRow(String table, JSONObject row)
-			throws JSONException {
+	private static ContentValues jsonToRow(
+			String table,
+			Set<String> columns,
+			JSONObject row) throws JSONException {
 		ContentValues values = new ContentValues();
 		for (Iterator<String> it = row.keys(); it.hasNext(); ) {
 			String column = it.next();
+			if (!columns.contains(column)) {
+				continue;
+			}
 			if (isBlob(table, column)) {
 				values.put(column, Base64.decode(row.getString(column),
 						Base64.NO_WRAP));
@@ -841,7 +919,7 @@ public class Database {
 
 	private static class OpenHelper extends SQLiteOpenHelper {
 		OpenHelper(Context context) {
-			super(context, "app_cache.db", null, 4);
+			super(context, "app_cache.db", null, 5);
 		}
 
 		@Override
@@ -874,6 +952,7 @@ public class Database {
 					"PRIMARY KEY (" + MENU_NAME + "," + POSITION + "));");
 			db.execSQL("CREATE TABLE " + HIDDEN_APPS + " (" +
 					COMPONENT_NAME + " TEXT PRIMARY KEY NOT NULL);");
+			createLabelsTable(db);
 			db.execSQL("CREATE TABLE " + ICON_MAPPING_SETS + " (" +
 					ICON_PACK + " TEXT PRIMARY KEY NOT NULL);");
 			db.execSQL("CREATE TABLE " + ICON_MAPPINGS + " (" +
@@ -886,6 +965,12 @@ public class Database {
 			db.execSQL("CREATE TABLE " + META + " (" +
 					META_KEY + " TEXT PRIMARY KEY NOT NULL," +
 					META_VALUE + " TEXT NOT NULL);");
+		}
+
+		private static void createLabelsTable(SQLiteDatabase db) {
+			db.execSQL("CREATE TABLE " + APP_LABELS + " (" +
+					ITEM_KEY + " TEXT PRIMARY KEY NOT NULL," +
+					LABEL + " TEXT NOT NULL);");
 		}
 
 		private static void createUsageTables(SQLiteDatabase db) {
@@ -926,6 +1011,9 @@ public class Database {
 			}
 			if (oldVersion < 4) {
 				createShortcutsTable(db);
+			}
+			if (oldVersion < 5) {
+				createLabelsTable(db);
 			}
 		}
 

@@ -46,9 +46,8 @@ public class SettingsBackup {
 	public static void restore(Context context, InputStream in)
 			throws IOException, JSONException {
 		JSONObject backup = new JSONObject(readAll(in));
-		int format = backup.optInt(FORMAT_KEY, 0);
-		if (format < 1 || format > FORMAT) {
-			throw new IOException("unsupported backup format " + format);
+		if (backup.optInt(FORMAT_KEY, 0) < 1) {
+			throw new IOException("not a settings backup");
 		}
 
 		JSONObject tables = backup.optJSONObject(TABLES);
@@ -62,7 +61,7 @@ public class SettingsBackup {
 					jsonToPreferences(preferences));
 		}
 
-		PieLauncherApp.reloadPrefs(context);
+		PieLauncherApp.getPrefs(context).reload(context);
 		PieLauncherApp.apps.reload(context);
 	}
 

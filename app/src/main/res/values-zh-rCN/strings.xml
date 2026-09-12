@@ -141,4 +141,5 @@
 	<string name="import_settings_done">设置已导入</string>
 	<string name="import_settings_failed">无法导入设置</string>
 	<string name="no_file_picker">未找到可用于选择文件的应用程序</string>
+	<string name="rename_app">重命名</string>
 </resources>

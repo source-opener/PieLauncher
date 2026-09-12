@@ -141,4 +141,5 @@
 	<string name="import_settings_done">Настройки импортированы</string>
 	<string name="import_settings_failed">Не удалось импортировать настройки</string>
 	<string name="no_file_picker">Не найдено приложение для выбора файла</string>
+	<string name="rename_app">Переименовать</string>
 </resources>
