@@ -199,43 +199,38 @@ jobs:
         if: steps.check.outputs.publish == 'true'
         run: |
           set -euo pipefail
-          if [ '${{ steps.channel.outputs.name }}' = 'beta' ]; then
-            # The stable tag sits on a merge commit this branch does not
-            # contain, so ask the default branch instead of describing.
-            git fetch --no-tags origin \
-              '${{ github.event.repository.default_branch }}' \
-              >/dev/null 2>&1 || true
-            since=$(git rev-parse -q --verify FETCH_HEAD || true)
-          else
-            since=$(git describe --tags --abbrev=0 --exclude '*-beta*' \
-                2>/dev/null || true)
-          fi
-          stable=$(git describe --tags --abbrev=0 --exclude '*-beta*' \
-              ${since:-HEAD} 2>/dev/null || true)
-          if [ -n "$since" ]; then
-            changes=$(git log --no-merges --format='* %s' "$since"..HEAD)
-          else
-            changes=$(git log --no-merges --format='* %s' -n 20)
-          fi
-          [ -n "$changes" ] || changes="Nothing yet."
+          git remote add upstream "$UPSTREAM" 2>/dev/null || true
+          git fetch --no-tags --quiet upstream master
+          # ^upstream/master keeps this to what the fork adds, so merging
+          # an upstream release never floods the list with their commits.
+          fork=$(git log --no-merges --format='* %s' HEAD ^upstream/master)
+          [ -n "$fork" ] || fork="* Nothing yet."
           {
             if [ '${{ steps.channel.outputs.name }}' = 'beta' ]; then
+              git fetch --no-tags --quiet origin \
+                '${{ github.event.repository.default_branch }}' || true
+              since=$(git rev-parse -q --verify FETCH_HEAD || true)
+              beta=$(git log --no-merges --format='* %s' \
+                  "${since:-HEAD}"..HEAD 2>/dev/null || true)
+              [ -n "$beta" ] || beta="* Nothing yet."
               echo "Beta ${{ github.run_number }} on the way to"
               echo "${{ steps.version.outputs.base }}, built from"
               echo '`${{ github.sha }}`.'
               echo
-              echo "Everything it adds to stable ${stable:-(none yet)}:"
+              echo "## New in this beta"
+              echo
+              echo "$beta"
               echo
             fi
-            if [ '${{ steps.channel.outputs.name }}' != 'beta' ]; then
-              echo "Changes since ${stable:-the first release}:"
-              echo
-            fi
-            echo "$changes"
+            echo "## Changes from Pie Launcher ${{ steps.version.outputs.upstream }}"
+            echo
+            echo "$fork"
             echo
             echo "Signing certificate (SHA-256): \`${{ steps.signature.outputs.fingerprint }}\`"
           } > release-notes.md
           cat release-notes.md
+        env:
+          UPSTREAM: https://github.com/markusfisch/PieLauncher
 
       - name: Publish release
         if: steps.check.outputs.publish == 'true'

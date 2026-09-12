@@ -60,6 +60,18 @@ workflow takes the next fork revision: with `1.28.0.1` out, betas are
 last stable release rather than only what changed since the previous
 beta, so any single beta describes itself in full.
 
+## Notes
+
+Release notes list only what this fork adds. They come from
+`git log HEAD ^upstream/master`, so merging an upstream release never
+floods them with upstream's own commits.
+
+Stable releases carry that one list, which grows with every change and
+always states the complete difference from the original.
+
+Betas carry it too, above a second list of what the beta has that the
+current release does not.
+
 ## Drafts
 
 Both channels publish as **drafts**. The workflow builds, signs and
