@@ -68,19 +68,38 @@ jobs:
             echo "::error::fork-version must stay below 1000"
             exit 1
           fi
-          base="$upstream.$fork"
           if [ '${{ steps.channel.outputs.name }}' = 'beta' ]; then
-            name="$base-beta.${{ github.run_number }}"
+            # A beta leads to the next release, so it must not carry the
+            # version of one that is already out.
+            if git rev-parse -q --verify "refs/tags/v$upstream.$fork" \
+                >/dev/null; then
+              fork=$((fork + 1))
+            fi
+            base="$upstream.$fork"
+            # Publishing a beta takes its tag, so step past the ones
+            # already taken. While the draft is unpublished no tag
+            # exists, the number stays put, and every push updates that
+            # same draft instead of leaving one behind per feature.
+            beta=$(git tag --list "v$base-beta.*" \
+                | sed "s|^v$base-beta\.||" \
+                | grep -E '^[0-9]+$' \
+                | sort -n | tail -n 1 || true)
+            beta=$(( ${beta:-0} + 1 ))
+            name="$base-beta.$beta"
             code=${{ github.run_number }}
+            tag="v$name"
+            echo "beta=$beta" >> "$GITHUB_OUTPUT"
           else
+            base="$upstream.$fork"
             name="$base"
             code=$((upstream_code * 1000 + fork))
+            tag="v$name"
           fi
           echo "name=$name" >> "$GITHUB_OUTPUT"
           echo "base=$base" >> "$GITHUB_OUTPUT"
           echo "upstream=$upstream" >> "$GITHUB_OUTPUT"
           echo "code=$code" >> "$GITHUB_OUTPUT"
-          echo "tag=v$name" >> "$GITHUB_OUTPUT"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
           echo "Building ${{ steps.channel.outputs.name }} $name (code $code)"
 
       - name: Decide whether to publish
@@ -188,33 +207,38 @@ jobs:
         if: steps.check.outputs.publish == 'true'
         run: |
           set -euo pipefail
-          if [ '${{ steps.channel.outputs.name }}' = 'beta' ]; then
-            previous=$(git describe --tags --abbrev=0 2>/dev/null || true)
-            if [ -n "$previous" ]; then
-              changes=$(git log --no-merges --format='* %s' "$previous"..HEAD)
-            else
-              changes=$(git log --no-merges --format='* %s' -n 20)
-            fi
-            [ -n "$changes" ] || changes="No changes since $previous."
-          else
-            changes=$(awk -v v='## ${{ steps.version.outputs.upstream }}' '
-              $0 == v { found = 1; next }
-              found && /^## / { exit }
-              found { print }
-            ' CHANGELOG.md)
-            [ -n "$changes" ] || changes="See CHANGELOG.md for details."
-          fi
+          git remote add upstream "$UPSTREAM" 2>/dev/null || true
+          git fetch --no-tags --quiet upstream master
+          # ^upstream/master keeps this to what the fork adds, so merging
+          # an upstream release never floods the list with their commits.
+          fork=$(git log --no-merges --format='* %s' HEAD ^upstream/master)
+          [ -n "$fork" ] || fork="* Nothing yet."
           {
             if [ '${{ steps.channel.outputs.name }}' = 'beta' ]; then
-              echo "Beta build of ${{ steps.version.outputs.base }}, from"
+              git fetch --no-tags --quiet origin \
+                '${{ github.event.repository.default_branch }}' || true
+              since=$(git rev-parse -q --verify FETCH_HEAD || true)
+              beta=$(git log --no-merges --format='* %s' \
+                  "${since:-HEAD}"..HEAD 2>/dev/null || true)
+              [ -n "$beta" ] || beta="* Nothing yet."
+              echo "Beta ${{ steps.version.outputs.beta }} on the way to"
+              echo "${{ steps.version.outputs.base }}, built from"
               echo '`${{ github.sha }}`.'
               echo
+              echo "## New in this beta"
+              echo
+              echo "$beta"
+              echo
             fi
-            echo "$changes"
+            echo "## Changes from Pie Launcher ${{ steps.version.outputs.upstream }}"
+            echo
+            echo "$fork"
             echo
             echo "Signing certificate (SHA-256): \`${{ steps.signature.outputs.fingerprint }}\`"
           } > release-notes.md
           cat release-notes.md
+        env:
+          UPSTREAM: https://github.com/markusfisch/PieLauncher
 
       - name: Publish release
         if: steps.check.outputs.publish == 'true'
@@ -226,6 +250,24 @@ jobs:
           body_path: release-notes.md
           prerelease: ${{ steps.channel.outputs.prerelease }}
           make_latest: ${{ steps.channel.outputs.prerelease == 'false' }}
+          draft: true
           files: |
             ${{ steps.artifacts.outputs.apk }}
             ${{ steps.artifacts.outputs.checksum }}
+
+      - name: Prune older betas
+        if: steps.check.outputs.publish == 'true' && steps.channel.outputs.name == 'beta'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          KEEP: '1'
+        run: |
+          set -euo pipefail
+          gh release list --limit 100 \
+            --json tagName,isPrerelease,isDraft,createdAt \
+            --jq 'map(select(.isPrerelease and (.isDraft | not)))
+              | sort_by(.createdAt) | reverse | .[].tagName' > betas.txt
+          tail -n +$((KEEP + 1)) betas.txt | while read -r tag; do
+            [ -n "$tag" ] || continue
+            echo "Deleting $tag"
+            gh release delete "$tag" --yes --cleanup-tag
+          done

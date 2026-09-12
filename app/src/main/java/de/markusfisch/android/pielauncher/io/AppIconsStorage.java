@@ -4,7 +4,9 @@ import android.content.Context;
 import android.graphics.Bitmap;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import de.markusfisch.android.pielauncher.app.PieLauncherApp;
 import de.markusfisch.android.pielauncher.content.LauncherItemKey;
@@ -34,15 +36,15 @@ public class AppIconsStorage {
 		PieLauncherApp.getDatabase(context).storeAppIcon(context, key, bitmap);
 	}
 
+	public synchronized Set<LauncherItemKey> keys() {
+		return new HashSet<>(icons.keySet());
+	}
+
 	public synchronized void restore(Context context) {
 		if (restored) {
 			return;
 		}
 		PieLauncherApp.getDatabase(context).restoreAppIcons(context, icons);
 		restored = true;
-	}
-
-	public synchronized void invalidate() {
-		restored = false;
 	}
 }

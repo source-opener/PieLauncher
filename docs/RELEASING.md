@@ -49,9 +49,52 @@ its higher `versionCode` already raises the composed one, so
 Keep `fork-version` below 1000, which is the room the composed
 `versionCode` leaves for it.
 
-Beta versions append `-beta.<workflow run number>` to the same base, and
-use the run number alone as their `versionCode`, since the beta is a
-separate app with its own ladder.
+Betas append `-beta.<workflow run number>`, and use the run number alone
+as their `versionCode`, since the beta is a separate app with its own
+ladder.
+
+A beta names the version it leads *to*, not the one it was built from. It
+sits ahead of stable, so if the composed version is already released the
+workflow takes the next fork revision: with `1.28.0.1` out, betas are
+`1.28.0.2-beta.<n>`. Their notes list everything that differs from the
+last stable release rather than only what changed since the previous
+beta, so any single beta describes itself in full.
+
+## Notes
+
+Release notes list only what this fork adds. They come from
+`git log HEAD ^upstream/master`, so merging an upstream release never
+floods them with upstream's own commits.
+
+Stable releases carry that one list, which grows with every change and
+always states the complete difference from the original.
+
+Betas carry it too, above a second list of what the beta has that the
+current release does not.
+
+## Drafts
+
+Both channels publish as **drafts**. The workflow builds, signs and
+uploads, then stops. Nothing is live until you press Publish in the
+release editor, and Obtainium never sees a draft.
+
+A beta draft is tagged `v<version>-beta.<n>`, where `n` steps past the
+beta tags already taken for that version. An unpublished draft has no
+tag, so `n` does not move and every push to `dev` updates that one draft
+rather than leaving a release behind per feature: the APK is replaced,
+the notes are regenerated, and the release collects the whole set of
+changes until you publish it. Publishing takes the tag, so the next push
+starts a fresh draft at the next number.
+
+Notes are pre-filled and meant to be edited. Edit them last, once the
+features are in, because the next push regenerates the body and
+overwrites what you wrote. A draft is never pruned, only published
+pre-releases are, keeping the number set by `KEEP` in the workflow.
+Stable releases are never pruned.
+
+Stable notes list the commits since the previous stable release, not a
+`CHANGELOG.md` section: that file belongs to upstream and says nothing
+about what this fork added.
 
 ## Setup
 

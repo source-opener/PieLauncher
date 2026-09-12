@@ -147,4 +147,11 @@
 	<string name="pick_image">Afbeelding kiezen</string>
 	<string name="reset_icon">Pictogram herstellen</string>
 	<string name="pick_image_failed">Kan die afbeelding niet lezen</string>
+	<string name="import_settings_restart">Instellingen geïmporteerd. Pie Launcher moet opnieuw starten om ze te gebruiken.</string>
+	<string name="customised_apps">Aangepaste apps</string>
+	<string name="show_customised_apps"><big><font color="#ffffff">Aangepaste apps</font></big>\nApps met een eigen naam, labels of pictogram</string>
+	<string name="no_customised_apps">Geen aangepaste apps</string>
+	<string name="reset_name">Naam herstellen</string>
+	<string name="reset_tags">Labels herstellen</string>
+	<string name="reset_all">Alles herstellen</string>
 </resources>

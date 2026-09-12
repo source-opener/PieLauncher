@@ -153,7 +153,9 @@ public class Preferences {
 				editor.putString(key, (String) value);
 			}
 		}
-		editor.apply();
+		// Not apply(), which writes in the background and would lose the
+		// import if the app restarts before it lands.
+		editor.commit();
 	}
 
 	public Preferences(Context context) {

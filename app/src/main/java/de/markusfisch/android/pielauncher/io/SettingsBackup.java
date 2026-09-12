@@ -60,9 +60,6 @@ public class SettingsBackup {
 			PieLauncherApp.getPrefs(context).importValues(
 					jsonToPreferences(preferences));
 		}
-
-		PieLauncherApp.getPrefs(context).reload(context);
-		PieLauncherApp.apps.reload(context);
 	}
 
 	private static String readAll(InputStream in) throws IOException {

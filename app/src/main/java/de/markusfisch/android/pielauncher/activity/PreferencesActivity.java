@@ -117,6 +117,9 @@ public class PreferencesActivity extends Activity {
 			findViewById(R.id.hidden_apps).setOnClickListener((view) -> {
 				HiddenAppsActivity.start(this);
 			});
+			findViewById(R.id.customised_apps).setOnClickListener((view) -> {
+				CustomisedAppsActivity.start(this);
+			});
 			initBackup();
 		}
 
@@ -250,7 +253,14 @@ public class PreferencesActivity extends Activity {
 						: R.string.export_settings_failed;
 			}
 			final int result = message;
-			handler.post(() -> toast(result));
+			final boolean restart = result == R.string.import_settings_done;
+			handler.post(() -> {
+				if (restart) {
+					askToRestart();
+				} else {
+					toast(result);
+				}
+			});
 		});
 	}
 
@@ -276,6 +286,18 @@ public class PreferencesActivity extends Activity {
 		} finally {
 			out.close();
 		}
+	}
+
+	// Views and the app singletons cache what was just replaced, and
+	// writing any of it back would undo the import.
+	private void askToRestart() {
+		Dialog.newDialog(this)
+				.setTitle(R.string.import_settings)
+				.setMessage(R.string.import_settings_restart)
+				.setCancelable(false)
+				.setPositiveButton(android.R.string.ok,
+						(dialog, which) -> Runtime.getRuntime().exit(0))
+				.show();
 	}
 
 	private void toast(int messageId) {

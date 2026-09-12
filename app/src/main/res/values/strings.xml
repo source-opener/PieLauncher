@@ -147,4 +147,11 @@
 	<string name="pick_image">Pick image</string>
 	<string name="reset_icon">Reset icon</string>
 	<string name="pick_image_failed">Could not read that image</string>
+	<string name="import_settings_restart">Settings imported. Pie Launcher needs to restart to use them.</string>
+	<string name="customised_apps">Customised apps</string>
+	<string name="show_customised_apps"><big><font color="#ffffff">Customised apps</font></big>\nApps with a custom name, tags or icon</string>
+	<string name="no_customised_apps">No customised apps</string>
+	<string name="reset_name">Reset name</string>
+	<string name="reset_tags">Reset tags</string>
+	<string name="reset_all">Reset everything</string>
 </resources>

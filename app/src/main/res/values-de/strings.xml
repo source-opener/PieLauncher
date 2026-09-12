@@ -147,4 +147,11 @@
 	<string name="pick_image">Bild auswählen</string>
 	<string name="reset_icon">Icon zurücksetzen</string>
 	<string name="pick_image_failed">Bild konnte nicht gelesen werden</string>
+	<string name="import_settings_restart">Einstellungen importiert. Pie Launcher muss neu starten, um sie zu verwenden.</string>
+	<string name="customised_apps">Angepasste Apps</string>
+	<string name="show_customised_apps"><big><font color="#ffffff">Angepasste Apps</font></big>\nApps mit eigenem Namen, Schlagwörtern oder Icon</string>
+	<string name="no_customised_apps">Keine angepassten Apps</string>
+	<string name="reset_name">Namen zurücksetzen</string>
+	<string name="reset_tags">Schlagwörter zurücksetzen</string>
+	<string name="reset_all">Alles zurücksetzen</string>
 </resources>

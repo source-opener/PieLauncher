@@ -147,4 +147,11 @@
 	<string name="pick_image">Choisir une image</string>
 	<string name="reset_icon">Réinitialiser l\'icône</string>
 	<string name="pick_image_failed">Impossible de lire cette image</string>
+	<string name="import_settings_restart">Paramètres importés. Pie Launcher doit redémarrer pour les utiliser.</string>
+	<string name="customised_apps">Applications personnalisées</string>
+	<string name="show_customised_apps"><big><font color="#ffffff">Applications personnalisées</font></big>\nApplications avec un nom, des mots-clés ou une icône personnalisés</string>
+	<string name="no_customised_apps">Aucune application personnalisée</string>
+	<string name="reset_name">Réinitialiser le nom</string>
+	<string name="reset_tags">Réinitialiser les mots-clés</string>
+	<string name="reset_all">Tout réinitialiser</string>
 </resources>
