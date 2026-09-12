@@ -49,9 +49,17 @@ its higher `versionCode` already raises the composed one, so
 Keep `fork-version` below 1000, which is the room the composed
 `versionCode` leaves for it.
 
-Beta versions append `-beta.<workflow run number>` to the same base, and
-use the run number alone as their `versionCode`, since the beta is a
-separate app with its own ladder.
+Betas append `-beta.<workflow run number>`, and use the run number alone
+as their `versionCode`, since the beta is a separate app with its own
+ladder.
+
+A beta names the version it leads *to*, not the one it was built from. It
+sits ahead of stable, so if the composed version is already released the
+workflow takes the next fork revision: with `1.28.0.1` out, betas are
+`1.28.0.2-beta.<n>`. Their notes list everything that differs from the
+last stable release rather than only what changed since the previous
+beta, so any single beta describes itself in full and older ones can be
+deleted freely.
 
 ## Setup
 

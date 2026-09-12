@@ -68,11 +68,18 @@ jobs:
             echo "::error::fork-version must stay below 1000"
             exit 1
           fi
-          base="$upstream.$fork"
           if [ '${{ steps.channel.outputs.name }}' = 'beta' ]; then
+            # A beta leads to the next release, so it must not carry the
+            # version of one that is already out.
+            if git rev-parse -q --verify "refs/tags/v$upstream.$fork" \
+                >/dev/null; then
+              fork=$((fork + 1))
+            fi
+            base="$upstream.$fork"
             name="$base-beta.${{ github.run_number }}"
             code=${{ github.run_number }}
           else
+            base="$upstream.$fork"
             name="$base"
             code=$((upstream_code * 1000 + fork))
           fi
@@ -189,13 +196,14 @@ jobs:
         run: |
           set -euo pipefail
           if [ '${{ steps.channel.outputs.name }}' = 'beta' ]; then
-            previous=$(git describe --tags --abbrev=0 2>/dev/null || true)
-            if [ -n "$previous" ]; then
-              changes=$(git log --no-merges --format='* %s' "$previous"..HEAD)
+            stable=$(git describe --tags --abbrev=0 --exclude '*-beta*' \
+                2>/dev/null || true)
+            if [ -n "$stable" ]; then
+              changes=$(git log --no-merges --format='* %s' "$stable"..HEAD)
             else
               changes=$(git log --no-merges --format='* %s' -n 20)
             fi
-            [ -n "$changes" ] || changes="No changes since $previous."
+            [ -n "$changes" ] || changes="Nothing yet."
           else
             changes=$(awk -v v='## ${{ steps.version.outputs.upstream }}' '
               $0 == v { found = 1; next }
@@ -206,8 +214,11 @@ jobs:
           fi
           {
             if [ '${{ steps.channel.outputs.name }}' = 'beta' ]; then
-              echo "Beta build of ${{ steps.version.outputs.base }}, from"
+              echo "Beta ${{ github.run_number }} on the way to"
+              echo "${{ steps.version.outputs.base }}, built from"
               echo '`${{ github.sha }}`.'
+              echo
+              echo "Everything it adds to stable ${stable:-(none yet)}:"
               echo
             fi
             echo "$changes"
