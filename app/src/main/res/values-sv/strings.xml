@@ -144,4 +144,7 @@
 	<string name="rename_app">Byt namn</string>
 	<string name="app_tags">Etiketter</string>
 	<string name="app_tags_hint">Extra ord för att hitta appen</string>
+	<string name="pick_image">Välj bild</string>
+	<string name="reset_icon">Återställ ikon</string>
+	<string name="pick_image_failed">Kunde inte läsa bilden</string>
 </resources>

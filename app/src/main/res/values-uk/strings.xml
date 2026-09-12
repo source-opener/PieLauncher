@@ -144,4 +144,7 @@
 	<string name="rename_app">Перейменувати</string>
 	<string name="app_tags">Мітки</string>
 	<string name="app_tags_hint">Додаткові слова для пошуку цієї програми</string>
+	<string name="pick_image">Вибрати зображення</string>
+	<string name="reset_icon">Скинути іконку</string>
+	<string name="pick_image_failed">Не вдалося прочитати зображення</string>
 </resources>

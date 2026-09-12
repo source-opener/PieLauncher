@@ -13,6 +13,7 @@ import android.os.UserHandle;
 import de.markusfisch.android.pielauncher.content.Apps;
 import de.markusfisch.android.pielauncher.content.Database;
 import de.markusfisch.android.pielauncher.graphics.IconPack;
+import de.markusfisch.android.pielauncher.io.AppIconsStorage;
 import de.markusfisch.android.pielauncher.io.AppLabelsStorage;
 import de.markusfisch.android.pielauncher.io.AppTagsStorage;
 import de.markusfisch.android.pielauncher.preference.Preferences;
@@ -25,6 +26,7 @@ public class PieLauncherApp extends Application {
 	public static final IconPack iconPack = new IconPack();
 	public static final AppLabelsStorage appLabels = new AppLabelsStorage();
 	public static final AppTagsStorage appTags = new AppTagsStorage();
+	public static final AppIconsStorage appIcons = new AppIconsStorage();
 
 	private static final ConfigurationChangedReceiver configurationChangedReceiver =
 			new ConfigurationChangedReceiver();

@@ -175,12 +175,22 @@ jobs:
         if: steps.check.outputs.publish == 'true'
         run: |
           set -euo pipefail
-          changes=$(awk -v v='## ${{ steps.version.outputs.base }}' '
-            $0 == v { found = 1; next }
-            found && /^## / { exit }
-            found { print }
-          ' CHANGELOG.md)
-          [ -n "$changes" ] || changes="See CHANGELOG.md for details."
+          if [ '${{ steps.channel.outputs.name }}' = 'beta' ]; then
+            previous=$(git describe --tags --abbrev=0 2>/dev/null || true)
+            if [ -n "$previous" ]; then
+              changes=$(git log --no-merges --format='* %s' "$previous"..HEAD)
+            else
+              changes=$(git log --no-merges --format='* %s' -n 20)
+            fi
+            [ -n "$changes" ] || changes="No changes since $previous."
+          else
+            changes=$(awk -v v='## ${{ steps.version.outputs.base }}' '
+              $0 == v { found = 1; next }
+              found && /^## / { exit }
+              found { print }
+            ' CHANGELOG.md)
+            [ -n "$changes" ] || changes="See CHANGELOG.md for details."
+          fi
           {
             if [ '${{ steps.channel.outputs.name }}' = 'beta' ]; then
               echo "Beta build of ${{ steps.version.outputs.base }}, from"

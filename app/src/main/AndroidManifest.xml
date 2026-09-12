@@ -58,5 +58,9 @@
 		<activity
 			android:name=".activity.HiddenAppsActivity"
 			android:exported="true"/>
+		<activity
+			android:name=".activity.PickImageActivity"
+			android:exported="false"
+			android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
 	</application>
 </manifest>

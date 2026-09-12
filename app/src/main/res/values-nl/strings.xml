@@ -144,4 +144,7 @@
 	<string name="rename_app">Hernoemen</string>
 	<string name="app_tags">Labels</string>
 	<string name="app_tags_hint">Extra woorden om deze app mee te vinden</string>
+	<string name="pick_image">Afbeelding kiezen</string>
+	<string name="reset_icon">Pictogram herstellen</string>
+	<string name="pick_image_failed">Kan die afbeelding niet lezen</string>
 </resources>

@@ -144,4 +144,7 @@
 	<string name="rename_app">Rename</string>
 	<string name="app_tags">Tags</string>
 	<string name="app_tags_hint">Extra words to find this app by</string>
+	<string name="pick_image">Pick image</string>
+	<string name="reset_icon">Reset icon</string>
+	<string name="pick_image_failed">Could not read that image</string>
 </resources>
