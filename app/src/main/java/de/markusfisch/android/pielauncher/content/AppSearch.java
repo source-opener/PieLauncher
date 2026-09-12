@@ -3,6 +3,8 @@ package de.markusfisch.android.pielauncher.content;
 import android.content.Context;
 import android.os.UserHandle;
 
+import java.text.Normalizer;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -38,7 +40,19 @@ public class AppSearch {
 			return appIcon.componentName.getPackageName()
 					.toLowerCase(defaultLocale);
 		}
-		return appIcon.label.toLowerCase(defaultLocale);
+		return fold(appIcon.label.toLowerCase(defaultLocale));
+	}
+
+	// Strips accents so that "cafe" finds "Café". The ASCII check keeps
+	// this off the hot path for most labels.
+	public static String fold(String s) {
+		for (int i = 0, len = s.length(); i < len; ++i) {
+			if (s.charAt(i) > 0x7f) {
+				return Normalizer.normalize(s, Normalizer.Form.NFD)
+						.replaceAll("\\p{Mn}+", "");
+			}
+		}
+		return s;
 	}
 
 	public static int hammingDistance(String a, String b, int l) {
@@ -108,7 +122,7 @@ public class AppSearch {
 		}
 
 		Locale defaultLocale = Locale.getDefault();
-		query = query.toLowerCase(defaultLocale);
+		query = fold(query.toLowerCase(defaultLocale));
 
 		int strategy = prefs.getSearchStrictness();
 		Comparator<AppIcon> appComparator = getAppComparator(
@@ -206,6 +220,7 @@ public class AppSearch {
 			String query,
 			int strategy) {
 		for (String tag : PieLauncherApp.appTags.split(key)) {
+			tag = fold(tag);
 			if (strategy == Preferences.SEARCH_STRICTNESS_STARTS_WITH
 					? tag.startsWith(query)
 					: tag.contains(query)) {
