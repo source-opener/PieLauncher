@@ -54,6 +54,8 @@ public class Database {
 	private static final String HIDDEN_APPS = "hidden_apps";
 
 	private static final String APP_LABELS = "app_labels";
+	private static final String APP_TAGS = "app_tags";
+	private static final String TAGS = "tags";
 
 	private static final String PINNED_SHORTCUTS = "pinned_shortcuts";
 	private static final String OWNER_PACKAGE = "owner_package";
@@ -81,6 +83,7 @@ public class Database {
 			MENU_ITEMS,
 			HIDDEN_APPS,
 			APP_LABELS,
+			APP_TAGS,
 			ICON_MAPPING_SETS,
 			ICON_MAPPINGS,
 			APP_USAGE,
@@ -775,6 +778,44 @@ public class Database {
 		}
 	}
 
+	public void restoreAppTags(
+			Context context,
+			Map<LauncherItemKey, String> tags) {
+		tags.clear();
+		Cursor cursor = openHelper.getReadableDatabase().query(APP_TAGS,
+				new String[]{ITEM_KEY, TAGS},
+				null, null, null, null, null);
+		try {
+			while (cursor.moveToNext()) {
+				LauncherItemKey key = LauncherItemKey.unflattenFromString(
+						context, cursor.getString(0));
+				if (key != null && key.componentName != null) {
+					tags.put(key, cursor.getString(1));
+				}
+			}
+		} finally {
+			cursor.close();
+		}
+	}
+
+	public void storeAppTags(
+			Context context,
+			LauncherItemKey key,
+			String tags) {
+		String itemKey = LauncherItemKey.flattenToString(context,
+				key.componentName, key.userHandle);
+		SQLiteDatabase db = openHelper.getWritableDatabase();
+		if (tags == null) {
+			db.delete(APP_TAGS, ITEM_KEY + "=?", new String[]{itemKey});
+			return;
+		}
+		ContentValues values = new ContentValues();
+		values.put(ITEM_KEY, itemKey);
+		values.put(TAGS, tags);
+		db.insertWithOnConflict(APP_TAGS, null, values,
+				SQLiteDatabase.CONFLICT_REPLACE);
+	}
+
 	public void storeAppLabel(
 			Context context,
 			LauncherItemKey key,
@@ -919,7 +960,7 @@ public class Database {
 
 	private static class OpenHelper extends SQLiteOpenHelper {
 		OpenHelper(Context context) {
-			super(context, "app_cache.db", null, 5);
+			super(context, "app_cache.db", null, 6);
 		}
 
 		@Override
@@ -953,6 +994,7 @@ public class Database {
 			db.execSQL("CREATE TABLE " + HIDDEN_APPS + " (" +
 					COMPONENT_NAME + " TEXT PRIMARY KEY NOT NULL);");
 			createLabelsTable(db);
+			createTagsTable(db);
 			db.execSQL("CREATE TABLE " + ICON_MAPPING_SETS + " (" +
 					ICON_PACK + " TEXT PRIMARY KEY NOT NULL);");
 			db.execSQL("CREATE TABLE " + ICON_MAPPINGS + " (" +
@@ -971,6 +1013,12 @@ public class Database {
 			db.execSQL("CREATE TABLE " + APP_LABELS + " (" +
 					ITEM_KEY + " TEXT PRIMARY KEY NOT NULL," +
 					LABEL + " TEXT NOT NULL);");
+		}
+
+		private static void createTagsTable(SQLiteDatabase db) {
+			db.execSQL("CREATE TABLE " + APP_TAGS + " (" +
+					ITEM_KEY + " TEXT PRIMARY KEY NOT NULL," +
+					TAGS + " TEXT NOT NULL);");
 		}
 
 		private static void createUsageTables(SQLiteDatabase db) {
@@ -1014,6 +1062,9 @@ public class Database {
 			}
 			if (oldVersion < 5) {
 				createLabelsTable(db);
+			}
+			if (oldVersion < 6) {
+				createTagsTable(db);
 			}
 		}
 

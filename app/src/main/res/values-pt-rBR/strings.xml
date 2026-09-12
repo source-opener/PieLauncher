@@ -142,4 +142,6 @@
 	<string name="import_settings_failed">Não foi possível importar as configurações</string>
 	<string name="no_file_picker">Nenhum aplicativo encontrado para escolher um arquivo</string>
 	<string name="rename_app">Renomear</string>
+	<string name="app_tags">Etiquetas</string>
+	<string name="app_tags_hint">Palavras adicionais para encontrar este aplicativo</string>
 </resources>

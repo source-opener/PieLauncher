@@ -142,4 +142,6 @@
 	<string name="import_settings_failed">Не удалось импортировать настройки</string>
 	<string name="no_file_picker">Не найдено приложение для выбора файла</string>
 	<string name="rename_app">Переименовать</string>
+	<string name="app_tags">Метки</string>
+	<string name="app_tags_hint">Дополнительные слова для поиска этого приложения</string>
 </resources>
