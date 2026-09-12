@@ -6,7 +6,7 @@
 | --- | --- | --- | --- |
 | `master` | stable | Pie Launcher | release, tagged `v<upstream>.<fork>` |
 | `dev` | beta | Pie Launcher Beta | pre-release, tagged `v<upstream>.<fork>-beta.<build>` |
-| `feature/*`, `fix/*`, `ci/*` | none | - | nothing, CI only |
+| `feature/*`, `fix/*`, `ci/*` | none | - | nothing, CI on their pull request |
 
 The beta build carries the `.beta` application ID suffix, its own name and
 an orange launcher icon, so it installs next to the stable build instead
@@ -16,17 +16,17 @@ Export settings** and **Import settings** to copy a setup between them.
 ## Workflows
 
 `ci.yml` runs `lintDebug`, builds the debug APK and checks the beta
-variant on every push to the branches above and on every pull request.
+variant on every pull request. Pushes are not built, so a branch is
+verified once, when it is proposed for merge.
 
 `release.yml` builds a signed APK and publishes it as a GitHub release.
 
-On `master` it reads `versionName` from `app/build.gradle` and publishes
-only if no tag `v<versionName>` exists yet, so ordinary commits never
+On `master` it publishes only if the composed version (see
+[Versioning](#versioning)) has no tag yet, so ordinary commits never
 create a release.
 
-On `dev` it publishes every push as `<versionName>-beta.<workflow run
-number>`. That run number is also the `versionCode`, because it only ever
-grows.
+On `dev` it publishes every push, appending `-beta.<workflow run number>`
+to the same version.
 
 ## Versioning
 
