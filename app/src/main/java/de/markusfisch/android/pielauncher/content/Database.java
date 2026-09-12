@@ -13,6 +13,11 @@ import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.UserHandle;
 import android.os.UserManager;
+import android.util.Base64;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -21,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -66,6 +72,16 @@ public class Database {
 	private static final String MAPPINGS_FILE = "mappings";
 	private static final String MAPPINGS_PREFIX = MAPPINGS_FILE + "-";
 	private static final String SEPARATOR = ";";
+
+	// Without apps, which is a cache, and meta, which is bookkeeping.
+	private static final String[] BACKUP_TABLES = {
+			MENU_ITEMS,
+			HIDDEN_APPS,
+			ICON_MAPPING_SETS,
+			ICON_MAPPINGS,
+			APP_USAGE,
+			PINNED_SHORTCUTS
+	};
 
 	private final OpenHelper openHelper;
 	private final Context context;
@@ -720,6 +736,107 @@ public class Database {
 			long serialNumber) {
 		UserManager um = AppLauncher.getUserManager(context);
 		return um != null ? um.getUserForSerialNumber(serialNumber) : null;
+	}
+
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+	public JSONObject exportTables() throws JSONException {
+		SQLiteDatabase db = openHelper.getReadableDatabase();
+		JSONObject tables = new JSONObject();
+		for (String table : BACKUP_TABLES) {
+			JSONArray rows = new JSONArray();
+			Cursor cursor = db.query(table, null, null, null, null, null,
+					null);
+			try {
+				String[] columns = cursor.getColumnNames();
+				while (cursor.moveToNext()) {
+					rows.put(rowToJson(table, columns, cursor));
+				}
+			} finally {
+				cursor.close();
+			}
+			tables.put(table, rows);
+		}
+		return tables;
+	}
+
+	public void importTables(JSONObject tables) throws JSONException {
+		SQLiteDatabase db = openHelper.getWritableDatabase();
+		db.beginTransaction();
+		try {
+			for (String table : BACKUP_TABLES) {
+				JSONArray rows = tables.optJSONArray(table);
+				if (rows == null) {
+					continue;
+				}
+				db.delete(table, null, null);
+				for (int i = 0, len = rows.length(); i < len; ++i) {
+					db.insertWithOnConflict(table, null,
+							jsonToRow(table, rows.getJSONObject(i)),
+							SQLiteDatabase.CONFLICT_REPLACE);
+				}
+			}
+			db.setTransactionSuccessful();
+		} finally {
+			db.endTransaction();
+		}
+	}
+
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+	private static JSONObject rowToJson(
+			String table,
+			String[] columns,
+			Cursor cursor) throws JSONException {
+		JSONObject row = new JSONObject();
+		for (int i = 0; i < columns.length; ++i) {
+			switch (cursor.getType(i)) {
+				case Cursor.FIELD_TYPE_NULL:
+					break;
+				case Cursor.FIELD_TYPE_INTEGER:
+					row.put(columns[i], cursor.getLong(i));
+					break;
+				case Cursor.FIELD_TYPE_FLOAT:
+					row.put(columns[i], cursor.getDouble(i));
+					break;
+				case Cursor.FIELD_TYPE_BLOB:
+					row.put(columns[i], Base64.encodeToString(
+							cursor.getBlob(i), Base64.NO_WRAP));
+					break;
+				default:
+					row.put(columns[i], cursor.getString(i));
+					break;
+			}
+		}
+		return row;
+	}
+
+	private static ContentValues jsonToRow(String table, JSONObject row)
+			throws JSONException {
+		ContentValues values = new ContentValues();
+		for (Iterator<String> it = row.keys(); it.hasNext(); ) {
+			String column = it.next();
+			if (isBlob(table, column)) {
+				values.put(column, Base64.decode(row.getString(column),
+						Base64.NO_WRAP));
+				continue;
+			}
+			Object value = row.get(column);
+			if (value instanceof Boolean) {
+				values.put(column, (Boolean) value ? 1 : 0);
+			} else if (value instanceof Integer) {
+				values.put(column, (Integer) value);
+			} else if (value instanceof Long) {
+				values.put(column, (Long) value);
+			} else if (value instanceof Double) {
+				values.put(column, (Double) value);
+			} else {
+				values.put(column, value.toString());
+			}
+		}
+		return values;
+	}
+
+	private static boolean isBlob(String table, String column) {
+		return PINNED_SHORTCUTS.equals(table) && ICON.equals(column);
 	}
 
 	private static class OpenHelper extends SQLiteOpenHelper {

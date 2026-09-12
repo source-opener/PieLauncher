@@ -132,4 +132,13 @@
 	<string name="activity_not_enabled">Деятельность не включена</string>
 	<string name="added_to_home_screen">%1$s добавлено</string>
 	<string name="removed_from_home_screen">%1$s удалено</string>
+	<string name="category_backup">Резервная копия</string>
+	<string name="export_settings"><big><font color="#ffffff">Экспорт настроек</font></big>\nСохранить круговое меню, скрытые приложения, сопоставления иконок и настройки в файл</string>
+	<string name="import_settings"><big><font color="#ffffff">Импорт настроек</font></big>\nЗаменить всё ранее экспортированным файлом</string>
+	<string name="import_settings_confirm">Круговое меню, скрытые приложения, сопоставления иконок и все настройки будут заменены содержимым файла. Продолжить?</string>
+	<string name="export_settings_done">Настройки экспортированы</string>
+	<string name="export_settings_failed">Не удалось экспортировать настройки</string>
+	<string name="import_settings_done">Настройки импортированы</string>
+	<string name="import_settings_failed">Не удалось импортировать настройки</string>
+	<string name="no_file_picker">Не найдено приложение для выбора файла</string>
 </resources>

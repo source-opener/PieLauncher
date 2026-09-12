@@ -132,4 +132,13 @@
 	<string name="activity_not_enabled">Activité non activée</string>
 	<string name="added_to_home_screen">%1$s ajouté</string>
 	<string name="removed_from_home_screen">%1$s supprimé</string>
+	<string name="category_backup">Sauvegarde</string>
+	<string name="export_settings"><big><font color="#ffffff">Exporter les paramètres</font></big>\nEnregistrer le menu Pie, les applications cachées, les associations d\'icônes et les paramètres dans un fichier</string>
+	<string name="import_settings"><big><font color="#ffffff">Importer les paramètres</font></big>\nTout remplacer par un fichier exporté précédemment</string>
+	<string name="import_settings_confirm">Cela remplace le menu Pie, les applications cachées, les associations d\'icônes et tous les paramètres par le contenu du fichier. Continuer ?</string>
+	<string name="export_settings_done">Paramètres exportés</string>
+	<string name="export_settings_failed">Impossible d\'exporter les paramètres</string>
+	<string name="import_settings_done">Paramètres importés</string>
+	<string name="import_settings_failed">Impossible d\'importer les paramètres</string>
+	<string name="no_file_picker">Aucune application trouvée pour sélectionner un fichier</string>
 </resources>

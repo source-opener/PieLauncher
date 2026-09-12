@@ -249,6 +249,17 @@ public class Apps {
 		return indexAppsAsync(context, null, null);
 	}
 
+	public boolean reload(Context context) {
+		if (indexing) {
+			return false;
+		}
+		apps.clear();
+		menuPrimary.clear();
+		menuSecondary.clear();
+		hiddenAppsStorage.invalidate();
+		return indexAppsAsync(context);
+	}
+
 	public boolean indexAppsAsync(Context context,
 			String packageNameRestriction,
 			UserHandle userHandleRestriction) {

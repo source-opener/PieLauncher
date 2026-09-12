@@ -118,6 +118,15 @@
 	<string name="edit_pie_menu">Edit pie menu</string>
 	<string name="add_to_pie_menu">Add to pie menu</string>
 	<string name="change_icon">Change icon</string>
+	<string name="category_backup">Backup</string>
+	<string name="export_settings"><big><font color="#ffffff">Export settings</font></big>\nSave the pie menu, hidden apps, icon mappings and preferences to a file</string>
+	<string name="import_settings"><big><font color="#ffffff">Import settings</font></big>\nReplace everything with a previously exported file</string>
+	<string name="import_settings_confirm">This replaces the pie menu, hidden apps, icon mappings and all preferences with the contents of the file. Continue?</string>
+	<string name="export_settings_done">Settings exported</string>
+	<string name="export_settings_failed">Could not export settings</string>
+	<string name="import_settings_done">Settings imported</string>
+	<string name="import_settings_failed">Could not import settings</string>
+	<string name="no_file_picker">Found no app to pick a file with</string>
 	<string name="hidden_apps">Hidden apps</string>
 	<string name="hide_app">Hide app</string>
 	<string name="show_app_info">Show app info</string>

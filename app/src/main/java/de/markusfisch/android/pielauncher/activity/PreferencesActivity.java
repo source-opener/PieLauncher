@@ -1,9 +1,12 @@
 package de.markusfisch.android.pielauncher.activity;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,9 +16,15 @@ import android.text.Spanned;
 import android.view.View;
 import android.view.Window;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.window.OnBackInvokedCallback;
 import android.window.OnBackInvokedDispatcher;
 
+import org.json.JSONException;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -26,15 +35,19 @@ import de.markusfisch.android.pielauncher.R;
 import de.markusfisch.android.pielauncher.app.PieLauncherApp;
 import de.markusfisch.android.pielauncher.graphics.BackgroundBlur;
 import de.markusfisch.android.pielauncher.graphics.ToolbarBackground;
+import de.markusfisch.android.pielauncher.io.SettingsBackup;
 import de.markusfisch.android.pielauncher.os.BatteryOptimization;
 import de.markusfisch.android.pielauncher.os.DefaultLauncher;
 import de.markusfisch.android.pielauncher.preference.Preferences;
 import de.markusfisch.android.pielauncher.view.SystemBars;
+import de.markusfisch.android.pielauncher.widget.Dialog;
 import de.markusfisch.android.pielauncher.widget.OptionsDialog;
 import de.markusfisch.android.pielauncher.widget.ScrollWithListenerView;
 
 public class PreferencesActivity extends Activity {
 	private static final String WELCOME = "welcome";
+	private static final int REQUEST_EXPORT = 1;
+	private static final int REQUEST_IMPORT = 2;
 
 	private final Handler handler = new Handler(Looper.getMainLooper());
 	private final ExecutorService executor =
@@ -104,6 +117,7 @@ public class PreferencesActivity extends Activity {
 			findViewById(R.id.hidden_apps).setOnClickListener((view) -> {
 				HiddenAppsActivity.start(this);
 			});
+			initBackup();
 		}
 
 		Window window = getWindow();
@@ -167,6 +181,106 @@ public class PreferencesActivity extends Activity {
 		getOnBackInvokedDispatcher().unregisterOnBackInvokedCallback(
 				onBackInvokedCallback);
 		onBackInvokedCallback = null;
+	}
+
+	private void initBackup() {
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+			findViewById(R.id.category_backup).setVisibility(View.GONE);
+			findViewById(R.id.export_settings).setVisibility(View.GONE);
+			findViewById(R.id.import_settings).setVisibility(View.GONE);
+			return;
+		}
+		findViewById(R.id.export_settings).setOnClickListener((view) ->
+				pickFile(Intent.ACTION_CREATE_DOCUMENT, REQUEST_EXPORT));
+		findViewById(R.id.import_settings).setOnClickListener((view) ->
+				Dialog.newDialog(this)
+						.setMessage(R.string.import_settings_confirm)
+						.setPositiveButton(android.R.string.ok,
+								(dialog, which) -> pickFile(
+										Intent.ACTION_OPEN_DOCUMENT,
+										REQUEST_IMPORT))
+						.setNegativeButton(android.R.string.cancel, null)
+						.show());
+	}
+
+	@TargetApi(Build.VERSION_CODES.KITKAT)
+	private void pickFile(String action, int requestCode) {
+		Intent intent = new Intent(action);
+		intent.addCategory(Intent.CATEGORY_OPENABLE);
+		intent.setType(SettingsBackup.MIME_TYPE);
+		if (Intent.ACTION_CREATE_DOCUMENT.equals(action)) {
+			intent.putExtra(Intent.EXTRA_TITLE, SettingsBackup.FILE_NAME);
+		}
+		try {
+			startActivityForResult(intent, requestCode);
+		} catch (ActivityNotFoundException e) {
+			toast(R.string.no_file_picker);
+		}
+	}
+
+	@Override
+	protected void onActivityResult(
+			int requestCode,
+			int resultCode,
+			Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (resultCode != RESULT_OK || data == null ||
+				data.getData() == null ||
+				(requestCode != REQUEST_EXPORT &&
+						requestCode != REQUEST_IMPORT)) {
+			return;
+		}
+		transferSettings(data.getData(), requestCode == REQUEST_IMPORT);
+	}
+
+	private void transferSettings(Uri uri, boolean importing) {
+		executor.execute(() -> {
+			int message;
+			try {
+				if (importing) {
+					readSettings(uri);
+					message = R.string.import_settings_done;
+				} else {
+					writeSettings(uri);
+					message = R.string.export_settings_done;
+				}
+			} catch (IOException | JSONException e) {
+				message = importing
+						? R.string.import_settings_failed
+						: R.string.export_settings_failed;
+			}
+			final int result = message;
+			handler.post(() -> toast(result));
+		});
+	}
+
+	private void readSettings(Uri uri) throws IOException, JSONException {
+		InputStream in = getContentResolver().openInputStream(uri);
+		if (in == null) {
+			throw new IOException("cannot read " + uri);
+		}
+		try {
+			SettingsBackup.restore(this, in);
+		} finally {
+			in.close();
+		}
+	}
+
+	private void writeSettings(Uri uri) throws IOException, JSONException {
+		OutputStream out = getContentResolver().openOutputStream(uri);
+		if (out == null) {
+			throw new IOException("cannot write " + uri);
+		}
+		try {
+			SettingsBackup.export(this, out);
+		} finally {
+			out.close();
+		}
+	}
+
+	private void toast(int messageId) {
+		Toast.makeText(getApplicationContext(), messageId,
+				Toast.LENGTH_SHORT).show();
 	}
 
 	private void initPreferences() {

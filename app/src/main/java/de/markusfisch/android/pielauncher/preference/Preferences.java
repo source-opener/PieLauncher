@@ -12,6 +12,8 @@ import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.WindowManager;
 
+import java.util.Map;
+
 public class Preferences {
 	public static final int DEAD_ZONE_NONE = 0;
 	public static final int DEAD_ZONE_TOP = 1;
@@ -127,6 +129,32 @@ public class Preferences {
 	private boolean showDrawerOnHome = true;
 	private int splitPieMenu = ALTERNATE_MENU_NONE;
 	private int circleSwapsMenus = ALTERNATE_MENU_NONE;
+
+	public Map<String, ?> exportValues() {
+		return preferences.getAll();
+	}
+
+	public void importValues(Map<String, Object> values) {
+		SharedPreferences.Editor editor = preferences.edit();
+		editor.clear();
+		for (Map.Entry<String, Object> entry : values.entrySet()) {
+			String key = entry.getKey();
+			Object value = entry.getValue();
+			// A wrong type here throws a ClassCastException on read.
+			if (value instanceof Boolean) {
+				editor.putBoolean(key, (Boolean) value);
+			} else if (value instanceof Integer) {
+				editor.putInt(key, (Integer) value);
+			} else if (value instanceof Long) {
+				editor.putLong(key, (Long) value);
+			} else if (value instanceof Float) {
+				editor.putFloat(key, (Float) value);
+			} else if (value instanceof String) {
+				editor.putString(key, (String) value);
+			}
+		}
+		editor.apply();
+	}
 
 	public Preferences(Context context) {
 		Context appContext = context.getApplicationContext();
