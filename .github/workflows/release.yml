@@ -195,23 +195,14 @@ jobs:
         if: steps.check.outputs.publish == 'true'
         run: |
           set -euo pipefail
-          if [ '${{ steps.channel.outputs.name }}' = 'beta' ]; then
-            stable=$(git describe --tags --abbrev=0 --exclude '*-beta*' \
-                2>/dev/null || true)
-            if [ -n "$stable" ]; then
-              changes=$(git log --no-merges --format='* %s' "$stable"..HEAD)
-            else
-              changes=$(git log --no-merges --format='* %s' -n 20)
-            fi
-            [ -n "$changes" ] || changes="Nothing yet."
+          stable=$(git describe --tags --abbrev=0 --exclude '*-beta*' \
+              2>/dev/null || true)
+          if [ -n "$stable" ]; then
+            changes=$(git log --no-merges --format='* %s' "$stable"..HEAD)
           else
-            changes=$(awk -v v='## ${{ steps.version.outputs.upstream }}' '
-              $0 == v { found = 1; next }
-              found && /^## / { exit }
-              found { print }
-            ' CHANGELOG.md)
-            [ -n "$changes" ] || changes="See CHANGELOG.md for details."
+            changes=$(git log --no-merges --format='* %s' -n 20)
           fi
+          [ -n "$changes" ] || changes="Nothing yet."
           {
             if [ '${{ steps.channel.outputs.name }}' = 'beta' ]; then
               echo "Beta ${{ github.run_number }} on the way to"
@@ -221,11 +212,32 @@ jobs:
               echo "Everything it adds to stable ${stable:-(none yet)}:"
               echo
             fi
+            if [ '${{ steps.channel.outputs.name }}' != 'beta' ]; then
+              echo "Changes since ${stable:-the first release}:"
+              echo
+            fi
             echo "$changes"
             echo
             echo "Signing certificate (SHA-256): \`${{ steps.signature.outputs.fingerprint }}\`"
           } > release-notes.md
           cat release-notes.md
+
+      - name: Prune older betas
+        if: steps.check.outputs.publish == 'true' && steps.channel.outputs.name == 'beta'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          KEEP: '1'
+        run: |
+          set -euo pipefail
+          gh release list --limit 100 \
+            --json tagName,isPrerelease,createdAt \
+            --jq 'map(select(.isPrerelease))
+              | sort_by(.createdAt) | reverse | .[].tagName' > betas.txt
+          tail -n +$((KEEP + 1)) betas.txt | while read -r tag; do
+            [ -n "$tag" ] || continue
+            echo "Deleting $tag"
+            gh release delete "$tag" --yes --cleanup-tag
+          done
 
       - name: Publish release
         if: steps.check.outputs.publish == 'true'

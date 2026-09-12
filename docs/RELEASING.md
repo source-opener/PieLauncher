@@ -58,8 +58,15 @@ sits ahead of stable, so if the composed version is already released the
 workflow takes the next fork revision: with `1.28.0.1` out, betas are
 `1.28.0.2-beta.<n>`. Their notes list everything that differs from the
 last stable release rather than only what changed since the previous
-beta, so any single beta describes itself in full and older ones can be
-deleted freely.
+beta, so any single beta describes itself in full.
+
+Publishing a beta deletes the older ones, keeping the number set by
+`KEEP` in the workflow. Only pre-releases are ever removed, so a stable
+release cannot be pruned.
+
+Stable notes list the commits since the previous stable release, not a
+`CHANGELOG.md` section: that file belongs to upstream and says nothing
+about what this fork added.
 
 ## Setup
 
