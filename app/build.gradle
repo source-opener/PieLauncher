@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 
-def betaNumber = System.getenv('ANDROID_BETA_NUMBER')
+def versionCodeOverride = System.getenv('ANDROID_VERSION_CODE')
+def versionNameOverride = System.getenv('ANDROID_VERSION_NAME')
 
 android {
 	namespace 'de.markusfisch.android.pielauncher'
@@ -38,11 +39,15 @@ android {
 		beta {
 			initWith release
 			applicationIdSuffix '.beta'
-			versionNameSuffix betaNumber ? "-beta.$betaNumber" : '-beta'
+			versionNameSuffix versionNameOverride ? null : '-beta'
 		}
 	}
 }
 
-if (betaNumber) {
-	android.defaultConfig.versionCode = betaNumber.toInteger()
+if (versionCodeOverride) {
+	android.defaultConfig.versionCode = versionCodeOverride.toInteger()
+}
+
+if (versionNameOverride) {
+	android.defaultConfig.versionName = versionNameOverride
 }

@@ -141,4 +141,10 @@
 	<string name="import_settings_done">Paramètres importés</string>
 	<string name="import_settings_failed">Impossible d\'importer les paramètres</string>
 	<string name="no_file_picker">Aucune application trouvée pour sélectionner un fichier</string>
+	<string name="rename_app">Renommer</string>
+	<string name="app_tags">Mots-clés</string>
+	<string name="app_tags_hint">Mots supplémentaires pour trouver cette application</string>
+	<string name="pick_image">Choisir une image</string>
+	<string name="reset_icon">Réinitialiser l\'icône</string>
+	<string name="pick_image_failed">Impossible de lire cette image</string>
 </resources>

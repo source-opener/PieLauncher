@@ -149,6 +149,9 @@ public class AppSearch {
 						add = subject.startsWith(query);
 						break;
 				}
+				if (!add) {
+					add = hasTag(entry.getKey(), query, strategy);
+				}
 				if (add) {
 					list.add(appIcon);
 				} else {
@@ -196,6 +199,20 @@ public class AppSearch {
 					? result
 					: appLabelComparator.compare(left, right);
 		};
+	}
+
+	private static boolean hasTag(
+			LauncherItemKey key,
+			String query,
+			int strategy) {
+		for (String tag : PieLauncherApp.appTags.split(key)) {
+			if (strategy == Preferences.SEARCH_STRICTNESS_STARTS_WITH
+					? tag.startsWith(query)
+					: tag.contains(query)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private static boolean inProfile(

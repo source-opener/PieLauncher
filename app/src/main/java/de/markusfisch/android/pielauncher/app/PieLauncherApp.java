@@ -13,6 +13,9 @@ import android.os.UserHandle;
 import de.markusfisch.android.pielauncher.content.Apps;
 import de.markusfisch.android.pielauncher.content.Database;
 import de.markusfisch.android.pielauncher.graphics.IconPack;
+import de.markusfisch.android.pielauncher.io.AppIconsStorage;
+import de.markusfisch.android.pielauncher.io.AppLabelsStorage;
+import de.markusfisch.android.pielauncher.io.AppTagsStorage;
 import de.markusfisch.android.pielauncher.preference.Preferences;
 import de.markusfisch.android.pielauncher.receiver.ConfigurationChangedReceiver;
 import de.markusfisch.android.pielauncher.receiver.ManagedProfileEventReceiver;
@@ -21,6 +24,9 @@ import de.markusfisch.android.pielauncher.receiver.PackageEventReceiver;
 public class PieLauncherApp extends Application {
 	public static final Apps apps = new Apps();
 	public static final IconPack iconPack = new IconPack();
+	public static final AppLabelsStorage appLabels = new AppLabelsStorage();
+	public static final AppTagsStorage appTags = new AppTagsStorage();
+	public static final AppIconsStorage appIcons = new AppIconsStorage();
 
 	private static final ConfigurationChangedReceiver configurationChangedReceiver =
 			new ConfigurationChangedReceiver();
@@ -42,10 +48,6 @@ public class PieLauncherApp extends Application {
 			prefs = new Preferences(context.getApplicationContext());
 		}
 		return prefs;
-	}
-
-	public static synchronized void reloadPrefs(Context context) {
-		prefs = new Preferences(context.getApplicationContext());
 	}
 
 	public static synchronized Database getDatabase(Context context) {

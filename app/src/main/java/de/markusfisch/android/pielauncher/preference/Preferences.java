@@ -160,6 +160,11 @@ public class Preferences {
 		Context appContext = context.getApplicationContext();
 		preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
 		systemSettings = new SystemSettings(appContext.getContentResolver());
+		reload(appContext);
+	}
+
+	public void reload(Context context) {
+		Context appContext = context.getApplicationContext();
 
 		migrateSettings();
 

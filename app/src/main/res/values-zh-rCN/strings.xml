@@ -141,4 +141,10 @@
 	<string name="import_settings_done">设置已导入</string>
 	<string name="import_settings_failed">无法导入设置</string>
 	<string name="no_file_picker">未找到可用于选择文件的应用程序</string>
+	<string name="rename_app">重命名</string>
+	<string name="app_tags">标签</string>
+	<string name="app_tags_hint">用于查找此应用的额外关键词</string>
+	<string name="pick_image">选择图片</string>
+	<string name="reset_icon">重置图标</string>
+	<string name="pick_image_failed">无法读取该图片</string>
 </resources>

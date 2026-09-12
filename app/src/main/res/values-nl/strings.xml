@@ -141,4 +141,10 @@
 	<string name="import_settings_done">Instellingen geïmporteerd</string>
 	<string name="import_settings_failed">Kan instellingen niet importeren</string>
 	<string name="no_file_picker">Geen app gevonden om een bestand te kiezen</string>
+	<string name="rename_app">Hernoemen</string>
+	<string name="app_tags">Labels</string>
+	<string name="app_tags_hint">Extra woorden om deze app mee te vinden</string>
+	<string name="pick_image">Afbeelding kiezen</string>
+	<string name="reset_icon">Pictogram herstellen</string>
+	<string name="pick_image_failed">Kan die afbeelding niet lezen</string>
 </resources>

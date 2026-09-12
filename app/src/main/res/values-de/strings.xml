@@ -141,4 +141,10 @@
 	<string name="import_settings_done">Einstellungen importiert</string>
 	<string name="import_settings_failed">Einstellungen konnten nicht importiert werden</string>
 	<string name="no_file_picker">Keine App zum Auswählen einer Datei gefunden</string>
+	<string name="rename_app">Umbenennen</string>
+	<string name="app_tags">Schlagwörter</string>
+	<string name="app_tags_hint">Zusätzliche Wörter, um diese App zu finden</string>
+	<string name="pick_image">Bild auswählen</string>
+	<string name="reset_icon">Icon zurücksetzen</string>
+	<string name="pick_image_failed">Bild konnte nicht gelesen werden</string>
 </resources>
