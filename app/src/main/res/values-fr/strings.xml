@@ -142,4 +142,6 @@
 	<string name="import_settings_failed">Impossible d\'importer les paramètres</string>
 	<string name="no_file_picker">Aucune application trouvée pour sélectionner un fichier</string>
 	<string name="rename_app">Renommer</string>
+	<string name="app_tags">Mots-clés</string>
+	<string name="app_tags_hint">Mots supplémentaires pour trouver cette application</string>
 </resources>

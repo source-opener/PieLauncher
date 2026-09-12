@@ -142,4 +142,6 @@
 	<string name="import_settings_failed">Kan instellingen niet importeren</string>
 	<string name="no_file_picker">Geen app gevonden om een bestand te kiezen</string>
 	<string name="rename_app">Hernoemen</string>
+	<string name="app_tags">Labels</string>
+	<string name="app_tags_hint">Extra woorden om deze app mee te vinden</string>
 </resources>

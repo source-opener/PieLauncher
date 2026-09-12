@@ -1086,6 +1086,7 @@ public class AppPieView extends View {
 		list.add(context.getString(R.string.show_app_info));
 		list.add(context.getString(R.string.hide_app));
 		list.add(context.getString(R.string.rename_app));
+		list.add(context.getString(R.string.app_tags));
 		if (PieLauncherApp.iconPack.hasPacks()) {
 			list.add(context.getString(R.string.change_icon));
 		}
@@ -1112,6 +1113,9 @@ public class AppPieView extends View {
 							renameApp(context, (Apps.AppIcon) icon);
 							break;
 						case 5:
+							editTags(context, (Apps.AppIcon) icon);
+							break;
+						case 6:
 							returnToList();
 							changeIcon(context, icon);
 							break;
@@ -1514,8 +1518,8 @@ public class AppPieView extends View {
 
 	private void renameApp(Context context, Apps.AppIcon icon) {
 		View view = LayoutInflater.from(context).inflate(
-				R.layout.dialog_rename, null);
-		EditText input = view.findViewById(R.id.name);
+				R.layout.dialog_input, null);
+		EditText input = view.findViewById(R.id.input);
 		input.setText(icon.label);
 		Dialog.newDialog(context)
 				.setTitle(R.string.rename_app)
@@ -1528,6 +1532,24 @@ public class AppPieView extends View {
 							name.isEmpty() ? null : name);
 					PieLauncherApp.apps.indexAppsAsync(context);
 				})
+				.setNegativeButton(android.R.string.cancel, null)
+				.show();
+	}
+
+	private void editTags(Context context, Apps.AppIcon icon) {
+		LauncherItemKey key = new LauncherItemKey(icon.componentName,
+				icon.userHandle);
+		View view = LayoutInflater.from(context).inflate(
+				R.layout.dialog_input, null);
+		EditText input = view.findViewById(R.id.input);
+		input.setHint(R.string.app_tags_hint);
+		input.setText(PieLauncherApp.appTags.get(key));
+		Dialog.newDialog(context)
+				.setTitle(R.string.app_tags)
+				.setView(view)
+				.setPositiveButton(android.R.string.ok, (dialog, which) ->
+						PieLauncherApp.appTags.store(context, key,
+								input.getText().toString()))
 				.setNegativeButton(android.R.string.cancel, null)
 				.show();
 	}

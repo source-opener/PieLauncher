@@ -258,6 +258,7 @@ public class Apps {
 		menuSecondary.clear();
 		hiddenAppsStorage.invalidate();
 		PieLauncherApp.appLabels.invalidate();
+		PieLauncherApp.appTags.invalidate();
 		return indexAppsAsync(context);
 	}
 
@@ -576,6 +577,7 @@ public class Apps {
 				PieLauncherApp.getPrefs(context).getIconPack());
 		PieLauncherApp.iconPack.restoreMappings(context);
 		PieLauncherApp.appLabels.restore(context);
+		PieLauncherApp.appTags.restore(context);
 		if (AppLauncher.HAS_LAUNCHER_APP) {
 			indexProfilesApps(
 					AppLauncher.getLauncherApps(context),
