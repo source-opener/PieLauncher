@@ -117,6 +117,9 @@ public class PreferencesActivity extends Activity {
 			findViewById(R.id.hidden_apps).setOnClickListener((view) -> {
 				HiddenAppsActivity.start(this);
 			});
+			findViewById(R.id.customised_apps).setOnClickListener((view) -> {
+				CustomisedAppsActivity.start(this);
+			});
 			initBackup();
 		}
 

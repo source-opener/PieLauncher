@@ -148,4 +148,10 @@
 	<string name="reset_icon">重置图标</string>
 	<string name="pick_image_failed">无法读取该图片</string>
 	<string name="import_settings_restart">设置已导入。Pie 启动器需要重启才能使用这些设置。</string>
+	<string name="customised_apps">自定义的应用</string>
+	<string name="show_customised_apps"><big><font color="#ffffff">自定义的应用</font></big>\n具有自定义名称、标签或图标的应用</string>
+	<string name="no_customised_apps">没有自定义的应用</string>
+	<string name="reset_name">重置名称</string>
+	<string name="reset_tags">重置标签</string>
+	<string name="reset_all">全部重置</string>
 </resources>
