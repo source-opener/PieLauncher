@@ -36,8 +36,4 @@ public class AppLabelsStorage {
 		PieLauncherApp.getDatabase(context).restoreAppLabels(context, labels);
 		restored = true;
 	}
-
-	public synchronized void invalidate() {
-		restored = false;
-	}
 }

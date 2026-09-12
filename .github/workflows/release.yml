@@ -68,11 +68,18 @@ jobs:
             echo "::error::fork-version must stay below 1000"
             exit 1
           fi
-          base="$upstream.$fork"
           if [ '${{ steps.channel.outputs.name }}' = 'beta' ]; then
+            # A beta leads to the next release, so it must not carry the
+            # version of one that is already out.
+            if git rev-parse -q --verify "refs/tags/v$upstream.$fork" \
+                >/dev/null; then
+              fork=$((fork + 1))
+            fi
+            base="$upstream.$fork"
             name="$base-beta.${{ github.run_number }}"
             code=${{ github.run_number }}
           else
+            base="$upstream.$fork"
             name="$base"
             code=$((upstream_code * 1000 + fork))
           fi
@@ -188,26 +195,25 @@ jobs:
         if: steps.check.outputs.publish == 'true'
         run: |
           set -euo pipefail
-          if [ '${{ steps.channel.outputs.name }}' = 'beta' ]; then
-            previous=$(git describe --tags --abbrev=0 2>/dev/null || true)
-            if [ -n "$previous" ]; then
-              changes=$(git log --no-merges --format='* %s' "$previous"..HEAD)
-            else
-              changes=$(git log --no-merges --format='* %s' -n 20)
-            fi
-            [ -n "$changes" ] || changes="No changes since $previous."
+          stable=$(git describe --tags --abbrev=0 --exclude '*-beta*' \
+              2>/dev/null || true)
+          if [ -n "$stable" ]; then
+            changes=$(git log --no-merges --format='* %s' "$stable"..HEAD)
           else
-            changes=$(awk -v v='## ${{ steps.version.outputs.upstream }}' '
-              $0 == v { found = 1; next }
-              found && /^## / { exit }
-              found { print }
-            ' CHANGELOG.md)
-            [ -n "$changes" ] || changes="See CHANGELOG.md for details."
+            changes=$(git log --no-merges --format='* %s' -n 20)
           fi
+          [ -n "$changes" ] || changes="Nothing yet."
           {
             if [ '${{ steps.channel.outputs.name }}' = 'beta' ]; then
-              echo "Beta build of ${{ steps.version.outputs.base }}, from"
+              echo "Beta ${{ github.run_number }} on the way to"
+              echo "${{ steps.version.outputs.base }}, built from"
               echo '`${{ github.sha }}`.'
+              echo
+              echo "Everything it adds to stable ${stable:-(none yet)}:"
+              echo
+            fi
+            if [ '${{ steps.channel.outputs.name }}' != 'beta' ]; then
+              echo "Changes since ${stable:-the first release}:"
               echo
             fi
             echo "$changes"
@@ -215,6 +221,23 @@ jobs:
             echo "Signing certificate (SHA-256): \`${{ steps.signature.outputs.fingerprint }}\`"
           } > release-notes.md
           cat release-notes.md
+
+      - name: Prune older betas
+        if: steps.check.outputs.publish == 'true' && steps.channel.outputs.name == 'beta'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          KEEP: '1'
+        run: |
+          set -euo pipefail
+          gh release list --limit 100 \
+            --json tagName,isPrerelease,createdAt \
+            --jq 'map(select(.isPrerelease))
+              | sort_by(.createdAt) | reverse | .[].tagName' > betas.txt
+          tail -n +$((KEEP + 1)) betas.txt | while read -r tag; do
+            [ -n "$tag" ] || continue
+            echo "Deleting $tag"
+            gh release delete "$tag" --yes --cleanup-tag
+          done
 
       - name: Publish release
         if: steps.check.outputs.publish == 'true'

@@ -147,4 +147,5 @@
 	<string name="pick_image">选择图片</string>
 	<string name="reset_icon">重置图标</string>
 	<string name="pick_image_failed">无法读取该图片</string>
+	<string name="import_settings_restart">设置已导入。Pie 启动器需要重启才能使用这些设置。</string>
 </resources>
