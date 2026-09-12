@@ -56,20 +56,32 @@ jobs:
         id: version
         run: |
           set -euo pipefail
-          base=$(sed -n "s/^[[:space:]]*versionName[[:space:]]*['\"]\([^'\"]*\)['\"].*/\1/p" app/build.gradle | head -n 1)
-          if [ -z "$base" ]; then
-            echo "::error::Could not read versionName from app/build.gradle"
+          upstream=$(sed -n "s/^[[:space:]]*versionName[[:space:]]*['\"]\([^'\"]*\)['\"].*/\1/p" app/build.gradle | head -n 1)
+          upstream_code=$(sed -n "s/^[[:space:]]*versionCode[[:space:]]*\([0-9][0-9]*\).*/\1/p" app/build.gradle | head -n 1)
+          if [ -z "$upstream" ] || [ -z "$upstream_code" ]; then
+            echo "::error::Could not read the version from app/build.gradle"
             exit 1
           fi
+          fork=$(tr -cd '0-9' < fork-version 2>/dev/null || true)
+          [ -n "$fork" ] || fork=0
+          if [ "$fork" -ge 1000 ]; then
+            echo "::error::fork-version must stay below 1000"
+            exit 1
+          fi
+          base="$upstream.$fork"
           if [ '${{ steps.channel.outputs.name }}' = 'beta' ]; then
             name="$base-beta.${{ github.run_number }}"
+            code=${{ github.run_number }}
           else
             name="$base"
+            code=$((upstream_code * 1000 + fork))
           fi
           echo "name=$name" >> "$GITHUB_OUTPUT"
           echo "base=$base" >> "$GITHUB_OUTPUT"
+          echo "upstream=$upstream" >> "$GITHUB_OUTPUT"
+          echo "code=$code" >> "$GITHUB_OUTPUT"
           echo "tag=v$name" >> "$GITHUB_OUTPUT"
-          echo "Building ${{ steps.channel.outputs.name }} version $name"
+          echo "Building ${{ steps.channel.outputs.name }} $name (code $code)"
 
       - name: Decide whether to publish
         id: check
@@ -131,7 +143,8 @@ jobs:
           ANDROID_STORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           ANDROID_KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-          ANDROID_BETA_NUMBER: ${{ steps.channel.outputs.name == 'beta' && github.run_number || '' }}
+          ANDROID_VERSION_CODE: ${{ steps.version.outputs.code }}
+          ANDROID_VERSION_NAME: ${{ steps.version.outputs.name }}
         run: ./gradlew --no-daemon lintDebug assemble${{ steps.channel.outputs.variant }}
 
       - name: Remove keystore
@@ -184,7 +197,7 @@ jobs:
             fi
             [ -n "$changes" ] || changes="No changes since $previous."
           else
-            changes=$(awk -v v='## ${{ steps.version.outputs.base }}' '
+            changes=$(awk -v v='## ${{ steps.version.outputs.upstream }}' '
               $0 == v { found = 1; next }
               found && /^## / { exit }
               found { print }
