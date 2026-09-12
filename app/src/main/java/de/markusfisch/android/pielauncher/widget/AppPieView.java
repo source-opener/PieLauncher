@@ -25,10 +25,12 @@ import android.util.SparseArray;
 import android.view.HapticFeedbackConstants;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.Window;
 import android.widget.OverScroller;
+import android.widget.EditText;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,6 +43,7 @@ import de.markusfisch.android.pielauncher.app.PieLauncherApp;
 import de.markusfisch.android.pielauncher.content.AppLauncher;
 import de.markusfisch.android.pielauncher.content.AppSearch;
 import de.markusfisch.android.pielauncher.content.Apps;
+import de.markusfisch.android.pielauncher.content.LauncherItemKey;
 import de.markusfisch.android.pielauncher.graphics.BackgroundBlur;
 import de.markusfisch.android.pielauncher.graphics.CanvasPieMenu;
 import de.markusfisch.android.pielauncher.graphics.Converter;
@@ -1082,6 +1085,7 @@ public class AppPieView extends View {
 		list.add(context.getString(R.string.add_to_pie_menu));
 		list.add(context.getString(R.string.show_app_info));
 		list.add(context.getString(R.string.hide_app));
+		list.add(context.getString(R.string.rename_app));
 		if (PieLauncherApp.iconPack.hasPacks()) {
 			list.add(context.getString(R.string.change_icon));
 		}
@@ -1105,6 +1109,9 @@ public class AppPieView extends View {
 									((Apps.AppIcon) icon).componentName);
 							break;
 						case 4:
+							renameApp(context, (Apps.AppIcon) icon);
+							break;
+						case 5:
 							returnToList();
 							changeIcon(context, icon);
 							break;
@@ -1503,6 +1510,26 @@ public class AppPieView extends View {
 		return pieMenu.icons == menuSecondary
 				? R.drawable.ic_screen_upper
 				: R.drawable.ic_screen_lower;
+	}
+
+	private void renameApp(Context context, Apps.AppIcon icon) {
+		View view = LayoutInflater.from(context).inflate(
+				R.layout.dialog_rename, null);
+		EditText input = view.findViewById(R.id.name);
+		input.setText(icon.label);
+		Dialog.newDialog(context)
+				.setTitle(R.string.rename_app)
+				.setView(view)
+				.setPositiveButton(android.R.string.ok, (dialog, which) -> {
+					String name = input.getText().toString().trim();
+					PieLauncherApp.appLabels.store(context,
+							new LauncherItemKey(icon.componentName,
+									icon.userHandle),
+							name.isEmpty() ? null : name);
+					PieLauncherApp.apps.indexAppsAsync(context);
+				})
+				.setNegativeButton(android.R.string.cancel, null)
+				.show();
 	}
 
 	private void changeIcon(Context context, PieMenu.Icon icon) {

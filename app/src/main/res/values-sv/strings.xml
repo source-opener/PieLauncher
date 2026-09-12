@@ -141,4 +141,5 @@
 	<string name="import_settings_done">Inställningar importerade</string>
 	<string name="import_settings_failed">Kunde inte importera inställningar</string>
 	<string name="no_file_picker">Hittade ingen app för att välja en fil</string>
+	<string name="rename_app">Byt namn</string>
 </resources>

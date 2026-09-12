@@ -257,6 +257,7 @@ public class Apps {
 		menuPrimary.clear();
 		menuSecondary.clear();
 		hiddenAppsStorage.invalidate();
+		PieLauncherApp.appLabels.invalidate();
 		return indexAppsAsync(context);
 	}
 
@@ -574,6 +575,7 @@ public class Apps {
 		PieLauncherApp.iconPack.selectPack(pm,
 				PieLauncherApp.getPrefs(context).getIconPack());
 		PieLauncherApp.iconPack.restoreMappings(context);
+		PieLauncherApp.appLabels.restore(context);
 		if (AppLauncher.HAS_LAUNCHER_APP) {
 			indexProfilesApps(
 					AppLauncher.getLauncherApps(context),
@@ -682,8 +684,11 @@ public class Apps {
 			String label,
 			Drawable icon,
 			UserHandle userHandle) {
-		AppIcon appIcon = new AppIcon(componentName, label, icon, userHandle);
-		allApps.put(new LauncherItemKey(componentName, userHandle), appIcon);
+		LauncherItemKey key = new LauncherItemKey(componentName, userHandle);
+		String custom = PieLauncherApp.appLabels.get(key);
+		AppIcon appIcon = new AppIcon(componentName,
+				custom != null ? custom : label, icon, userHandle);
+		allApps.put(key, appIcon);
 		return appIcon;
 	}
 
@@ -703,7 +708,8 @@ public class Apps {
 		} else {
 			drawerPackageName = null;
 		}
-		if (menu.isEmpty()) {
+		if (menu.isEmpty() && !PieLauncherApp.getDatabase(context)
+				.hasMenu(MENU_PRIMARY)) {
 			MenuDefaults.createInitialMenu(menu, allApps,
 					context.getPackageManager());
 			MenuStorage.store(context, MENU_PRIMARY, menu);
@@ -716,7 +722,8 @@ public class Apps {
 			Map<LauncherItemKey, AppIcon> allApps) {
 		ArrayList<AppIcon> menu = MenuStorage.restore(context,
 				MENU_SECONDARY, allApps);
-		if (menu.isEmpty()) {
+		if (menu.isEmpty() && !PieLauncherApp.getDatabase(context)
+				.hasMenu(MENU_SECONDARY)) {
 			// Just add a few apps so users aren't confused by an empty menu.
 			MenuDefaults.createMenuForPopularApps(menu, allApps, 4);
 			MenuStorage.store(context, MENU_SECONDARY, menu);
