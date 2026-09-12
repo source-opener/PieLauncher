@@ -148,4 +148,10 @@
 	<string name="reset_icon">Сбросить иконку</string>
 	<string name="pick_image_failed">Не удалось прочитать изображение</string>
 	<string name="import_settings_restart">Настройки импортированы. Для их применения Pie Launcher нужно перезапустить.</string>
+	<string name="customised_apps">Изменённые приложения</string>
+	<string name="show_customised_apps"><big><font color="#ffffff">Изменённые приложения</font></big>\nПриложения со своим именем, метками или иконкой</string>
+	<string name="no_customised_apps">Нет изменённых приложений</string>
+	<string name="reset_name">Сбросить имя</string>
+	<string name="reset_tags">Сбросить метки</string>
+	<string name="reset_all">Сбросить всё</string>
 </resources>

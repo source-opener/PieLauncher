@@ -148,4 +148,10 @@
 	<string name="reset_icon">Återställ ikon</string>
 	<string name="pick_image_failed">Kunde inte läsa bilden</string>
 	<string name="import_settings_restart">Inställningar importerade. Pie Launcher måste startas om för att använda dem.</string>
+	<string name="customised_apps">Anpassade appar</string>
+	<string name="show_customised_apps"><big><font color="#ffffff">Anpassade appar</font></big>\nAppar med eget namn, etiketter eller ikon</string>
+	<string name="no_customised_apps">Inga anpassade appar</string>
+	<string name="reset_name">Återställ namn</string>
+	<string name="reset_tags">Återställ etiketter</string>
+	<string name="reset_all">Återställ allt</string>
 </resources>

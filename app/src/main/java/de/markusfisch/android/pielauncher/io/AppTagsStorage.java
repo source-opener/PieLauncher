@@ -3,8 +3,10 @@ package de.markusfisch.android.pielauncher.io;
 import android.content.Context;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import de.markusfisch.android.pielauncher.app.PieLauncherApp;
 import de.markusfisch.android.pielauncher.content.LauncherItemKey;
@@ -41,6 +43,10 @@ public class AppTagsStorage {
 		}
 		PieLauncherApp.getDatabase(context).storeAppTags(context, key,
 				normalized);
+	}
+
+	public synchronized Set<LauncherItemKey> keys() {
+		return new HashSet<>(tags.keySet());
 	}
 
 	public synchronized void restore(Context context) {

@@ -148,4 +148,10 @@
 	<string name="reset_icon">Redefinir ícone</string>
 	<string name="pick_image_failed">Não foi possível ler essa imagem</string>
 	<string name="import_settings_restart">Configurações importadas. O Pie Launcher precisa reiniciar para usá-las.</string>
+	<string name="customised_apps">Aplicativos personalizados</string>
+	<string name="show_customised_apps"><big><font color="#ffffff">Aplicativos personalizados</font></big>\nAplicativos com nome, etiquetas ou ícone personalizados</string>
+	<string name="no_customised_apps">Nenhum aplicativo personalizado</string>
+	<string name="reset_name">Redefinir nome</string>
+	<string name="reset_tags">Redefinir etiquetas</string>
+	<string name="reset_all">Redefinir tudo</string>
 </resources>
