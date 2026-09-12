@@ -76,11 +76,19 @@ jobs:
               fork=$((fork + 1))
             fi
             base="$upstream.$fork"
-            name="$base-beta.${{ github.run_number }}"
+            # Publishing a beta takes its tag, so step past the ones
+            # already taken. While the draft is unpublished no tag
+            # exists, the number stays put, and every push updates that
+            # same draft instead of leaving one behind per feature.
+            beta=$(git tag --list "v$base-beta.*" \
+                | sed "s|^v$base-beta\.||" \
+                | grep -E '^[0-9]+$' \
+                | sort -n | tail -n 1 || true)
+            beta=$(( ${beta:-0} + 1 ))
+            name="$base-beta.$beta"
             code=${{ github.run_number }}
-            # No run number, so every push updates the same draft
-            # instead of leaving a release per feature behind.
-            tag="v$base-beta"
+            tag="v$name"
+            echo "beta=$beta" >> "$GITHUB_OUTPUT"
           else
             base="$upstream.$fork"
             name="$base"
@@ -213,7 +221,7 @@ jobs:
               beta=$(git log --no-merges --format='* %s' \
                   "${since:-HEAD}"..HEAD 2>/dev/null || true)
               [ -n "$beta" ] || beta="* Nothing yet."
-              echo "Beta ${{ github.run_number }} on the way to"
+              echo "Beta ${{ steps.version.outputs.beta }} on the way to"
               echo "${{ steps.version.outputs.base }}, built from"
               echo '`${{ github.sha }}`.'
               echo

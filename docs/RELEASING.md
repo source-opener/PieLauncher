@@ -78,10 +78,13 @@ Both channels publish as **drafts**. The workflow builds, signs and
 uploads, then stops. Nothing is live until you press Publish in the
 release editor, and Obtainium never sees a draft.
 
-A beta draft is tagged `v<version>-beta` without a build number, so every
-push to `dev` updates that one draft rather than leaving a release behind
-per feature: the APK is replaced, the notes are regenerated, and the
-release collects the whole set of changes until you publish it.
+A beta draft is tagged `v<version>-beta.<n>`, where `n` steps past the
+beta tags already taken for that version. An unpublished draft has no
+tag, so `n` does not move and every push to `dev` updates that one draft
+rather than leaving a release behind per feature: the APK is replaced,
+the notes are regenerated, and the release collects the whole set of
+changes until you publish it. Publishing takes the tag, so the next push
+starts a fresh draft at the next number.
 
 Notes are pre-filled and meant to be edited. Edit them last, once the
 features are in, because the next push regenerates the body and
