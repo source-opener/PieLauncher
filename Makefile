@@ -14,6 +14,9 @@ infer: clean
 release: lint
 	./gradlew assembleRelease
 
+beta: lint
+	./gradlew assembleBeta
+
 bundle: lint
 	./gradlew bundleRelease
 
