@@ -154,4 +154,15 @@
 	<string name="reset_name">Скинути назву</string>
 	<string name="reset_tags">Скинути мітки</string>
 	<string name="reset_all">Скинути все</string>
+	<string name="folders">Теки</string>
+	<string name="new_folder">Нова тека</string>
+	<string name="folder_name">Назва теки</string>
+	<string name="add_to_folder">Додати до %1$s</string>
+	<string name="remove_from_folder">Вилучити з %1$s</string>
+	<string name="edit_folder">Змінити теку</string>
+	<string name="rename_folder">Перейменувати теку</string>
+	<string name="delete_folder">Видалити теку</string>
+	<string name="want_to_delete_folder">Видалити цю теку? Програми в ній буде збережено.</string>
+	<string name="hide_folder_contents">Приховати вміст зі списку</string>
+	<string name="show_folder_contents">Показувати вміст у списку</string>
 </resources>

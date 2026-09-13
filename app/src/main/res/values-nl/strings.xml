@@ -154,4 +154,15 @@
 	<string name="reset_name">Naam herstellen</string>
 	<string name="reset_tags">Labels herstellen</string>
 	<string name="reset_all">Alles herstellen</string>
+	<string name="folders">Mappen</string>
+	<string name="new_folder">Nieuwe map</string>
+	<string name="folder_name">Mapnaam</string>
+	<string name="add_to_folder">Toevoegen aan %1$s</string>
+	<string name="remove_from_folder">Verwijderen uit %1$s</string>
+	<string name="edit_folder">Map bewerken</string>
+	<string name="rename_folder">Map hernoemen</string>
+	<string name="delete_folder">Map verwijderen</string>
+	<string name="want_to_delete_folder">Wilt u deze map verwijderen? De apps erin blijven behouden.</string>
+	<string name="hide_folder_contents">Inhoud verbergen in de lijst</string>
+	<string name="show_folder_contents">Inhoud tonen in de lijst</string>
 </resources>

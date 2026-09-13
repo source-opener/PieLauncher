@@ -53,6 +53,8 @@ public class HomeActivity extends Activity {
 		if (pieView.inEditMode()) {
 			pieView.endEditMode();
 			showAllApps();
+		} else if (pieView.closeFolder()) {
+			resetSearch();
 		} else {
 			hideAllApps();
 		}
@@ -256,6 +258,11 @@ public class HomeActivity extends Activity {
 				searchInput.setBackgroundColor(0);
 				setAlpha(searchInput, alpha);
 			}
+
+			@Override
+			public void onResetSearch() {
+				resetSearch();
+			}
 		});
 		PieLauncherApp.apps.setUpdateListener(new Apps.UpdateListener() {
 			@Override
@@ -328,6 +335,9 @@ public class HomeActivity extends Activity {
 				case EditorInfo.IME_ACTION_SEARCH:
 				case EditorInfo.IME_NULL:
 					if (!searchInput.getText().toString().isEmpty()) {
+						if (pieView.openSelectedFolderFromList()) {
+							return true;
+						}
 						pieView.launchSelectedAppFromList();
 					}
 					hideAllApps();
@@ -396,14 +406,21 @@ public class HomeActivity extends Activity {
 			kb.showFor(searchInput);
 		}
 
-		// Clear search input.
+		clearSearchInput();
+		updateAppList(true);
+		pieView.showList();
+	}
+
+	private void clearSearchInput() {
 		Editable editable = searchInput.getText();
 		updateAfterTextChange = false;
 		editable.clear();
 		updateAfterTextChange = true;
+	}
 
+	private void resetSearch() {
+		clearSearchInput();
 		updateAppList(true);
-		pieView.showList();
 	}
 
 	private void setAlpha(View view, float alpha) {
