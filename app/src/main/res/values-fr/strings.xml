@@ -154,4 +154,15 @@
 	<string name="reset_name">Réinitialiser le nom</string>
 	<string name="reset_tags">Réinitialiser les mots-clés</string>
 	<string name="reset_all">Tout réinitialiser</string>
+	<string name="folders">Dossiers</string>
+	<string name="new_folder">Nouveau dossier</string>
+	<string name="folder_name">Nom du dossier</string>
+	<string name="add_to_folder">Ajouter à %1$s</string>
+	<string name="remove_from_folder">Retirer de %1$s</string>
+	<string name="edit_folder">Modifier le dossier</string>
+	<string name="rename_folder">Renommer le dossier</string>
+	<string name="delete_folder">Supprimer le dossier</string>
+	<string name="want_to_delete_folder">Voulez-vous supprimer ce dossier ? Les applications qu’il contient sont conservées.</string>
+	<string name="hide_folder_contents">Masquer le contenu de la liste</string>
+	<string name="show_folder_contents">Afficher le contenu dans la liste</string>
 </resources>

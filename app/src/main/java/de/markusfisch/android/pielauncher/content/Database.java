@@ -55,6 +55,12 @@ public class Database {
 
 	private static final String APP_LABELS = "app_labels";
 	private static final String APP_ICONS = "app_icons";
+	private static final String ID = "_id";
+	private static final String FOLDERS = "folders";
+	private static final String FOLDER_ITEMS = "folder_items";
+	private static final String FOLDER_ID = "folder_id";
+	private static final String NAME = "name";
+	private static final String HIDE_CONTENTS = "hide_contents";
 	private static final String APP_TAGS = "app_tags";
 	private static final String TAGS = "tags";
 
@@ -86,6 +92,8 @@ public class Database {
 			APP_LABELS,
 			APP_TAGS,
 			APP_ICONS,
+			FOLDERS,
+			FOLDER_ITEMS,
 			ICON_MAPPING_SETS,
 			ICON_MAPPINGS,
 			APP_USAGE,
@@ -780,6 +788,96 @@ public class Database {
 		}
 	}
 
+	public void restoreFolders(
+			Context context,
+			List<Folders.Folder> folders,
+			Map<Long, Set<LauncherItemKey>> items) {
+		folders.clear();
+		items.clear();
+		SQLiteDatabase db = openHelper.getReadableDatabase();
+		Cursor cursor = db.query(FOLDERS,
+				new String[]{ID, NAME, HIDE_CONTENTS},
+				null, null, null, null, NAME);
+		try {
+			while (cursor.moveToNext()) {
+				folders.add(new Folders.Folder(
+						cursor.getLong(0),
+						cursor.getString(1),
+						cursor.getInt(2) != 0));
+			}
+		} finally {
+			cursor.close();
+		}
+		cursor = db.query(FOLDER_ITEMS,
+				new String[]{FOLDER_ID, ITEM_KEY},
+				null, null, null, null, null);
+		try {
+			while (cursor.moveToNext()) {
+				LauncherItemKey key = LauncherItemKey.unflattenFromString(
+						context, cursor.getString(1));
+				if (key == null || key.componentName == null) {
+					continue;
+				}
+				long id = cursor.getLong(0);
+				Set<LauncherItemKey> keys = items.get(id);
+				if (keys == null) {
+					keys = new HashSet<>();
+					items.put(id, keys);
+				}
+				keys.add(key);
+			}
+		} finally {
+			cursor.close();
+		}
+	}
+
+	public long insertFolder(String name) {
+		ContentValues values = new ContentValues();
+		values.put(NAME, name);
+		values.put(HIDE_CONTENTS, 0);
+		return openHelper.getWritableDatabase().insert(FOLDERS, null, values);
+	}
+
+	public void updateFolder(long id, String name, boolean hideContents) {
+		ContentValues values = new ContentValues();
+		values.put(NAME, name);
+		values.put(HIDE_CONTENTS, hideContents ? 1 : 0);
+		openHelper.getWritableDatabase().update(FOLDERS, values,
+				ID + "=?", new String[]{String.valueOf(id)});
+	}
+
+	public void deleteFolder(long id) {
+		SQLiteDatabase db = openHelper.getWritableDatabase();
+		String[] args = {String.valueOf(id)};
+		db.beginTransaction();
+		try {
+			db.delete(FOLDER_ITEMS, FOLDER_ID + "=?", args);
+			db.delete(FOLDERS, ID + "=?", args);
+			db.setTransactionSuccessful();
+		} finally {
+			db.endTransaction();
+		}
+	}
+
+	public void addToFolder(Context context, long id, LauncherItemKey key) {
+		ContentValues values = new ContentValues();
+		values.put(FOLDER_ID, id);
+		values.put(ITEM_KEY, LauncherItemKey.flattenToString(context,
+				key.componentName, key.userHandle));
+		openHelper.getWritableDatabase().insertWithOnConflict(FOLDER_ITEMS,
+				null, values, SQLiteDatabase.CONFLICT_REPLACE);
+	}
+
+	public void removeFromFolder(Context context, long id, LauncherItemKey key) {
+		openHelper.getWritableDatabase().delete(FOLDER_ITEMS,
+				FOLDER_ID + "=? AND " + ITEM_KEY + "=?",
+				new String[]{
+						String.valueOf(id),
+						LauncherItemKey.flattenToString(context,
+								key.componentName, key.userHandle)
+				});
+	}
+
 	public void restoreAppIcons(
 			Context context,
 			Map<LauncherItemKey, Bitmap> icons) {
@@ -1008,7 +1106,7 @@ public class Database {
 
 	private static class OpenHelper extends SQLiteOpenHelper {
 		OpenHelper(Context context) {
-			super(context, "app_cache.db", null, 7);
+			super(context, "app_cache.db", null, 8);
 		}
 
 		@Override
@@ -1044,6 +1142,7 @@ public class Database {
 			createLabelsTable(db);
 			createTagsTable(db);
 			createIconsTable(db);
+			createFolderTables(db);
 			db.execSQL("CREATE TABLE " + ICON_MAPPING_SETS + " (" +
 					ICON_PACK + " TEXT PRIMARY KEY NOT NULL);");
 			db.execSQL("CREATE TABLE " + ICON_MAPPINGS + " (" +
@@ -1074,6 +1173,17 @@ public class Database {
 			db.execSQL("CREATE TABLE " + APP_ICONS + " (" +
 					ITEM_KEY + " TEXT PRIMARY KEY NOT NULL," +
 					ICON + " BLOB NOT NULL);");
+		}
+
+		private static void createFolderTables(SQLiteDatabase db) {
+			db.execSQL("CREATE TABLE " + FOLDERS + " (" +
+					ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+					NAME + " TEXT NOT NULL," +
+					HIDE_CONTENTS + " INTEGER NOT NULL);");
+			db.execSQL("CREATE TABLE " + FOLDER_ITEMS + " (" +
+					FOLDER_ID + " INTEGER NOT NULL," +
+					ITEM_KEY + " TEXT NOT NULL," +
+					"PRIMARY KEY (" + FOLDER_ID + "," + ITEM_KEY + "));");
 		}
 
 		private static void createUsageTables(SQLiteDatabase db) {
@@ -1123,6 +1233,9 @@ public class Database {
 			}
 			if (oldVersion < 7) {
 				createIconsTable(db);
+			}
+			if (oldVersion < 8) {
+				createFolderTables(db);
 			}
 		}
 

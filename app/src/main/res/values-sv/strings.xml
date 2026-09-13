@@ -154,4 +154,15 @@
 	<string name="reset_name">Återställ namn</string>
 	<string name="reset_tags">Återställ etiketter</string>
 	<string name="reset_all">Återställ allt</string>
+	<string name="folders">Mappar</string>
+	<string name="new_folder">Ny mapp</string>
+	<string name="folder_name">Mappnamn</string>
+	<string name="add_to_folder">Lägg till i %1$s</string>
+	<string name="remove_from_folder">Ta bort från %1$s</string>
+	<string name="edit_folder">Redigera mapp</string>
+	<string name="rename_folder">Byt namn på mapp</string>
+	<string name="delete_folder">Ta bort mapp</string>
+	<string name="want_to_delete_folder">Vill du ta bort den här mappen? Apparna i den behålls.</string>
+	<string name="hide_folder_contents">Dölj innehållet i listan</string>
+	<string name="show_folder_contents">Visa innehållet i listan</string>
 </resources>

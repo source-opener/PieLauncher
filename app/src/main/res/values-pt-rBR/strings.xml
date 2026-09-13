@@ -154,4 +154,15 @@
 	<string name="reset_name">Redefinir nome</string>
 	<string name="reset_tags">Redefinir etiquetas</string>
 	<string name="reset_all">Redefinir tudo</string>
+	<string name="folders">Pastas</string>
+	<string name="new_folder">Nova pasta</string>
+	<string name="folder_name">Nome da pasta</string>
+	<string name="add_to_folder">Adicionar a %1$s</string>
+	<string name="remove_from_folder">Remover de %1$s</string>
+	<string name="edit_folder">Editar pasta</string>
+	<string name="rename_folder">Renomear pasta</string>
+	<string name="delete_folder">Excluir pasta</string>
+	<string name="want_to_delete_folder">Deseja excluir esta pasta? Os aplicativos nela são mantidos.</string>
+	<string name="hide_folder_contents">Ocultar conteúdo da lista</string>
+	<string name="show_folder_contents">Mostrar conteúdo na lista</string>
 </resources>
