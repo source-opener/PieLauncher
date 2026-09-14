@@ -15,6 +15,10 @@ import android.view.WindowManager;
 import java.util.Map;
 
 public class Preferences {
+	public static final int FOLDER_DWELL_OFF = 0;
+	public static final int FOLDER_DWELL_SHORT = 400;
+	public static final int FOLDER_DWELL_MEDIUM = 700;
+	public static final int FOLDER_DWELL_LONG = 1200;
 	public static final int DEAD_ZONE_NONE = 0;
 	public static final int DEAD_ZONE_TOP = 1;
 	public static final int DEAD_ZONE_BOTTOM = 2;
@@ -92,6 +96,7 @@ public class Preferences {
 	private static final String USE_LIGHT_DIALOGS = "use_light_dialogs";
 	private static final String FORCE_RELAUNCH = "force_relaunch";
 	private static final String SHOW_DRAWER_ON_HOME = "show_drawer_on_home";
+	private static final String FOLDER_DWELL = "folder_dwell";
 	private static final String SPLIT_PIE_MENU = "split_pie_menu";
 	private static final String CIRCLE_SWAPS_MENUS = "circle_swaps";
 
@@ -123,6 +128,7 @@ public class Preferences {
 	private int showAppNames = SHOW_APP_NAMES_SEARCH;
 	private int excludePie = EXCLUDE_PIE_NONE;
 	private int iconPress = ICON_PRESS_DEFAULT;
+	private int folderDwell = FOLDER_DWELL_MEDIUM;
 	private String iconPack;
 	private boolean useLightDialogs = false;
 	private boolean forceRelaunch = false;
@@ -214,6 +220,7 @@ public class Preferences {
 		showAppNames = preferences.getInt(SHOW_APP_NAMES, showAppNames);
 		excludePie = preferences.getInt(EXCLUDE_PIE, excludePie);
 		iconPress = preferences.getInt(ICON_PRESS, iconPress);
+		folderDwell = preferences.getInt(FOLDER_DWELL, folderDwell);
 		iconPack = preferences.getString(ICON_PACK, iconPack);
 		hapticFeedback = preferences.getInt(HAPTIC_FEEDBACK, hapticFeedback);
 		useLightDialogs = preferences.getBoolean(USE_LIGHT_DIALOGS,
@@ -435,6 +442,17 @@ public class Preferences {
 
 	public int getIconPress() {
 		return iconPress;
+	}
+
+	// Milliseconds a folder in the pie menu has to stay selected before it
+	// opens, or FOLDER_DWELL_OFF to only open it when the finger is lifted.
+	public int getFolderDwell() {
+		return folderDwell;
+	}
+
+	public void setFolderDwell(int folderDwell) {
+		this.folderDwell = folderDwell;
+		put(FOLDER_DWELL, folderDwell).apply();
 	}
 
 	public void setIconPress(int iconPress) {

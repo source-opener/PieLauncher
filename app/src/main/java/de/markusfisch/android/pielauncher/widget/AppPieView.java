@@ -12,6 +12,7 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.RenderEffect;
 import android.graphics.RenderNode;
 import android.graphics.Shader;
@@ -44,6 +45,7 @@ import de.markusfisch.android.pielauncher.app.PieLauncherApp;
 import de.markusfisch.android.pielauncher.content.AppLauncher;
 import de.markusfisch.android.pielauncher.content.AppSearch;
 import de.markusfisch.android.pielauncher.content.Apps;
+import de.markusfisch.android.pielauncher.content.Folders;
 import de.markusfisch.android.pielauncher.content.LauncherItemKey;
 import de.markusfisch.android.pielauncher.graphics.BackgroundBlur;
 import de.markusfisch.android.pielauncher.graphics.CanvasPieMenu;
@@ -61,6 +63,12 @@ public class AppPieView extends View {
 		void onScrollList(int y, boolean isScrolling);
 
 		void onDragDown(float alpha);
+
+		void onResetSearch();
+	}
+
+	private interface NameListener {
+		void onName(String name);
 	}
 
 	private static final int HAPTIC_FEEDBACK_DOWN =
@@ -94,6 +102,8 @@ public class AppPieView extends View {
 	private final Paint paintDropZone = new Paint(Paint.ANTI_ALIAS_FLAG);
 	private final Paint paintPressed = new Paint(Paint.ANTI_ALIAS_FLAG);
 	private final Paint paintAction = new Paint(Paint.FILTER_BITMAP_FLAG);
+	private final Paint paintDwell = new Paint(Paint.ANTI_ALIAS_FLAG);
+	private final RectF dwellOval = new RectF();
 	private final TextPaint paintText = new TextPaint(Paint.ANTI_ALIAS_FLAG);
 	private final Point touch = new Point();
 	private final Rect drawRect = new Rect();
@@ -117,6 +127,8 @@ public class AppPieView extends View {
 	private final String editAppTip;
 	private final String hideAppTip;
 	private final String removeAppTip;
+	private final String pickImageTip;
+	private final String deleteFolderTip;
 	private final Preferences prefs;
 	private final long tapOrScrollTimeout;
 	private final long longPressTimeout;
@@ -177,6 +189,12 @@ public class AppPieView extends View {
 	private Apps.AppIcon touchedIcon;
 	private Apps.AppIcon highlightedIcon;
 	private Apps.AppIcon launchingIcon;
+	private long openFolderId = -1L;
+	private long dwellStartedAt;
+	private Apps.AppIcon dwellIcon;
+	private Runnable dwellRunnable;
+	private boolean dwellFired = false;
+	private boolean folderFromPie = false;
 	private long highlightedFrom;
 	private long grabbedIconAt;
 	private long lastTapUpTime;
@@ -215,6 +233,8 @@ public class AppPieView extends View {
 		editAppTip = context.getString(R.string.change_icon);
 		hideAppTip = context.getString(R.string.hide_app);
 		removeAppTip = context.getString(R.string.tip_remove_app);
+		pickImageTip = context.getString(R.string.pick_image);
+		deleteFolderTip = context.getString(R.string.delete_folder);
 
 		paintDropZone.setColor(res.getColor(R.color.bg_drop_zone));
 		paintDropZone.setStyle(Paint.Style.FILL);
@@ -222,6 +242,11 @@ public class AppPieView extends View {
 		paintPressed.setColor(res.getColor(R.color.bg_action_pressed));
 		paintPressed.setStyle(Paint.Style.FILL);
 		alphaPressed = paintPressed.getAlpha();
+
+		paintDwell.setColor(res.getColor(R.color.text_color));
+		paintDwell.setStyle(Paint.Style.STROKE);
+		paintDwell.setStrokeCap(Paint.Cap.ROUND);
+		paintDwell.setStrokeWidth(3f * dp);
 
 		paintText.setColor(res.getColor(R.color.text_color));
 		alphaText = paintText.getAlpha();
@@ -300,6 +325,8 @@ public class AppPieView extends View {
 	}
 
 	public void hideList() {
+		openFolderId = -1L;
+		folderFromPie = false;
 		if (mode == MODE_PIE) {
 			return;
 		}
@@ -346,8 +373,8 @@ public class AppPieView extends View {
 	}
 
 	public void filterAppList(String query, boolean resetScroll) {
-		List<Apps.AppIcon> newAppList = AppSearch.filterAppsBy(
-				PieLauncherApp.apps, getContext(), query);
+		List<Apps.AppIcon> newAppList = AppSearch.filterDrawerBy(
+				PieLauncherApp.apps, getContext(), query, openFolderId);
 		if (newAppList != null) {
 			appList = newAppList;
 		}
@@ -363,11 +390,33 @@ public class AppPieView extends View {
 	}
 
 	public void launchSelectedAppFromList() {
-		if (selectedApp < 0 || isEmpty()) {
+		Apps.AppIcon appIcon = getSelectedAppFromList();
+		if (appIcon == null || openFolder(appIcon)) {
 			return;
 		}
-		launchApp(getContext(), appList.get(
-				clamp(selectedApp, 0, getIconCount() - 1)));
+		launchApp(getContext(), appIcon);
+	}
+
+	public boolean openSelectedFolderFromList() {
+		Apps.AppIcon appIcon = getSelectedAppFromList();
+		return appIcon != null && openFolder(appIcon);
+	}
+
+	private Apps.AppIcon getSelectedAppFromList() {
+		if (selectedApp < 0 || isEmpty()) {
+			return null;
+		}
+		return appList.get(clamp(selectedApp, 0, getIconCount() - 1));
+	}
+
+	// Returns false for a folder opened from the pie menu so going back
+	// leaves the drawer altogether instead of falling back into it.
+	public boolean closeFolder() {
+		if (openFolderId < 0 || folderFromPie) {
+			return false;
+		}
+		openFolderId = -1L;
+		return true;
 	}
 
 	public void endEditMode() {
@@ -504,6 +553,7 @@ public class AppPieView extends View {
 							// is a pending action.
 							break;
 						}
+						dwellFired = false;
 						pointerCount = 1;
 						addTouch(event);
 						long eventTime = event.getEventTime();
@@ -559,6 +609,7 @@ public class AppPieView extends View {
 						if (mode == MODE_PIE) {
 							cancelSpin();
 							cancelExpandPanel();
+							cancelFolderDwell();
 							fadeOutMode();
 						} else if (mode == MODE_LIST) {
 							cancelLongPress();
@@ -772,7 +823,8 @@ public class AppPieView extends View {
 				longPressRunnable = () -> {
 					performHapticFeedbackIfAllowed(
 							HapticFeedbackConstants.LONG_PRESS);
-					if (prefs.getIconPress() == Preferences.ICON_PRESS_MENU) {
+					if (prefs.getIconPress() == Preferences.ICON_PRESS_MENU ||
+							Folders.isFolder(appIcon)) {
 						showIconOptions(context, appIcon);
 					} else {
 						addIconInteractively(appIcon);
@@ -1081,6 +1133,10 @@ public class AppPieView extends View {
 		if (icon == null) {
 			return;
 		}
+		if (Folders.isFolder(icon)) {
+			showFolderOptions(context, icon);
+			return;
+		}
 		LauncherItemKey key = new LauncherItemKey(icon.componentName,
 				icon.userHandle);
 		ArrayList<String> labels = new ArrayList<>();
@@ -1096,10 +1152,17 @@ public class AppPieView extends View {
 				() -> AppLauncher.launchAppInfo(context, icon));
 		addOption(labels, actions, context.getString(R.string.hide_app),
 				() -> PickIconActivity.askToHide(context, icon.componentName));
+		if (Apps.isShortcut(icon)) {
+			addOption(labels, actions,
+					context.getString(R.string.remove_shortcut),
+					() -> askToRemoveShortcut(context, icon));
+		}
 		addOption(labels, actions, context.getString(R.string.rename_app),
 				() -> renameApp(context, icon));
 		addOption(labels, actions, context.getString(R.string.app_tags),
 				() -> editTags(context, icon));
+		addOption(labels, actions, context.getString(R.string.folders),
+				() -> showFolderList(context, key));
 		addOption(labels, actions, context.getString(R.string.pick_image),
 				() -> PickImageActivity.start(context, key));
 		if (PieLauncherApp.appIcons.has(key)) {
@@ -1128,6 +1191,134 @@ public class AppPieView extends View {
 			Runnable action) {
 		labels.add(label);
 		actions.add(action);
+	}
+
+	private static void askToRemoveShortcut(
+			Context context,
+			Apps.AppIcon icon) {
+		Dialog.newDialog(context)
+				.setTitle(R.string.remove_shortcut)
+				.setMessage(R.string.want_to_remove_shortcut)
+				.setPositiveButton(android.R.string.ok, (dialog, which) ->
+						PieLauncherApp.apps.removePinnedShortcut(context, icon))
+				.setNegativeButton(android.R.string.cancel, null)
+				.show();
+	}
+
+	private void showFolderList(Context context, LauncherItemKey key) {
+		ArrayList<String> labels = new ArrayList<>();
+		ArrayList<Runnable> actions = new ArrayList<>();
+		for (Folders.Folder folder : PieLauncherApp.folders.getFolders()) {
+			boolean member = PieLauncherApp.folders.contains(folder.id, key);
+			addOption(labels, actions, context.getString(member
+							? R.string.remove_from_folder
+							: R.string.add_to_folder, folder.name),
+					() -> {
+						if (member) {
+							PieLauncherApp.folders.remove(context,
+									folder.id, key);
+						} else {
+							PieLauncherApp.folders.add(context,
+									folder.id, key);
+						}
+						resetSearch();
+					});
+		}
+		addOption(labels, actions, context.getString(R.string.new_folder),
+				() -> askForFolderName(context, null, name -> {
+					PieLauncherApp.folders.add(context,
+							PieLauncherApp.folders.create(context, name), key);
+					resetSearch();
+				}));
+		OptionsDialog.show(context, R.string.folders,
+				labels.toArray(new CharSequence[0]),
+				(view, which) -> actions.get(which).run());
+	}
+
+	private void showFolderOptions(Context context, Apps.AppIcon icon) {
+		long id = Folders.idOf(icon);
+		Folders.Folder folder = PieLauncherApp.folders.getFolder(id);
+		if (folder == null) {
+			return;
+		}
+		ArrayList<String> labels = new ArrayList<>();
+		ArrayList<Runnable> actions = new ArrayList<>();
+		addOption(labels, actions, context.getString(R.string.add_to_pie_menu),
+				() -> {
+					addIconInteractively(icon);
+					postDelayed(this::releaseIcon, 100);
+				});
+		addOption(labels, actions, context.getString(R.string.rename_folder),
+				() -> askForFolderName(context, folder.name, name -> {
+					PieLauncherApp.folders.update(context, id, name,
+							folder.hideContents);
+					// The menus hold the icon this replaced.
+					PieLauncherApp.apps.indexAppsAsync(context);
+					resetSearch();
+				}));
+		addOption(labels, actions, context.getString(folder.hideContents
+						? R.string.show_folder_contents
+						: R.string.hide_folder_contents),
+				() -> {
+					PieLauncherApp.folders.update(context, id, folder.name,
+							!folder.hideContents);
+					resetSearch();
+				});
+		addOption(labels, actions, context.getString(R.string.app_tags),
+				() -> editTags(context, icon));
+		LauncherItemKey key = Folders.keyOf(id);
+		addOption(labels, actions, context.getString(R.string.pick_image),
+				() -> PickImageActivity.start(context, key));
+		if (PieLauncherApp.appIcons.has(key)) {
+			addOption(labels, actions, context.getString(R.string.reset_icon),
+					() -> {
+						PieLauncherApp.appIcons.store(context, key, null);
+						resetSearch();
+					});
+		}
+		addOption(labels, actions, context.getString(R.string.delete_folder),
+				() -> askToDeleteFolder(context, id));
+		OptionsDialog.show(context, R.string.edit_folder,
+				labels.toArray(new CharSequence[0]),
+				(view, which) -> actions.get(which).run());
+	}
+
+	private void askToDeleteFolder(Context context, long id) {
+		Dialog.newDialog(context)
+				.setTitle(R.string.delete_folder)
+				.setMessage(R.string.want_to_delete_folder)
+				.setPositiveButton(android.R.string.ok, (d, w) -> {
+					PieLauncherApp.folders.delete(context, id);
+					// Rebuild the menus, which may hold this folder.
+					PieLauncherApp.apps.indexAppsAsync(context);
+					resetSearch();
+				})
+				.setNegativeButton(android.R.string.cancel, null)
+				.show();
+	}
+
+	private static void askForFolderName(
+			Context context,
+			String name,
+			NameListener listener) {
+		View view = LayoutInflater.from(context).inflate(
+				R.layout.dialog_input, null);
+		EditText input = view.findViewById(R.id.input);
+		input.setHint(R.string.folder_name);
+		if (name != null) {
+			input.setText(name);
+		}
+		Dialog.newDialog(context)
+				.setTitle(R.string.folder_name)
+				.setView(view)
+				.setPositiveButton(android.R.string.ok, (dialog, which) -> {
+					String s = input.getText().toString().trim();
+					if (!s.isEmpty()) {
+						listener.onName(s);
+					}
+				})
+				.setNegativeButton(android.R.string.cancel, null)
+				.show();
 	}
 
 	private void addIconInteractively(Apps.AppIcon appIcon) {
@@ -1182,6 +1373,14 @@ public class AppPieView extends View {
 			Context context,
 			Point at,
 			TapFlags tapFlags) {
+		if (dwellFired) {
+			// The folder opened while the finger was still down, so this
+			// release is not meant for whatever is now under it.
+			dwellFired = false;
+			return true;
+		}
+		// The gesture is over, so nothing is being dwelled on any more.
+		cancelFolderDwell();
 		if (mode == MODE_PIE) {
 			return performPieAction(context, tapFlags);
 		} else if (mode == MODE_LIST && tapFlags.wasTap) {
@@ -1235,7 +1434,11 @@ public class AppPieView extends View {
 				listListener.onOpenList(false);
 			}
 		} else if (pieVisible && appIcon != null) {
-			launchApp(context, appIcon);
+			if (Folders.isFolder(appIcon)) {
+				openFolderFromPie(appIcon);
+			} else {
+				launchApp(context, appIcon);
+			}
 			result = true;
 		}
 		return result;
@@ -1257,11 +1460,30 @@ public class AppPieView extends View {
 			}
 			return false;
 		}
+		if (openFolder(appIcon)) {
+			return true;
+		}
 		launchApp(context, appIcon);
 		if (listListener != null) {
 			listListener.onHideList();
 		}
 		return true;
+	}
+
+	private boolean openFolder(Apps.AppIcon appIcon) {
+		if (!Folders.isFolder(appIcon)) {
+			return false;
+		}
+		openFolderId = Folders.idOf(appIcon);
+		folderFromPie = false;
+		resetSearch();
+		return true;
+	}
+
+	private void resetSearch() {
+		if (listListener != null) {
+			listListener.onResetSearch();
+		}
 	}
 
 	private Apps.AppIcon getListIconAt(int x, int y) {
@@ -1321,7 +1543,11 @@ public class AppPieView extends View {
 					fadeOutMode();
 					returnToList();
 				}
-				if (PieLauncherApp.iconPack.hasPacks()) {
+				if (Folders.isFolder(grabbedIcon)) {
+					storeMenu();
+					PickImageActivity.start(context,
+							Folders.keyOf(Folders.idOf(grabbedIcon)));
+				} else if (PieLauncherApp.iconPack.hasPacks()) {
 					storeMenu();
 					changeIcon(context, grabbedIcon);
 				} else if (PieLauncherApp.apps.isDrawerIcon(
@@ -1342,6 +1568,11 @@ public class AppPieView extends View {
 				if (PieLauncherApp.apps.isDrawerIcon(
 						(Apps.AppIcon) grabbedIcon)) {
 					removeIconFromPie(grabbedIcon, true);
+				} else if (Folders.isFolder(grabbedIcon)) {
+					// The end target gets rid of the thing itself, and a
+					// folder is not an app to uninstall.
+					askToDeleteFolder(context, Folders.idOf(grabbedIcon));
+					endEditMode();
 				} else if (Apps.isShortcut((Apps.AppIcon) grabbedIcon)) {
 					// The end target uninstalls apps; a pinned shortcut (e.g.
 					// a PWA) has nothing to uninstall, so remove it instead.
@@ -1941,21 +2172,29 @@ public class AppPieView extends View {
 			performHapticFeedbackIfAllowed(HAPTIC_FEEDBACK_CHOICE);
 		}
 
-		return f < 1f;
+		// After draw() so the icon rect is where it is on screen.
+		boolean dwelling = drawFolderDwell(canvas,
+				SystemClock.uptimeMillis(), f);
+
+		return f < 1f || dwelling;
 	}
 
 	private String getTip(boolean hasIcon) {
 		if (hasIcon) {
+			boolean folder = Folders.isFolder(grabbedIcon);
 			if (contains(iconStartRect, touch)) {
 				setHighlightedAction(iconStartRect);
 				return removeIconTip;
 			} else if (contains(iconCenterRect, touch)) {
 				setHighlightedAction(iconCenterRect);
+				if (folder) {
+					return pickImageTip;
+				}
 				return PieLauncherApp.iconPack.hasPacks()
 						? editAppTip : hideAppTip;
 			} else if (contains(iconEndRect, touch)) {
 				setHighlightedAction(iconEndRect);
-				return removeAppTip;
+				return folder ? deleteFolderTip : removeAppTip;
 			}
 			resetHighlightedAction();
 			return dragToOrderTip;
@@ -2023,6 +2262,58 @@ public class AppPieView extends View {
 		radius = clampRadius(prefs.getRadius(primary, maxRadius));
 		twist = prefs.getTwist(primary);
 		iconScale = prefs.getIconScale(primary);
+	}
+
+	private boolean drawFolderDwell(Canvas canvas, long now, float alpha) {
+		int delay = prefs.getFolderDwell();
+		int selected = pieMenu.getSelectedIcon();
+		Apps.AppIcon icon = selected > -1 && selected < pieMenu.icons.size()
+				? pieMenu.icons.get(selected)
+				: null;
+		if (delay < 1 || mode != MODE_PIE || fadePie.isFadingOut(now) ||
+				!Folders.isFolder(icon)) {
+			cancelFolderDwell();
+			return false;
+		}
+		if (icon != dwellIcon) {
+			cancelFolderDwell();
+			dwellIcon = icon;
+			dwellStartedAt = now;
+			dwellRunnable = () -> {
+				dwellRunnable = null;
+				openFolderFromPie(icon);
+			};
+			postDelayed(dwellRunnable, delay);
+		}
+		float t = Math.min(1f, (float) (now - dwellStartedAt) / delay);
+		dwellOval.set(icon.rect.left, icon.rect.top,
+				icon.rect.right, icon.rect.bottom);
+		float inset = paintDwell.getStrokeWidth() * .5f;
+		dwellOval.inset(inset, inset);
+		paintDwell.setAlpha(Math.round(alpha * 255f));
+		canvas.drawArc(dwellOval, -90f, 360f * t, false, paintDwell);
+		return t < 1f;
+	}
+
+	private void cancelFolderDwell() {
+		if (dwellRunnable != null) {
+			removeCallbacks(dwellRunnable);
+			dwellRunnable = null;
+		}
+		dwellIcon = null;
+	}
+
+	private void openFolderFromPie(Apps.AppIcon icon) {
+		cancelFolderDwell();
+		dwellFired = true;
+		openFolderId = Folders.idOf(icon);
+		folderFromPie = true;
+		fadeOutMode();
+		if (listListener != null) {
+			// Opens the drawer, which reads openFolderId when it builds
+			// its list, so the folder is all it shows.
+			listListener.onOpenList(false);
+		}
 	}
 
 	private void fadeOutMode() {

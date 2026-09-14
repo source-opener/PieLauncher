@@ -15,6 +15,10 @@ public class MenuStorage {
 			Context context,
 			String fileName,
 			Map<LauncherItemKey, Apps.AppIcon> allApps) {
+		// A menu can hold folders, which are not among the indexed apps.
+		// Without this they would be dropped here and then written out of
+		// the menu by the next store().
+		PieLauncherApp.folders.restore(context);
 		return PieLauncherApp.getDatabase(context).restoreMenu(
 				fileName, allApps);
 	}

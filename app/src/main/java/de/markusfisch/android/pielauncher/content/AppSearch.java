@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import de.markusfisch.android.pielauncher.app.PieLauncherApp;
 import de.markusfisch.android.pielauncher.content.Apps.AppIcon;
@@ -80,7 +81,22 @@ public class AppSearch {
 			Context context,
 			String query) {
 		Preferences prefs = PieLauncherApp.getPrefs(context);
-		return filterAppsBy(repo, context, query, prefs, prefs.getAppSorting());
+		return filterAppsBy(repo, context, query, prefs, prefs.getAppSorting(),
+				null, -1L);
+	}
+
+	// Like filterAppsBy() but with folders: folders matching the query are
+	// listed first, unless folderId names an open folder, in which case the
+	// result is restricted to that folder's items.
+	public static List<AppIcon> filterDrawerBy(
+			Apps repo,
+			Context context,
+			String query,
+			long folderId) {
+		Preferences prefs = PieLauncherApp.getPrefs(context);
+		PieLauncherApp.folders.restore(context);
+		return filterAppsBy(repo, context, query, prefs, prefs.getAppSorting(),
+				PieLauncherApp.folders, folderId);
 	}
 
 	public static List<AppIcon> filterAppsByFrecency(
@@ -88,7 +104,7 @@ public class AppSearch {
 			Context context) {
 		Preferences prefs = PieLauncherApp.getPrefs(context);
 		return filterAppsBy(repo, context, null, prefs,
-				Preferences.APP_SORT_FRECENCY);
+				Preferences.APP_SORT_FRECENCY, null, -1L);
 	}
 
 	private static List<AppIcon> filterAppsBy(
@@ -96,7 +112,9 @@ public class AppSearch {
 			Context context,
 			String query,
 			Preferences prefs,
-			int appSorting) {
+			int appSorting,
+			Folders folders,
+			long folderId) {
 		if (repo.isIndexing()) {
 			return null;
 		}
@@ -130,9 +148,19 @@ public class AppSearch {
 		ArrayList<AppIcon> list = new ArrayList<>();
 		ArrayList<AppSearch.HammingHit> hamming = new ArrayList<>();
 
+		boolean inFolder = folders != null && folderId > -1;
+		Set<LauncherItemKey> only = inFolder
+				? folders.getItems(folderId)
+				: null;
+		Set<LauncherItemKey> hidden = folders != null && !inFolder
+				? folders.getHiddenItems()
+				: Collections.<LauncherItemKey>emptySet();
+
 		if (query.isEmpty()) {
-			for (AppIcon appIcon : repo.apps.values()) {
-				if (inProfile(appIcon.userHandle, privateUser, privateOnly)) {
+			for (Map.Entry<LauncherItemKey, AppIcon> entry : repo.apps.entrySet()) {
+				AppIcon appIcon = entry.getValue();
+				if (inProfile(appIcon.userHandle, privateUser, privateOnly) &&
+						inScope(entry.getKey(), only, hidden)) {
 					list.add(appIcon);
 				}
 			}
@@ -148,7 +176,8 @@ public class AppSearch {
 			int item = prefs.getSearchParameter();
 			for (Map.Entry<LauncherItemKey, AppIcon> entry : repo.apps.entrySet()) {
 				AppIcon appIcon = entry.getValue();
-				if (!inProfile(appIcon.userHandle, privateUser, privateOnly)) {
+				if (!inProfile(appIcon.userHandle, privateUser, privateOnly) ||
+						!inScope(entry.getKey(), only, hidden)) {
 					continue;
 				}
 				String subject = AppSearch.getSubject(item, appIcon, defaultLocale);
@@ -195,7 +224,20 @@ public class AppSearch {
 				list.add(hit.appIcon);
 			}
 		}
+		if (folders != null && !inFolder) {
+			List<AppIcon> folderIcons = folders.match(query, strategy,
+					defaultLocale);
+			Collections.sort(folderIcons, appLabelComparator);
+			list.addAll(0, folderIcons);
+		}
 		return list;
+	}
+
+	private static boolean inScope(
+			LauncherItemKey key,
+			Set<LauncherItemKey> only,
+			Set<LauncherItemKey> hidden) {
+		return only != null ? only.contains(key) : !hidden.contains(key);
 	}
 
 	static Comparator<AppIcon> getAppComparator(int sorting, long now) {
@@ -215,15 +257,18 @@ public class AppSearch {
 		};
 	}
 
-	private static boolean hasTag(
+	static boolean matches(String subject, String query, int strategy) {
+		return strategy == Preferences.SEARCH_STRICTNESS_STARTS_WITH
+				? subject.startsWith(query)
+				: subject.contains(query);
+	}
+
+	static boolean hasTag(
 			LauncherItemKey key,
 			String query,
 			int strategy) {
 		for (String tag : PieLauncherApp.appTags.split(key)) {
-			tag = fold(tag);
-			if (strategy == Preferences.SEARCH_STRICTNESS_STARTS_WITH
-					? tag.startsWith(query)
-					: tag.contains(query)) {
+			if (matches(fold(tag), query, strategy)) {
 				return true;
 			}
 		}

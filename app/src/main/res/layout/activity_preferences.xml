@@ -76,9 +76,13 @@
 					android:id="@+id/split_pie_menu"
 					android:text="@string/split_pie_menu" />
 				<de.markusfisch.android.pielauncher.widget.PreferenceView
-					style="@style/Preference"
+					style="@style/PreferenceWithSeparator"
 					android:id="@+id/circle_swaps_menus"
 					android:text="@string/circle_swaps_menus" />
+				<de.markusfisch.android.pielauncher.widget.PreferenceView
+					style="@style/Preference"
+					android:id="@+id/folder_dwell"
+					android:text="@string/folder_dwell_medium" />
 				<TextView
 					style="@style/CategoryHeader"
 					android:text="@string/category_app_drawer" />

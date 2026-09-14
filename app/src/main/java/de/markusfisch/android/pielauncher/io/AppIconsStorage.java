@@ -34,6 +34,9 @@ public class AppIconsStorage {
 			icons.put(key, bitmap);
 		}
 		PieLauncherApp.getDatabase(context).storeAppIcon(context, key, bitmap);
+		// Folders bake their icon in when they are read, so make them
+		// pick this up whether or not the key belongs to one.
+		PieLauncherApp.folders.invalidate();
 	}
 
 	public synchronized Set<LauncherItemKey> keys() {

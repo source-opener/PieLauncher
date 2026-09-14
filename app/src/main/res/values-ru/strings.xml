@@ -154,4 +154,22 @@
 	<string name="reset_name">Сбросить имя</string>
 	<string name="reset_tags">Сбросить метки</string>
 	<string name="reset_all">Сбросить всё</string>
+	<string name="folders">Папки</string>
+	<string name="new_folder">Новая папка</string>
+	<string name="folder_name">Название папки</string>
+	<string name="add_to_folder">Добавить в %1$s</string>
+	<string name="remove_from_folder">Убрать из %1$s</string>
+	<string name="edit_folder">Изменить папку</string>
+	<string name="rename_folder">Переименовать папку</string>
+	<string name="delete_folder">Удалить папку</string>
+	<string name="want_to_delete_folder">Удалить эту папку? Приложения в ней сохранятся.</string>
+	<string name="hide_folder_contents">Скрыть содержимое из списка</string>
+	<string name="show_folder_contents">Показывать содержимое в списке</string>
+	<string name="remove_shortcut">Удалить ярлык</string>
+	<string name="want_to_remove_shortcut">Удалить этот ярлык?</string>
+	<string name="folder_dwell">Открывать папку удержанием</string>
+	<string name="folder_dwell_short">Короткое удержание</string>
+	<string name="folder_dwell_medium">Среднее удержание</string>
+	<string name="folder_dwell_long">Долгое удержание</string>
+	<string name="folder_dwell_off">Открывать при отпускании</string>
 </resources>
