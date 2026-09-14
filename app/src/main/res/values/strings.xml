@@ -167,4 +167,9 @@
 	<string name="show_folder_contents">Show contents in drawer</string>
 	<string name="remove_shortcut">Remove shortcut</string>
 	<string name="want_to_remove_shortcut">Do you want to remove this shortcut?</string>
+	<string name="folder_dwell">Hold to open folder</string>
+	<string name="folder_dwell_short">Short hold</string>
+	<string name="folder_dwell_medium">Medium hold</string>
+	<string name="folder_dwell_long">Long hold</string>
+	<string name="folder_dwell_off">Open on release</string>
 </resources>

@@ -167,4 +167,9 @@
 	<string name="show_folder_contents">Afficher le contenu dans la liste</string>
 	<string name="remove_shortcut">Supprimer le raccourci</string>
 	<string name="want_to_remove_shortcut">Voulez-vous supprimer ce raccourci ?</string>
+	<string name="folder_dwell">Maintenir pour ouvrir un dossier</string>
+	<string name="folder_dwell_short">Appui court</string>
+	<string name="folder_dwell_medium">Appui moyen</string>
+	<string name="folder_dwell_long">Appui long</string>
+	<string name="folder_dwell_off">Ouvrir au relâchement</string>
 </resources>

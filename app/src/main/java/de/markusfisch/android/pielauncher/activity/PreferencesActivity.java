@@ -442,6 +442,11 @@ public class PreferencesActivity extends Activity {
 				PreferencesActivity::getIconPressOptions,
 				() -> prefs.getIconPress(),
 				(value) -> prefs.setIconPress(value));
+		initPreference(R.id.folder_dwell,
+				R.string.folder_dwell,
+				PreferencesActivity::getFolderDwellOptions,
+				() -> prefs.getFolderDwell(),
+				(value) -> prefs.setFolderDwell(value));
 		initPreference(R.id.icon_pack,
 				R.string.icon_pack,
 				this::getIconPackOptions,
@@ -797,6 +802,15 @@ public class PreferencesActivity extends Activity {
 		map.put(Preferences.EXCLUDE_PIE_NONE, R.string.exclude_pie_no);
 		map.put(Preferences.EXCLUDE_PIE_PRIMARY, R.string.exclude_pie_yes);
 		map.put(Preferences.EXCLUDE_PIE_ALL, R.string.exclude_pie_all);
+		return map;
+	}
+
+	private static Map<Integer, Integer> getFolderDwellOptions() {
+		Map<Integer, Integer> map = new LinkedHashMap<>();
+		map.put(Preferences.FOLDER_DWELL_SHORT, R.string.folder_dwell_short);
+		map.put(Preferences.FOLDER_DWELL_MEDIUM, R.string.folder_dwell_medium);
+		map.put(Preferences.FOLDER_DWELL_LONG, R.string.folder_dwell_long);
+		map.put(Preferences.FOLDER_DWELL_OFF, R.string.folder_dwell_off);
 		return map;
 	}
 

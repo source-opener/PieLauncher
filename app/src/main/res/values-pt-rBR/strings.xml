@@ -167,4 +167,9 @@
 	<string name="show_folder_contents">Mostrar conteúdo na lista</string>
 	<string name="remove_shortcut">Remover atalho</string>
 	<string name="want_to_remove_shortcut">Deseja remover este atalho?</string>
+	<string name="folder_dwell">Segurar para abrir a pasta</string>
+	<string name="folder_dwell_short">Toque curto</string>
+	<string name="folder_dwell_medium">Toque médio</string>
+	<string name="folder_dwell_long">Toque longo</string>
+	<string name="folder_dwell_off">Abrir ao soltar</string>
 </resources>

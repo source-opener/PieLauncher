@@ -167,4 +167,9 @@
 	<string name="show_folder_contents">Visa innehållet i listan</string>
 	<string name="remove_shortcut">Ta bort genväg</string>
 	<string name="want_to_remove_shortcut">Vill du ta bort den här genvägen?</string>
+	<string name="folder_dwell">Håll kvar för att öppna mapp</string>
+	<string name="folder_dwell_short">Kort tryck</string>
+	<string name="folder_dwell_medium">Medellångt tryck</string>
+	<string name="folder_dwell_long">Långt tryck</string>
+	<string name="folder_dwell_off">Öppna när du släpper</string>
 </resources>

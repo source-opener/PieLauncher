@@ -167,4 +167,9 @@
 	<string name="show_folder_contents">在列表中显示内容</string>
 	<string name="remove_shortcut">移除快捷方式</string>
 	<string name="want_to_remove_shortcut">要移除此快捷方式吗？</string>
+	<string name="folder_dwell">长按打开文件夹</string>
+	<string name="folder_dwell_short">短按</string>
+	<string name="folder_dwell_medium">中等长按</string>
+	<string name="folder_dwell_long">长按</string>
+	<string name="folder_dwell_off">松开时打开</string>
 </resources>

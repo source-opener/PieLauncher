@@ -167,4 +167,9 @@
 	<string name="show_folder_contents">Показувати вміст у списку</string>
 	<string name="remove_shortcut">Вилучити ярлик</string>
 	<string name="want_to_remove_shortcut">Вилучити цей ярлик?</string>
+	<string name="folder_dwell">Відкривати теку утриманням</string>
+	<string name="folder_dwell_short">Коротке утримання</string>
+	<string name="folder_dwell_medium">Середнє утримання</string>
+	<string name="folder_dwell_long">Довге утримання</string>
+	<string name="folder_dwell_off">Відкривати після відпускання</string>
 </resources>
