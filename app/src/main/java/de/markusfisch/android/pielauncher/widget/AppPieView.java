@@ -1130,6 +1130,11 @@ public class AppPieView extends View {
 				() -> AppLauncher.launchAppInfo(context, icon));
 		addOption(labels, actions, context.getString(R.string.hide_app),
 				() -> PickIconActivity.askToHide(context, icon.componentName));
+		if (Apps.isShortcut(icon)) {
+			addOption(labels, actions,
+					context.getString(R.string.remove_shortcut),
+					() -> askToRemoveShortcut(context, icon));
+		}
 		addOption(labels, actions, context.getString(R.string.rename_app),
 				() -> renameApp(context, icon));
 		addOption(labels, actions, context.getString(R.string.app_tags),
@@ -1164,6 +1169,18 @@ public class AppPieView extends View {
 			Runnable action) {
 		labels.add(label);
 		actions.add(action);
+	}
+
+	private static void askToRemoveShortcut(
+			Context context,
+			Apps.AppIcon icon) {
+		Dialog.newDialog(context)
+				.setTitle(R.string.remove_shortcut)
+				.setMessage(R.string.want_to_remove_shortcut)
+				.setPositiveButton(android.R.string.ok, (dialog, which) ->
+						PieLauncherApp.apps.removePinnedShortcut(context, icon))
+				.setNegativeButton(android.R.string.cancel, null)
+				.show();
 	}
 
 	private void showFolderList(Context context, LauncherItemKey key) {

@@ -165,4 +165,6 @@
 	<string name="want_to_delete_folder">Видалити цю теку? Програми в ній буде збережено.</string>
 	<string name="hide_folder_contents">Приховати вміст зі списку</string>
 	<string name="show_folder_contents">Показувати вміст у списку</string>
+	<string name="remove_shortcut">Вилучити ярлик</string>
+	<string name="want_to_remove_shortcut">Вилучити цей ярлик?</string>
 </resources>
