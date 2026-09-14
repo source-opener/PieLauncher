@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import de.markusfisch.android.pielauncher.app.PieLauncherApp;
 import de.markusfisch.android.pielauncher.graphics.IconPack;
 
 public class Database {
@@ -122,9 +123,13 @@ public class Database {
 				POSITION);
 		try {
 			while (cursor.moveToNext()) {
-				Apps.AppIcon icon = allApps.get(
-						LauncherItemKey.unflattenFromString(
-								context, cursor.getString(0)));
+				LauncherItemKey key = LauncherItemKey.unflattenFromString(
+						context, cursor.getString(0));
+				Apps.AppIcon icon = allApps.get(key);
+				if (icon == null && Folders.isFolder(key)) {
+					// Folders are not among the indexed apps.
+					icon = PieLauncherApp.folders.getIcon(Folders.idOf(key));
+				}
 				if (icon != null) {
 					icons.add(icon);
 				}

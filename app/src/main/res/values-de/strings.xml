@@ -167,4 +167,9 @@
 	<string name="show_folder_contents">Inhalt in der Liste anzeigen</string>
 	<string name="remove_shortcut">Verknüpfung entfernen</string>
 	<string name="want_to_remove_shortcut">Möchten Sie diese Verknüpfung entfernen?</string>
+	<string name="folder_dwell">Ordner durch Halten öffnen</string>
+	<string name="folder_dwell_short">Kurz halten</string>
+	<string name="folder_dwell_medium">Mittellang halten</string>
+	<string name="folder_dwell_long">Lang halten</string>
+	<string name="folder_dwell_off">Beim Loslassen öffnen</string>
 </resources>

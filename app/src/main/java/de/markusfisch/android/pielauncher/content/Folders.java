@@ -86,6 +86,17 @@ public class Folders {
 		return new ArrayList<>(folders);
 	}
 
+	// The icon the pie menu holds for a folder, so a menu can be restored
+	// from a component name like an app's.
+	public synchronized Apps.AppIcon getIcon(long id) {
+		for (Apps.AppIcon icon : icons) {
+			if (idOf(icon) == id) {
+				return icon;
+			}
+		}
+		return null;
+	}
+
 	public synchronized Folder getFolder(long id) {
 		for (Folder folder : folders) {
 			if (folder.id == id) {

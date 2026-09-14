@@ -167,4 +167,9 @@
 	<string name="show_folder_contents">Показывать содержимое в списке</string>
 	<string name="remove_shortcut">Удалить ярлык</string>
 	<string name="want_to_remove_shortcut">Удалить этот ярлык?</string>
+	<string name="folder_dwell">Открывать папку удержанием</string>
+	<string name="folder_dwell_short">Короткое удержание</string>
+	<string name="folder_dwell_medium">Среднее удержание</string>
+	<string name="folder_dwell_long">Долгое удержание</string>
+	<string name="folder_dwell_off">Открывать при отпускании</string>
 </resources>

@@ -167,4 +167,9 @@
 	<string name="show_folder_contents">Inhoud tonen in de lijst</string>
 	<string name="remove_shortcut">Snelkoppeling verwijderen</string>
 	<string name="want_to_remove_shortcut">Wilt u deze snelkoppeling verwijderen?</string>
+	<string name="folder_dwell">Map openen door vasthouden</string>
+	<string name="folder_dwell_short">Kort vasthouden</string>
+	<string name="folder_dwell_medium">Middellang vasthouden</string>
+	<string name="folder_dwell_long">Lang vasthouden</string>
+	<string name="folder_dwell_off">Openen bij loslaten</string>
 </resources>
