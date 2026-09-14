@@ -257,15 +257,18 @@ public class AppSearch {
 		};
 	}
 
-	private static boolean hasTag(
+	static boolean matches(String subject, String query, int strategy) {
+		return strategy == Preferences.SEARCH_STRICTNESS_STARTS_WITH
+				? subject.startsWith(query)
+				: subject.contains(query);
+	}
+
+	static boolean hasTag(
 			LauncherItemKey key,
 			String query,
 			int strategy) {
 		for (String tag : PieLauncherApp.appTags.split(key)) {
-			tag = fold(tag);
-			if (strategy == Preferences.SEARCH_STRICTNESS_STARTS_WITH
-					? tag.startsWith(query)
-					: tag.contains(query)) {
+			if (matches(fold(tag), query, strategy)) {
 				return true;
 			}
 		}
