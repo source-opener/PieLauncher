@@ -165,4 +165,6 @@
 	<string name="want_to_delete_folder">Удалить эту папку? Приложения в ней сохранятся.</string>
 	<string name="hide_folder_contents">Скрыть содержимое из списка</string>
 	<string name="show_folder_contents">Показывать содержимое в списке</string>
+	<string name="remove_shortcut">Удалить ярлык</string>
+	<string name="want_to_remove_shortcut">Удалить этот ярлык?</string>
 </resources>

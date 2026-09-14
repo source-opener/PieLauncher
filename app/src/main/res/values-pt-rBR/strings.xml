@@ -165,4 +165,6 @@
 	<string name="want_to_delete_folder">Deseja excluir esta pasta? Os aplicativos nela são mantidos.</string>
 	<string name="hide_folder_contents">Ocultar conteúdo da lista</string>
 	<string name="show_folder_contents">Mostrar conteúdo na lista</string>
+	<string name="remove_shortcut">Remover atalho</string>
+	<string name="want_to_remove_shortcut">Deseja remover este atalho?</string>
 </resources>

@@ -165,4 +165,6 @@
 	<string name="want_to_delete_folder">Wilt u deze map verwijderen? De apps erin blijven behouden.</string>
 	<string name="hide_folder_contents">Inhoud verbergen in de lijst</string>
 	<string name="show_folder_contents">Inhoud tonen in de lijst</string>
+	<string name="remove_shortcut">Snelkoppeling verwijderen</string>
+	<string name="want_to_remove_shortcut">Wilt u deze snelkoppeling verwijderen?</string>
 </resources>
