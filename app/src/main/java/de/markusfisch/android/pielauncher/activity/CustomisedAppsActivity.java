@@ -35,8 +35,10 @@ import java.util.concurrent.Executors;
 import de.markusfisch.android.pielauncher.R;
 import de.markusfisch.android.pielauncher.adapter.CustomisedAppsAdapter;
 import de.markusfisch.android.pielauncher.app.PieLauncherApp;
+import de.markusfisch.android.pielauncher.content.Folders;
 import de.markusfisch.android.pielauncher.content.LauncherItemKey;
 import de.markusfisch.android.pielauncher.graphics.BackgroundBlur;
+import de.markusfisch.android.pielauncher.graphics.Converter;
 import de.markusfisch.android.pielauncher.graphics.ToolbarBackground;
 import de.markusfisch.android.pielauncher.view.SystemBars;
 import de.markusfisch.android.pielauncher.widget.OptionsDialog;
@@ -121,6 +123,7 @@ public class CustomisedAppsActivity extends Activity {
 		PieLauncherApp.appLabels.restore(this);
 		PieLauncherApp.appTags.restore(this);
 		PieLauncherApp.appIcons.restore(this);
+		PieLauncherApp.folders.restore(this);
 
 		Set<LauncherItemKey> keys = new HashSet<>();
 		keys.addAll(PieLauncherApp.appLabels.keys());
@@ -132,6 +135,14 @@ public class CustomisedAppsActivity extends Activity {
 			ArrayList<CustomisedAppsAdapter.CustomisedApp> apps =
 					new ArrayList<>();
 			for (LauncherItemKey key : keys) {
+				if (Folders.isFolder(key)) {
+					CustomisedAppsAdapter.CustomisedApp folder =
+							customisedFolder(key);
+					if (folder != null) {
+						apps.add(folder);
+					}
+					continue;
+				}
 				// Read the system name and icon rather than the indexed
 				// ones, which still hold the customisation being reset
 				// until the background index catches up.
@@ -157,6 +168,27 @@ public class CustomisedAppsActivity extends Activity {
 				listView.setAdapter(adapter);
 			});
 		});
+	}
+
+	// A folder keeps its name in its own table and has no system name or
+	// icon to fall back on, so resolve both here. Returns null for a
+	// customisation left behind by a folder that no longer exists.
+	private CustomisedAppsAdapter.CustomisedApp customisedFolder(
+			LauncherItemKey key) {
+		Folders.Folder folder = PieLauncherApp.folders.getFolder(
+				Folders.idOf(key));
+		if (folder == null) {
+			return null;
+		}
+		Bitmap bitmap = PieLauncherApp.appIcons.get(key);
+		return new CustomisedAppsAdapter.CustomisedApp(
+				key,
+				folder.name,
+				PieLauncherApp.appTags.get(key),
+				bitmap != null
+						? new BitmapDrawable(getResources(), bitmap)
+						: Converter.getDrawable(getResources(),
+								R.drawable.ic_folder));
 	}
 
 	private static Pair<String, Drawable> getSystemNameAndIcon(

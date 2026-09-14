@@ -16,7 +16,6 @@ import java.util.Set;
 import de.markusfisch.android.pielauncher.R;
 import de.markusfisch.android.pielauncher.app.PieLauncherApp;
 import de.markusfisch.android.pielauncher.graphics.Converter;
-import de.markusfisch.android.pielauncher.preference.Preferences;
 
 public class Folders {
 	public static class Folder {
@@ -42,19 +41,45 @@ public class Folders {
 	private final List<Apps.AppIcon> icons = new ArrayList<>();
 
 	private Bitmap bitmap;
-	private boolean restored = false;
+	// Not synchronized in invalidate() so storages can flag a change
+	// without taking this lock while this class is taking theirs.
+	private volatile boolean restored = false;
 
 	public static boolean isFolder(Apps.AppIcon icon) {
-		return icon != null && icon.componentName != null &&
-				FOLDER_PACKAGE.equals(icon.componentName.getPackageName());
+		return icon != null && isFolderPackage(icon.componentName);
+	}
+
+	public static boolean isFolder(LauncherItemKey key) {
+		return key != null && isFolderPackage(key.componentName);
 	}
 
 	public static long idOf(Apps.AppIcon icon) {
+		return parseId(icon.componentName);
+	}
+
+	public static long idOf(LauncherItemKey key) {
+		return parseId(key.componentName);
+	}
+
+	private static boolean isFolderPackage(ComponentName componentName) {
+		return componentName != null &&
+				FOLDER_PACKAGE.equals(componentName.getPackageName());
+	}
+
+	private static long parseId(ComponentName componentName) {
 		try {
-			return Long.parseLong(icon.componentName.getClassName());
+			return Long.parseLong(componentName.getClassName());
 		} catch (NumberFormatException e) {
 			return -1L;
 		}
+	}
+
+	// Folders carry their name in their own table but share the storages
+	// apps use for tags and custom icons, keyed like this.
+	public static LauncherItemKey keyOf(long id) {
+		return new LauncherItemKey(
+				new ComponentName(FOLDER_PACKAGE, String.valueOf(id)),
+				null);
 	}
 
 	public synchronized List<Folder> getFolders() {
@@ -106,9 +131,8 @@ public class Folders {
 		List<Apps.AppIcon> matches = new ArrayList<>();
 		for (Apps.AppIcon icon : icons) {
 			String name = AppSearch.fold(icon.label.toLowerCase(locale));
-			if (strategy == Preferences.SEARCH_STRICTNESS_STARTS_WITH
-					? name.startsWith(query)
-					: name.contains(query)) {
+			if (AppSearch.matches(name, query, strategy) ||
+					AppSearch.hasTag(keyOf(idOf(icon)), query, strategy)) {
 				matches.add(icon);
 			}
 		}
@@ -132,6 +156,11 @@ public class Folders {
 	}
 
 	public synchronized void delete(Context context, long id) {
+		// Drop the tags and the custom icon too, or they would linger in
+		// the database and in every settings export made afterwards.
+		LauncherItemKey key = keyOf(id);
+		PieLauncherApp.appTags.store(context, key, null);
+		PieLauncherApp.appIcons.store(context, key, null);
 		PieLauncherApp.getDatabase(context).deleteFolder(id);
 		reload(context);
 	}
@@ -158,7 +187,12 @@ public class Folders {
 		}
 	}
 
+	public void invalidate() {
+		restored = false;
+	}
+
 	private synchronized void reload(Context context) {
+		PieLauncherApp.appIcons.restore(context);
 		if (bitmap == null) {
 			// One bitmap for all folders; the drawer draws hundreds of
 			// icons per frame and does not need one more per folder.
@@ -169,11 +203,12 @@ public class Folders {
 				items);
 		icons.clear();
 		for (Folder folder : folders) {
+			LauncherItemKey key = keyOf(folder.id);
+			Bitmap custom = PieLauncherApp.appIcons.get(key);
 			icons.add(new Apps.AppIcon(
-					new ComponentName(FOLDER_PACKAGE,
-							String.valueOf(folder.id)),
+					key.componentName,
 					folder.name,
-					bitmap,
+					custom != null ? custom : bitmap,
 					null));
 		}
 		restored = true;

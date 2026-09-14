@@ -1235,6 +1235,18 @@ public class AppPieView extends View {
 							!folder.hideContents);
 					resetSearch();
 				});
+		addOption(labels, actions, context.getString(R.string.app_tags),
+				() -> editTags(context, icon));
+		LauncherItemKey key = Folders.keyOf(id);
+		addOption(labels, actions, context.getString(R.string.pick_image),
+				() -> PickImageActivity.start(context, key));
+		if (PieLauncherApp.appIcons.has(key)) {
+			addOption(labels, actions, context.getString(R.string.reset_icon),
+					() -> {
+						PieLauncherApp.appIcons.store(context, key, null);
+						resetSearch();
+					});
+		}
 		addOption(labels, actions, context.getString(R.string.delete_folder),
 				() -> Dialog.newDialog(context)
 						.setTitle(R.string.delete_folder)
