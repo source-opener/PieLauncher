@@ -15,6 +15,9 @@ public class IconMappingsStorage {
 			HashMap<ComponentName, IconPack.PackAndDrawable> mappings) {
 		PieLauncherApp.getDatabase(context).restoreIconMappings(
 				packageName, mappings);
+		// Folders bake their icon in when they are read, so make them
+		// pick up the mappings these calls bring in or take away.
+		PieLauncherApp.folders.invalidate();
 	}
 
 	public static void store(
@@ -23,5 +26,6 @@ public class IconMappingsStorage {
 			HashMap<ComponentName, IconPack.PackAndDrawable> mappings) {
 		PieLauncherApp.getDatabase(context).storeIconMappings(
 				packageName, mappings);
+		PieLauncherApp.folders.invalidate();
 	}
 }

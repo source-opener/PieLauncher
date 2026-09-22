@@ -181,12 +181,15 @@ public class CustomisedAppsActivity extends Activity {
 			return null;
 		}
 		Bitmap bitmap = PieLauncherApp.appIcons.get(key);
+		Drawable icon = bitmap != null
+				? new BitmapDrawable(getResources(), bitmap)
+				: PieLauncherApp.iconPack.getMappedIcon(key.componentName);
 		return new CustomisedAppsAdapter.CustomisedApp(
 				key,
 				folder.name,
 				PieLauncherApp.appTags.get(key),
-				bitmap != null
-						? new BitmapDrawable(getResources(), bitmap)
+				icon != null
+						? icon
 						: Converter.getDrawable(getResources(),
 								R.drawable.ic_folder));
 	}

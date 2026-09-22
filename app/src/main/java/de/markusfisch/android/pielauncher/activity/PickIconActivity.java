@@ -27,6 +27,7 @@ import java.util.concurrent.Executors;
 import de.markusfisch.android.pielauncher.R;
 import de.markusfisch.android.pielauncher.adapter.PickIconAdapter;
 import de.markusfisch.android.pielauncher.app.PieLauncherApp;
+import de.markusfisch.android.pielauncher.content.Folders;
 import de.markusfisch.android.pielauncher.graphics.BackgroundBlur;
 import de.markusfisch.android.pielauncher.graphics.IconPack;
 import de.markusfisch.android.pielauncher.graphics.ToolbarBackground;
@@ -241,8 +242,10 @@ public class PickIconActivity extends Activity {
 
 	private void initHide(ComponentName componentName) {
 		View hideButton = findViewById(R.id.hide_app);
-		if (PieLauncherApp.apps.isDrawerPackageName(
-				componentName.getPackageName())) {
+		// Neither the drawer icon nor a folder is an app to hide.
+		if (Folders.isFolder(componentName) ||
+				PieLauncherApp.apps.isDrawerPackageName(
+						componentName.getPackageName())) {
 			hideButton.setVisibility(View.INVISIBLE);
 		} else {
 			hideButton.setOnClickListener((v) -> askToHide(
