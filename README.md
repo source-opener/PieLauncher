@@ -1,7 +1,13 @@
 # Pie Launcher
 
 Fork of [Pie Launcher](https://github.com/markusfisch/PieLauncher) by
-Markus Fisch, worked on mainly by Claude.
+Markus Fisch, worked on mainly by Claude (99%).
+
+**This fork has a non-zero number of stars, which means people other than
+me may be running it. Because it is written almost entirely by an AI, it
+can contain mistakes. Use it at your own risk and, if you can, read the
+code before you do. For that same reason, merge requests fixing anything
+you find are very welcome.**
 
 Android home screen launcher that uses a dynamic
 [pie menu](https://en.wikipedia.org/wiki/Pie_menu)
