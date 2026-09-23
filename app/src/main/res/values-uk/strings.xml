@@ -172,4 +172,9 @@
 	<string name="folder_dwell_medium">Середнє утримання</string>
 	<string name="folder_dwell_long">Довге утримання</string>
 	<string name="folder_dwell_off">Відкривати після відпускання</string>
+	<string name="sync_settings">Синхронізація налаштувань</string>
+	<string name="sync_from_beta"><big><font color="#ffffff">Взяти з бета-версії</font></big>\nВзяти налаштування бета-версії, встановленої поруч</string>
+	<string name="sync_from_release"><big><font color="#ffffff">Взяти зі стабільної версії</font></big>\nВзяти налаштування стабільної версії, встановленої поруч</string>
+	<string name="sync_settings_confirm">Кругове меню, приховані програми, зіставлення іконок і всі налаштування цієї програми (%3$s) будуть замінені налаштуваннями %1$s (%2$s). Продовжити?</string>
+	<string name="sync_settings_older">Ці налаштування зі старішої версії, ніж ця програма.</string>
 </resources>

@@ -172,4 +172,9 @@
 	<string name="folder_dwell_medium">Среднее удержание</string>
 	<string name="folder_dwell_long">Долгое удержание</string>
 	<string name="folder_dwell_off">Открывать при отпускании</string>
+	<string name="sync_settings">Синхронизация настроек</string>
+	<string name="sync_from_beta"><big><font color="#ffffff">Взять из бета-версии</font></big>\nВзять настройки бета-версии, установленной рядом</string>
+	<string name="sync_from_release"><big><font color="#ffffff">Взять из стабильной версии</font></big>\nВзять настройки стабильной версии, установленной рядом</string>
+	<string name="sync_settings_confirm">Круговое меню, скрытые приложения, сопоставления иконок и все настройки этого приложения (%3$s) будут заменены настройками %1$s (%2$s). Продолжить?</string>
+	<string name="sync_settings_older">Эти настройки из более старой версии, чем это приложение.</string>
 </resources>

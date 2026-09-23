@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
 import android.content.res.Resources.NotFoundException;
+import android.content.res.XmlResourceParser;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.Xml;
@@ -16,6 +17,8 @@ import android.util.Xml;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -25,11 +28,21 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import de.markusfisch.android.pielauncher.io.IconMappingsStorage;
 
 public class IconPack {
 	public static class Pack {
+		private static final String[] DRAWABLE_LISTS = {
+				"drawable", "icon_pack", "appfilter", "app_filter"};
+		private static final String ANDROID_NAMESPACE =
+				"http://schemas.android.com/apk/res/android";
+		private static final Pattern DRAWABLE_ATTRIBUTE =
+				Pattern.compile("drawable\\s*=\\s*\"([^\"]+)\"");
+
 		public final String packageName;
 		public final String name;
 		public final Resources resources;
@@ -54,10 +67,122 @@ public class IconPack {
 			}
 		}
 
+		// Every icon in the pack, for picking one by hand. A pack lists
+		// them in drawable.xml, in the order it wants them shown, while
+		// appfilter.xml only names the ones it assigns to an app, which
+		// is a fraction of a large pack. Either can be an asset or a
+		// compiled resource, depending on the template the pack was
+		// built from, and a pack can ship both. Read every one of them
+		// and keep the first order an icon appears in.
 		public ArrayList<String> getDrawableNames() {
-			LinkedHashMap<String, String> map = new LinkedHashMap<>();
-			loadComponentAndDrawableNames(map);
-			return new ArrayList<>(new LinkedHashSet<>(map.values()));
+			LinkedHashSet<String> names = new LinkedHashSet<>();
+			for (String name : DRAWABLE_LISTS) {
+				loadFromAsset(name + ".xml", names);
+				loadFromResource(name, names);
+			}
+			return new ArrayList<>(names);
+		}
+
+		private void loadFromAsset(String fileName, Set<String> names) {
+			InputStream is = null;
+			try {
+				is = resources.getAssets().open(fileName);
+				XmlPullParser parser = Xml.newPullParser();
+				// Let the parser take the encoding from the document
+				// rather than assuming the platform default.
+				parser.setInput(is, null);
+				collectDrawableNames(parser, names);
+			} catch (FileNotFoundException e) {
+				// Not every pack ships every one of these.
+			} catch (XmlPullParserException | IOException e) {
+				scanDrawableNames(fileName, names);
+			} finally {
+				close(is);
+			}
+		}
+
+		// A pack built from one of the newer templates compiles these
+		// into res/xml rather than shipping them as assets, where
+		// looking for the file by name finds nothing.
+		private void loadFromResource(String name, Set<String> names) {
+			@SuppressLint("DiscouragedApi")
+			int id = resources.getIdentifier(name, "xml", packageName);
+			if (id == 0) {
+				return;
+			}
+			XmlResourceParser parser = null;
+			try {
+				parser = resources.getXml(id);
+				collectDrawableNames(parser, names);
+			} catch (XmlPullParserException | IOException |
+					NotFoundException e) {
+				// Compiled XML cannot be salvaged as text, and it
+				// cannot carry the malformed markup that would need it.
+			} finally {
+				if (parser != null) {
+					parser.close();
+				}
+			}
+		}
+
+		private static void collectDrawableNames(
+				XmlPullParser parser,
+				Set<String> names)
+				throws XmlPullParserException, IOException {
+			for (int eventType = parser.getEventType();
+					eventType != XmlPullParser.END_DOCUMENT;
+					eventType = parser.next()) {
+				if (eventType != XmlPullParser.START_TAG ||
+						!"item".equals(parser.getName())) {
+					continue;
+				}
+				String drawable = parser.getAttributeValue(null, "drawable");
+				if (drawable == null) {
+					drawable = parser.getAttributeValue(
+							ANDROID_NAMESPACE, "drawable");
+				}
+				addDrawableName(names, drawable);
+			}
+		}
+
+		// These files are written by hand and a single unescaped
+		// ampersand ends the parse where it sits, taking every icon
+		// after it with it. Read the names out of the raw text instead,
+		// which no amount of malformed XML around them can stop.
+		private void scanDrawableNames(String fileName, Set<String> names) {
+			InputStream is = null;
+			try {
+				is = resources.getAssets().open(fileName);
+				BufferedReader reader = new BufferedReader(
+						new InputStreamReader(is));
+				String line;
+				while ((line = reader.readLine()) != null) {
+					Matcher matcher = DRAWABLE_ATTRIBUTE.matcher(line);
+					while (matcher.find()) {
+						addDrawableName(names, matcher.group(1));
+					}
+				}
+			} catch (IOException e) {
+				// Nothing more to take from this file.
+			} finally {
+				close(is);
+			}
+		}
+
+		private static void addDrawableName(Set<String> names, String name) {
+			if (name != null && !name.isEmpty()) {
+				names.add(name);
+			}
+		}
+
+		private static void close(InputStream is) {
+			if (is != null) {
+				try {
+					is.close();
+				} catch (IOException e) {
+					// Ignore.
+				}
+			}
 		}
 
 		public void loadComponentAndDrawableNames(
@@ -128,25 +253,28 @@ public class IconPack {
 	private PackageManager packageManager;
 	private IconPack.Pack selectedPack;
 
-	public boolean hasPacks() {
+	// The packs and the mappings are written while apps are indexed in the
+	// background but read from the main thread too, for example when a
+	// folder resolves its icon, so guard them.
+	public synchronized boolean hasPacks() {
 		return !packs.isEmpty();
 	}
 
-	public void restoreMappings(Context context) {
+	public synchronized void restoreMappings(Context context) {
 		IconMappingsStorage.restore(
 				context, getSelectedIconPackageName(), mappings);
 	}
 
-	public void storeMappings(Context context) {
+	public synchronized void storeMappings(Context context) {
 		IconMappingsStorage.store(
 				context, getSelectedIconPackageName(), mappings);
 	}
 
-	public boolean hasMapping(ComponentName componentName) {
+	public synchronized boolean hasMapping(ComponentName componentName) {
 		return mappings.containsKey(componentName);
 	}
 
-	public void addMapping(
+	public synchronized void addMapping(
 			String iconPackageName,
 			ComponentName componentName,
 			String drawableName) {
@@ -154,19 +282,31 @@ public class IconPack {
 				new PackAndDrawable(iconPackageName, drawableName));
 	}
 
-	public void removeMapping(ComponentName componentName) {
+	public synchronized void removeMapping(ComponentName componentName) {
 		mappings.remove(componentName);
 	}
 
-	public void clearMappings() {
+	public synchronized void clearMappings() {
 		mappings.clear();
 	}
 
-	public String getSelectedIconPackageName() {
+	// The icon a component was explicitly mapped to, without the fallbacks
+	// getIcon() applies. Folders have no launch intent and no icon of their
+	// own to fall back on, so this is all there is to look up for them.
+	public synchronized Drawable getMappedIcon(ComponentName componentName) {
+		PackAndDrawable pad = mappings.get(componentName);
+		if (pad == null) {
+			return null;
+		}
+		Pack pack = packs.get(pad.packageName);
+		return pack != null ? pack.getDrawable(pad.drawableName) : null;
+	}
+
+	public synchronized String getSelectedIconPackageName() {
 		return selectedPack != null ? selectedPack.packageName : null;
 	}
 
-	public HashMap<String, String> getIconPacks() {
+	public synchronized HashMap<String, String> getIconPacks() {
 		HashMap<String, String> map = new HashMap<>();
 		for (Pack pack : packs.values()) {
 			map.put(pack.packageName, pack.name);
@@ -174,7 +314,7 @@ public class IconPack {
 		return map;
 	}
 
-	public void updatePacks(PackageManager pm) {
+	public synchronized void updatePacks(PackageManager pm) {
 		packs.clear();
 		for (String theme : new String[]{
 				"org.adw.launcher.THEMES",
@@ -196,7 +336,7 @@ public class IconPack {
 		}
 	}
 
-	public void selectPack(PackageManager pm, String packageName) {
+	public synchronized void selectPack(PackageManager pm, String packageName) {
 		selectedPack = null;
 		packageManager = null;
 		componentToDrawableNames.clear();
@@ -218,7 +358,7 @@ public class IconPack {
 		packageManager = pm;
 	}
 
-	public Drawable getIcon(ComponentName componentName) {
+	public synchronized Drawable getIcon(ComponentName componentName) {
 		String drawableName = null;
 		PackAndDrawable pad = mappings.get(componentName);
 		if (pad != null) {

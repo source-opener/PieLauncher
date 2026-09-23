@@ -15,6 +15,18 @@
 	<uses-permission android:name="android.permission.ACCESS_HIDDEN_PROFILES"/>
 	<!-- Allow launcher to expand the notification panel. -->
 	<uses-permission android:name="android.permission.EXPAND_STATUS_BAR"/>
+	<!-- The stable and the beta build read each other's settings. The
+	     level is signature, so only a build signed with the same key
+	     gets them. Each build defines the permission under its own
+	     application id and asks for both, because it cannot know which
+	     of the two it is at merge time. -->
+	<permission
+		android:name="${applicationId}.permission.READ_SETTINGS"
+		android:protectionLevel="signature"/>
+	<uses-permission
+		android:name="de.markusfisch.android.pielauncher.permission.READ_SETTINGS"/>
+	<uses-permission
+		android:name="de.markusfisch.android.pielauncher.beta.permission.READ_SETTINGS"/>
 	<application
 		tools:ignore="UnusedAttribute"
 		android:name=".app.PieLauncherApp"
@@ -65,5 +77,10 @@
 			android:name=".activity.PickImageActivity"
 			android:exported="false"
 			android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
+		<provider
+			android:name=".provider.SettingsProvider"
+			android:authorities="${applicationId}.settings"
+			android:exported="true"
+			android:permission="${applicationId}.permission.READ_SETTINGS"/>
 	</application>
 </manifest>

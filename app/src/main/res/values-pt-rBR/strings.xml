@@ -172,4 +172,9 @@
 	<string name="folder_dwell_medium">Toque médio</string>
 	<string name="folder_dwell_long">Toque longo</string>
 	<string name="folder_dwell_off">Abrir ao soltar</string>
+	<string name="sync_settings">Sincronizar configurações</string>
+	<string name="sync_from_beta"><big><font color="#ffffff">Trazer do aplicativo beta</font></big>\nUsar as configurações do aplicativo beta instalado ao lado</string>
+	<string name="sync_from_release"><big><font color="#ffffff">Trazer do aplicativo estável</font></big>\nUsar as configurações do aplicativo estável instalado ao lado</string>
+	<string name="sync_settings_confirm">Isso substitui o menu Pie, aplicativos ocultos, mapeamentos de ícones e todas as configurações deste aplicativo (%3$s) pelos de %1$s (%2$s). Continuar?</string>
+	<string name="sync_settings_older">Essas configurações vêm de uma versão mais antiga que este aplicativo.</string>
 </resources>

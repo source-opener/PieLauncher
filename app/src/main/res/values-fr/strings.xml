@@ -172,4 +172,9 @@
 	<string name="folder_dwell_medium">Appui moyen</string>
 	<string name="folder_dwell_long">Appui long</string>
 	<string name="folder_dwell_off">Ouvrir au relâchement</string>
+	<string name="sync_settings">Synchroniser les paramètres</string>
+	<string name="sync_from_beta"><big><font color="#ffffff">Reprendre ceux de la bêta</font></big>\nReprendre les paramètres de l\'application bêta installée à côté</string>
+	<string name="sync_from_release"><big><font color="#ffffff">Reprendre ceux de la version stable</font></big>\nReprendre les paramètres de l\'application stable installée à côté</string>
+	<string name="sync_settings_confirm">Cela remplace le menu Pie, les applications cachées, les associations d\'icônes et tous les paramètres de cette application (%3$s) par ceux de %1$s (%2$s). Continuer ?</string>
+	<string name="sync_settings_older">Ces paramètres proviennent d\'une version plus ancienne que celle-ci.</string>
 </resources>
