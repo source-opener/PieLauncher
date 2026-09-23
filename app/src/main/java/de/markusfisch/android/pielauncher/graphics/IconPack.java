@@ -128,25 +128,28 @@ public class IconPack {
 	private PackageManager packageManager;
 	private IconPack.Pack selectedPack;
 
-	public boolean hasPacks() {
+	// The packs and the mappings are written while apps are indexed in the
+	// background but read from the main thread too, for example when a
+	// folder resolves its icon, so guard them.
+	public synchronized boolean hasPacks() {
 		return !packs.isEmpty();
 	}
 
-	public void restoreMappings(Context context) {
+	public synchronized void restoreMappings(Context context) {
 		IconMappingsStorage.restore(
 				context, getSelectedIconPackageName(), mappings);
 	}
 
-	public void storeMappings(Context context) {
+	public synchronized void storeMappings(Context context) {
 		IconMappingsStorage.store(
 				context, getSelectedIconPackageName(), mappings);
 	}
 
-	public boolean hasMapping(ComponentName componentName) {
+	public synchronized boolean hasMapping(ComponentName componentName) {
 		return mappings.containsKey(componentName);
 	}
 
-	public void addMapping(
+	public synchronized void addMapping(
 			String iconPackageName,
 			ComponentName componentName,
 			String drawableName) {
@@ -154,19 +157,31 @@ public class IconPack {
 				new PackAndDrawable(iconPackageName, drawableName));
 	}
 
-	public void removeMapping(ComponentName componentName) {
+	public synchronized void removeMapping(ComponentName componentName) {
 		mappings.remove(componentName);
 	}
 
-	public void clearMappings() {
+	public synchronized void clearMappings() {
 		mappings.clear();
 	}
 
-	public String getSelectedIconPackageName() {
+	// The icon a component was explicitly mapped to, without the fallbacks
+	// getIcon() applies. Folders have no launch intent and no icon of their
+	// own to fall back on, so this is all there is to look up for them.
+	public synchronized Drawable getMappedIcon(ComponentName componentName) {
+		PackAndDrawable pad = mappings.get(componentName);
+		if (pad == null) {
+			return null;
+		}
+		Pack pack = packs.get(pad.packageName);
+		return pack != null ? pack.getDrawable(pad.drawableName) : null;
+	}
+
+	public synchronized String getSelectedIconPackageName() {
 		return selectedPack != null ? selectedPack.packageName : null;
 	}
 
-	public HashMap<String, String> getIconPacks() {
+	public synchronized HashMap<String, String> getIconPacks() {
 		HashMap<String, String> map = new HashMap<>();
 		for (Pack pack : packs.values()) {
 			map.put(pack.packageName, pack.name);
@@ -174,7 +189,7 @@ public class IconPack {
 		return map;
 	}
 
-	public void updatePacks(PackageManager pm) {
+	public synchronized void updatePacks(PackageManager pm) {
 		packs.clear();
 		for (String theme : new String[]{
 				"org.adw.launcher.THEMES",
@@ -196,7 +211,7 @@ public class IconPack {
 		}
 	}
 
-	public void selectPack(PackageManager pm, String packageName) {
+	public synchronized void selectPack(PackageManager pm, String packageName) {
 		selectedPack = null;
 		packageManager = null;
 		componentToDrawableNames.clear();
@@ -218,7 +233,7 @@ public class IconPack {
 		packageManager = pm;
 	}
 
-	public Drawable getIcon(ComponentName componentName) {
+	public synchronized Drawable getIcon(ComponentName componentName) {
 		String drawableName = null;
 		PackAndDrawable pad = mappings.get(componentName);
 		if (pad != null) {

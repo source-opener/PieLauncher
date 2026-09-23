@@ -3,6 +3,7 @@ package de.markusfisch.android.pielauncher.content;
 import android.content.ComponentName;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,11 +47,16 @@ public class Folders {
 	private volatile boolean restored = false;
 
 	public static boolean isFolder(Apps.AppIcon icon) {
-		return icon != null && isFolderPackage(icon.componentName);
+		return icon != null && isFolder(icon.componentName);
 	}
 
 	public static boolean isFolder(LauncherItemKey key) {
-		return key != null && isFolderPackage(key.componentName);
+		return key != null && isFolder(key.componentName);
+	}
+
+	public static boolean isFolder(ComponentName componentName) {
+		return componentName != null &&
+				FOLDER_PACKAGE.equals(componentName.getPackageName());
 	}
 
 	public static long idOf(Apps.AppIcon icon) {
@@ -59,11 +65,6 @@ public class Folders {
 
 	public static long idOf(LauncherItemKey key) {
 		return parseId(key.componentName);
-	}
-
-	private static boolean isFolderPackage(ComponentName componentName) {
-		return componentName != null &&
-				FOLDER_PACKAGE.equals(componentName.getPackageName());
 	}
 
 	private static long parseId(ComponentName componentName) {
@@ -172,6 +173,10 @@ public class Folders {
 		LauncherItemKey key = keyOf(id);
 		PieLauncherApp.appTags.store(context, key, null);
 		PieLauncherApp.appIcons.store(context, key, null);
+		if (PieLauncherApp.iconPack.hasMapping(key.componentName)) {
+			PieLauncherApp.iconPack.removeMapping(key.componentName);
+			PieLauncherApp.iconPack.storeMappings(context);
+		}
 		PieLauncherApp.getDatabase(context).deleteFolder(id);
 		reload(context);
 	}
@@ -215,13 +220,27 @@ public class Folders {
 		icons.clear();
 		for (Folder folder : folders) {
 			LauncherItemKey key = keyOf(folder.id);
-			Bitmap custom = PieLauncherApp.appIcons.get(key);
 			icons.add(new Apps.AppIcon(
 					key.componentName,
 					folder.name,
-					custom != null ? custom : bitmap,
+					iconFor(key),
 					null));
 		}
 		restored = true;
+	}
+
+	// What a folder shows: a picked image first, then the icon pack icon
+	// mapped to it, then the built-in folder symbol. Must be called from
+	// reload() only, which makes sure the fallback is there.
+	private Bitmap iconFor(LauncherItemKey key) {
+		Bitmap custom = PieLauncherApp.appIcons.get(key);
+		if (custom != null) {
+			return custom;
+		}
+		Drawable mapped = PieLauncherApp.iconPack.getMappedIcon(
+				key.componentName);
+		return mapped != null
+				? Converter.getBitmapFromDrawable(mapped)
+				: bitmap;
 	}
 }

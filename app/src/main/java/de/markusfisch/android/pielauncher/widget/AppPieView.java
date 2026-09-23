@@ -1276,6 +1276,13 @@ public class AppPieView extends View {
 						resetSearch();
 					});
 		}
+		if (PieLauncherApp.iconPack.hasPacks()) {
+			addOption(labels, actions, context.getString(R.string.change_icon),
+					() -> {
+						returnToList();
+						changeIcon(context, icon);
+					});
+		}
 		addOption(labels, actions, context.getString(R.string.delete_folder),
 				() -> askToDeleteFolder(context, id));
 		OptionsDialog.show(context, R.string.edit_folder,
@@ -1543,13 +1550,13 @@ public class AppPieView extends View {
 					fadeOutMode();
 					returnToList();
 				}
-				if (Folders.isFolder(grabbedIcon)) {
+				if (PieLauncherApp.iconPack.hasPacks()) {
+					storeMenu();
+					changeIcon(context, grabbedIcon);
+				} else if (Folders.isFolder(grabbedIcon)) {
 					storeMenu();
 					PickImageActivity.start(context,
 							Folders.keyOf(Folders.idOf(grabbedIcon)));
-				} else if (PieLauncherApp.iconPack.hasPacks()) {
-					storeMenu();
-					changeIcon(context, grabbedIcon);
 				} else if (PieLauncherApp.apps.isDrawerIcon(
 						(Apps.AppIcon) grabbedIcon)) {
 					removeIconFromPie(grabbedIcon, true);
@@ -2187,11 +2194,10 @@ public class AppPieView extends View {
 				return removeIconTip;
 			} else if (contains(iconCenterRect, touch)) {
 				setHighlightedAction(iconCenterRect);
-				if (folder) {
-					return pickImageTip;
+				if (PieLauncherApp.iconPack.hasPacks()) {
+					return editAppTip;
 				}
-				return PieLauncherApp.iconPack.hasPacks()
-						? editAppTip : hideAppTip;
+				return folder ? pickImageTip : hideAppTip;
 			} else if (contains(iconEndRect, touch)) {
 				setHighlightedAction(iconEndRect);
 				return folder ? deleteFolderTip : removeAppTip;
