@@ -172,4 +172,9 @@
 	<string name="folder_dwell_medium">中等长按</string>
 	<string name="folder_dwell_long">长按</string>
 	<string name="folder_dwell_off">松开时打开</string>
+	<string name="sync_settings">同步设置</string>
+	<string name="sync_from_beta"><big><font color="#ffffff">从测试版同步</font></big>\n采用并排安装的测试版应用的设置</string>
+	<string name="sync_from_release"><big><font color="#ffffff">从稳定版同步</font></big>\n采用并排安装的稳定版应用的设置</string>
+	<string name="sync_settings_confirm">这将用 %1$s (%2$s) 的设置替换本应用 (%3$s) 的饼状菜单、隐藏的应用程序、图标映射和所有设置。是否继续？</string>
+	<string name="sync_settings_older">这些设置来自比本应用更旧的版本。</string>
 </resources>

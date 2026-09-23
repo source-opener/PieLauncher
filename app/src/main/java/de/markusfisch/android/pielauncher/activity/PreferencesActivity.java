@@ -36,6 +36,7 @@ import de.markusfisch.android.pielauncher.app.PieLauncherApp;
 import de.markusfisch.android.pielauncher.graphics.BackgroundBlur;
 import de.markusfisch.android.pielauncher.graphics.ToolbarBackground;
 import de.markusfisch.android.pielauncher.io.SettingsBackup;
+import de.markusfisch.android.pielauncher.io.SettingsSync;
 import de.markusfisch.android.pielauncher.os.BatteryOptimization;
 import de.markusfisch.android.pielauncher.os.DefaultLauncher;
 import de.markusfisch.android.pielauncher.preference.Preferences;
@@ -187,23 +188,82 @@ public class PreferencesActivity extends Activity {
 	}
 
 	private void initBackup() {
-		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+		// Syncing needs no file picker, so it is still there on the
+		// versions of Android that cannot export to a file.
+		boolean canPickFiles =
+				Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
+		if (canPickFiles) {
+			findViewById(R.id.export_settings).setOnClickListener((view) ->
+					pickFile(Intent.ACTION_CREATE_DOCUMENT, REQUEST_EXPORT));
+			findViewById(R.id.import_settings).setOnClickListener((view) ->
+					Dialog.newDialog(this)
+							.setMessage(R.string.import_settings_confirm)
+							.setPositiveButton(android.R.string.ok,
+									(dialog, which) -> pickFile(
+											Intent.ACTION_OPEN_DOCUMENT,
+											REQUEST_IMPORT))
+							.setNegativeButton(android.R.string.cancel, null)
+							.show());
+		} else {
 			findViewById(R.id.category_backup).setVisibility(View.GONE);
 			findViewById(R.id.export_settings).setVisibility(View.GONE);
 			findViewById(R.id.import_settings).setVisibility(View.GONE);
+		}
+		initSync(canPickFiles);
+	}
+
+	// Asking the other app costs an inter-process call, so look for it in
+	// the background and only offer the entry once it answers.
+	private void initSync(boolean categoryVisible) {
+		executor.execute(() -> {
+			SettingsSync.Counterpart counterpart = SettingsSync.find(this);
+			if (counterpart == null) {
+				return;
+			}
+			handler.post(() -> {
+				if (isFinishing()) {
+					return;
+				}
+				TextView view = findViewById(R.id.sync_settings);
+				view.setText(SettingsSync.isBeta(this)
+						? R.string.sync_from_release
+						: R.string.sync_from_beta);
+				view.setOnClickListener((v) -> syncSettings(counterpart));
+				view.setVisibility(View.VISIBLE);
+				if (!categoryVisible) {
+					findViewById(R.id.category_backup).setVisibility(
+							View.VISIBLE);
+				}
+			});
+		});
+	}
+
+	// The beta is where things are tried out, so it takes the stable
+	// settings on a tap. Going the other way replaces a working setup
+	// and says what it is about to apply first.
+	private void syncSettings(SettingsSync.Counterpart counterpart) {
+		if (SettingsSync.isBeta(this)) {
+			transferSettings(counterpart.uri, true);
 			return;
 		}
-		findViewById(R.id.export_settings).setOnClickListener((view) ->
-				pickFile(Intent.ACTION_CREATE_DOCUMENT, REQUEST_EXPORT));
-		findViewById(R.id.import_settings).setOnClickListener((view) ->
-				Dialog.newDialog(this)
-						.setMessage(R.string.import_settings_confirm)
-						.setPositiveButton(android.R.string.ok,
-								(dialog, which) -> pickFile(
-										Intent.ACTION_OPEN_DOCUMENT,
-										REQUEST_IMPORT))
-						.setNegativeButton(android.R.string.cancel, null)
-						.show());
+		String versionName = SettingsSync.versionNameOf(this,
+				getPackageName());
+		String message = getString(R.string.sync_settings_confirm,
+				counterpart.label,
+				counterpart.versionName,
+				versionName == null ? "" : versionName);
+		if (SettingsSync.compareVersions(
+				counterpart.versionName, versionName) < 0) {
+			message = getString(R.string.sync_settings_older) + "\n\n" +
+					message;
+		}
+		Dialog.newDialog(this)
+				.setTitle(R.string.sync_settings)
+				.setMessage(message)
+				.setPositiveButton(android.R.string.ok, (dialog, which) ->
+						transferSettings(counterpart.uri, true))
+				.setNegativeButton(android.R.string.cancel, null)
+				.show();
 	}
 
 	@TargetApi(Build.VERSION_CODES.KITKAT)

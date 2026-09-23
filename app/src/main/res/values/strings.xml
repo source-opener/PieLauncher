@@ -172,4 +172,9 @@
 	<string name="folder_dwell_medium">Medium hold</string>
 	<string name="folder_dwell_long">Long hold</string>
 	<string name="folder_dwell_off">Open on release</string>
+	<string name="sync_settings">Sync settings</string>
+	<string name="sync_from_beta"><big><font color="#ffffff">Sync from the beta app</font></big>\nTake the settings of the beta app installed alongside this one</string>
+	<string name="sync_from_release"><big><font color="#ffffff">Sync from the stable app</font></big>\nTake the settings of the stable app installed alongside this one</string>
+	<string name="sync_settings_confirm">This replaces the pie menu, hidden apps, icon mappings and all preferences of this app (%3$s) with those of %1$s (%2$s). Continue?</string>
+	<string name="sync_settings_older">Those settings come from an older version than this app.</string>
 </resources>

@@ -170,6 +170,11 @@
 					android:id="@+id/export_settings"
 					android:text="@string/export_settings" />
 				<de.markusfisch.android.pielauncher.widget.PreferenceView
+					style="@style/PreferenceWithSeparator"
+					android:id="@+id/sync_settings"
+					android:visibility="gone"
+					android:text="@string/sync_from_beta" />
+				<de.markusfisch.android.pielauncher.widget.PreferenceView
 					style="@style/Preference"
 					android:id="@+id/import_settings"
 					android:text="@string/import_settings" />

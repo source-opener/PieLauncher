@@ -172,4 +172,9 @@
 	<string name="folder_dwell_medium">Middellang vasthouden</string>
 	<string name="folder_dwell_long">Lang vasthouden</string>
 	<string name="folder_dwell_off">Openen bij loslaten</string>
+	<string name="sync_settings">Instellingen synchroniseren</string>
+	<string name="sync_from_beta"><big><font color="#ffffff">Overnemen van de bèta-app</font></big>\nDe instellingen van de ernaast geïnstalleerde bèta-app overnemen</string>
+	<string name="sync_from_release"><big><font color="#ffffff">Overnemen van de stabiele app</font></big>\nDe instellingen van de ernaast geïnstalleerde stabiele app overnemen</string>
+	<string name="sync_settings_confirm">Dit vervangt het Pie menu, verborgen apps, pictogramkoppelingen en alle instellingen van deze app (%3$s) door die van %1$s (%2$s). Doorgaan?</string>
+	<string name="sync_settings_older">Die instellingen komen uit een oudere versie dan deze app.</string>
 </resources>

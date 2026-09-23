@@ -172,4 +172,9 @@
 	<string name="folder_dwell_medium">Medellångt tryck</string>
 	<string name="folder_dwell_long">Långt tryck</string>
 	<string name="folder_dwell_off">Öppna när du släpper</string>
+	<string name="sync_settings">Synkronisera inställningar</string>
+	<string name="sync_from_beta"><big><font color="#ffffff">Hämta från betaappen</font></big>\nAnvänd inställningarna från betaappen som är installerad bredvid</string>
+	<string name="sync_from_release"><big><font color="#ffffff">Hämta från den stabila appen</font></big>\nAnvänd inställningarna från den stabila appen som är installerad bredvid</string>
+	<string name="sync_settings_confirm">Detta ersätter cirkelmenyn, dolda appar, ikonkopplingar och alla inställningar i den här appen (%3$s) med de från %1$s (%2$s). Fortsätta?</string>
+	<string name="sync_settings_older">De inställningarna kommer från en äldre version än den här appen.</string>
 </resources>

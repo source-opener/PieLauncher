@@ -172,4 +172,9 @@
 	<string name="folder_dwell_medium">Mittellang halten</string>
 	<string name="folder_dwell_long">Lang halten</string>
 	<string name="folder_dwell_off">Beim Loslassen öffnen</string>
+	<string name="sync_settings">Einstellungen abgleichen</string>
+	<string name="sync_from_beta"><big><font color="#ffffff">Von der Beta-App übernehmen</font></big>\nDie Einstellungen der daneben installierten Beta-App übernehmen</string>
+	<string name="sync_from_release"><big><font color="#ffffff">Von der stabilen App übernehmen</font></big>\nDie Einstellungen der daneben installierten stabilen App übernehmen</string>
+	<string name="sync_settings_confirm">Dies ersetzt Pie Menu, versteckte Apps, Icon-Zuordnungen und alle Einstellungen dieser App (%3$s) durch die von %1$s (%2$s). Fortfahren?</string>
+	<string name="sync_settings_older">Diese Einstellungen stammen aus einer älteren Version als diese App.</string>
 </resources>
