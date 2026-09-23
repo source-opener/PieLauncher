@@ -20,13 +20,13 @@ import android.widget.GridView;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import de.markusfisch.android.pielauncher.R;
 import de.markusfisch.android.pielauncher.adapter.PickIconAdapter;
 import de.markusfisch.android.pielauncher.app.PieLauncherApp;
+import de.markusfisch.android.pielauncher.content.AppSearch;
 import de.markusfisch.android.pielauncher.content.Folders;
 import de.markusfisch.android.pielauncher.graphics.BackgroundBlur;
 import de.markusfisch.android.pielauncher.graphics.IconPack;
@@ -54,6 +54,7 @@ public class PickIconActivity extends Activity {
 	private GridView gridView;
 	private EditText searchInput;
 	private ArrayList<String> drawableNames;
+	private ArrayList<String> searchNames;
 	private PickIconAdapter iconAdapter;
 
 	public static void start(Context context, ComponentName componentName) {
@@ -198,12 +199,10 @@ public class PickIconActivity extends Activity {
 				// every one of them, which a large pack cannot afford.
 				iconAdapter.setNotifyOnChange(false);
 				iconAdapter.clear();
-				Locale defaultLocale = Locale.getDefault();
-				String query = e.toString().toLowerCase(defaultLocale);
-				for (int i = 0, size = drawableNames.size(); i < size; ++i) {
-					String name = drawableNames.get(i);
-					if (name.toLowerCase(defaultLocale).contains(query)) {
-						iconAdapter.add(name);
+				String query = foldForSearch(e.toString());
+				for (int i = 0, size = searchNames.size(); i < size; ++i) {
+					if (searchNames.get(i).contains(query)) {
+						iconAdapter.add(drawableNames.get(i));
 					}
 				}
 				iconAdapter.notifyDataSetChanged();
@@ -286,6 +285,7 @@ public class PickIconActivity extends Activity {
 			if (pack != null) {
 				iconPackPackageName = packageName;
 				drawableNames = pack.getDrawableNames();
+				searchNames = foldForSearch(drawableNames);
 			}
 			handler.post(() -> {
 				progressView.setVisibility(View.GONE);
@@ -299,6 +299,31 @@ public class PickIconActivity extends Activity {
 				searchInput.getText().clear();
 			});
 		});
+	}
+
+	// A pack names an icon whats_app and shows it as "Whats App", so
+	// what someone reads off the pack and types in cannot be matched
+	// against the name as it is. Compare both without case, accents or
+	// anything between the words. Folding every name once with the pack
+	// keeps that off the keystroke.
+	private static ArrayList<String> foldForSearch(List<String> names) {
+		ArrayList<String> folded = new ArrayList<>(names.size());
+		for (int i = 0, size = names.size(); i < size; ++i) {
+			folded.add(foldForSearch(names.get(i)));
+		}
+		return folded;
+	}
+
+	private static String foldForSearch(String name) {
+		String folded = AppSearch.fold(name);
+		StringBuilder sb = new StringBuilder(folded.length());
+		for (int i = 0, len = folded.length(); i < len; ++i) {
+			char c = folded.charAt(i);
+			if (Character.isLetterOrDigit(c)) {
+				sb.append(Character.toLowerCase(c));
+			}
+		}
+		return sb.toString();
 	}
 
 	private static ComponentName getComponentNameFromIntent(Intent intent) {

@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
 import android.content.res.Resources.NotFoundException;
+import android.content.res.XmlResourceParser;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.Xml;
@@ -36,7 +37,9 @@ import de.markusfisch.android.pielauncher.io.IconMappingsStorage;
 public class IconPack {
 	public static class Pack {
 		private static final String[] DRAWABLE_LISTS = {
-				"drawable.xml", "icon_pack.xml", "appfilter.xml"};
+				"drawable", "icon_pack", "appfilter", "app_filter"};
+		private static final String ANDROID_NAMESPACE =
+				"http://schemas.android.com/apk/res/android";
 		private static final Pattern DRAWABLE_ATTRIBUTE =
 				Pattern.compile("drawable\\s*=\\s*\"([^\"]+)\"");
 
@@ -67,28 +70,20 @@ public class IconPack {
 		// Every icon in the pack, for picking one by hand. A pack lists
 		// them in drawable.xml, in the order it wants them shown, while
 		// appfilter.xml only names the ones it assigns to an app, which
-		// is a fraction of a large pack. Read all of them and keep the
-		// first order an icon appears in.
+		// is a fraction of a large pack. Either can be an asset or a
+		// compiled resource, depending on the template the pack was
+		// built from, and a pack can ship both. Read every one of them
+		// and keep the first order an icon appears in.
 		public ArrayList<String> getDrawableNames() {
 			LinkedHashSet<String> names = new LinkedHashSet<>();
-			for (String fileName : DRAWABLE_LISTS) {
-				loadDrawableNames(fileName, names);
+			for (String name : DRAWABLE_LISTS) {
+				loadFromAsset(name + ".xml", names);
+				loadFromResource(name, names);
 			}
 			return new ArrayList<>(names);
 		}
 
-		private void loadDrawableNames(String fileName, Set<String> names) {
-			try {
-				parseDrawableNames(fileName, names);
-			} catch (FileNotFoundException e) {
-				// Not every pack ships every one of these.
-			} catch (XmlPullParserException | IOException e) {
-				scanDrawableNames(fileName, names);
-			}
-		}
-
-		private void parseDrawableNames(String fileName, Set<String> names)
-				throws XmlPullParserException, IOException {
+		private void loadFromAsset(String fileName, Set<String> names) {
 			InputStream is = null;
 			try {
 				is = resources.getAssets().open(fileName);
@@ -96,17 +91,57 @@ public class IconPack {
 				// Let the parser take the encoding from the document
 				// rather than assuming the platform default.
 				parser.setInput(is, null);
-				for (int eventType = parser.getEventType();
-						eventType != XmlPullParser.END_DOCUMENT;
-						eventType = parser.next()) {
-					if (eventType == XmlPullParser.START_TAG &&
-							"item".equals(parser.getName())) {
-						addDrawableName(names, parser.getAttributeValue(
-								null, "drawable"));
-					}
-				}
+				collectDrawableNames(parser, names);
+			} catch (FileNotFoundException e) {
+				// Not every pack ships every one of these.
+			} catch (XmlPullParserException | IOException e) {
+				scanDrawableNames(fileName, names);
 			} finally {
 				close(is);
+			}
+		}
+
+		// A pack built from one of the newer templates compiles these
+		// into res/xml rather than shipping them as assets, where
+		// looking for the file by name finds nothing.
+		private void loadFromResource(String name, Set<String> names) {
+			@SuppressLint("DiscouragedApi")
+			int id = resources.getIdentifier(name, "xml", packageName);
+			if (id == 0) {
+				return;
+			}
+			XmlResourceParser parser = null;
+			try {
+				parser = resources.getXml(id);
+				collectDrawableNames(parser, names);
+			} catch (XmlPullParserException | IOException |
+					NotFoundException e) {
+				// Compiled XML cannot be salvaged as text, and it
+				// cannot carry the malformed markup that would need it.
+			} finally {
+				if (parser != null) {
+					parser.close();
+				}
+			}
+		}
+
+		private static void collectDrawableNames(
+				XmlPullParser parser,
+				Set<String> names)
+				throws XmlPullParserException, IOException {
+			for (int eventType = parser.getEventType();
+					eventType != XmlPullParser.END_DOCUMENT;
+					eventType = parser.next()) {
+				if (eventType != XmlPullParser.START_TAG ||
+						!"item".equals(parser.getName())) {
+					continue;
+				}
+				String drawable = parser.getAttributeValue(null, "drawable");
+				if (drawable == null) {
+					drawable = parser.getAttributeValue(
+							ANDROID_NAMESPACE, "drawable");
+				}
+				addDrawableName(names, drawable);
 			}
 		}
 
