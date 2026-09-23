@@ -16,6 +16,8 @@ import android.util.Xml;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -25,11 +27,19 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import de.markusfisch.android.pielauncher.io.IconMappingsStorage;
 
 public class IconPack {
 	public static class Pack {
+		private static final String[] DRAWABLE_LISTS = {
+				"drawable.xml", "icon_pack.xml", "appfilter.xml"};
+		private static final Pattern DRAWABLE_ATTRIBUTE =
+				Pattern.compile("drawable\\s*=\\s*\"([^\"]+)\"");
+
 		public final String packageName;
 		public final String name;
 		public final Resources resources;
@@ -54,10 +64,90 @@ public class IconPack {
 			}
 		}
 
+		// Every icon in the pack, for picking one by hand. A pack lists
+		// them in drawable.xml, in the order it wants them shown, while
+		// appfilter.xml only names the ones it assigns to an app, which
+		// is a fraction of a large pack. Read all of them and keep the
+		// first order an icon appears in.
 		public ArrayList<String> getDrawableNames() {
-			LinkedHashMap<String, String> map = new LinkedHashMap<>();
-			loadComponentAndDrawableNames(map);
-			return new ArrayList<>(new LinkedHashSet<>(map.values()));
+			LinkedHashSet<String> names = new LinkedHashSet<>();
+			for (String fileName : DRAWABLE_LISTS) {
+				loadDrawableNames(fileName, names);
+			}
+			return new ArrayList<>(names);
+		}
+
+		private void loadDrawableNames(String fileName, Set<String> names) {
+			try {
+				parseDrawableNames(fileName, names);
+			} catch (FileNotFoundException e) {
+				// Not every pack ships every one of these.
+			} catch (XmlPullParserException | IOException e) {
+				scanDrawableNames(fileName, names);
+			}
+		}
+
+		private void parseDrawableNames(String fileName, Set<String> names)
+				throws XmlPullParserException, IOException {
+			InputStream is = null;
+			try {
+				is = resources.getAssets().open(fileName);
+				XmlPullParser parser = Xml.newPullParser();
+				// Let the parser take the encoding from the document
+				// rather than assuming the platform default.
+				parser.setInput(is, null);
+				for (int eventType = parser.getEventType();
+						eventType != XmlPullParser.END_DOCUMENT;
+						eventType = parser.next()) {
+					if (eventType == XmlPullParser.START_TAG &&
+							"item".equals(parser.getName())) {
+						addDrawableName(names, parser.getAttributeValue(
+								null, "drawable"));
+					}
+				}
+			} finally {
+				close(is);
+			}
+		}
+
+		// These files are written by hand and a single unescaped
+		// ampersand ends the parse where it sits, taking every icon
+		// after it with it. Read the names out of the raw text instead,
+		// which no amount of malformed XML around them can stop.
+		private void scanDrawableNames(String fileName, Set<String> names) {
+			InputStream is = null;
+			try {
+				is = resources.getAssets().open(fileName);
+				BufferedReader reader = new BufferedReader(
+						new InputStreamReader(is));
+				String line;
+				while ((line = reader.readLine()) != null) {
+					Matcher matcher = DRAWABLE_ATTRIBUTE.matcher(line);
+					while (matcher.find()) {
+						addDrawableName(names, matcher.group(1));
+					}
+				}
+			} catch (IOException e) {
+				// Nothing more to take from this file.
+			} finally {
+				close(is);
+			}
+		}
+
+		private static void addDrawableName(Set<String> names, String name) {
+			if (name != null && !name.isEmpty()) {
+				names.add(name);
+			}
+		}
+
+		private static void close(InputStream is) {
+			if (is != null) {
+				try {
+					is.close();
+				} catch (IOException e) {
+					// Ignore.
+				}
+			}
 		}
 
 		public void loadComponentAndDrawableNames(

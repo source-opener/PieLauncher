@@ -194,15 +194,19 @@ public class PickIconActivity extends Activity {
 				if (iconAdapter == null) {
 					return;
 				}
+				// Adding matches one by one lays the grid out again for
+				// every one of them, which a large pack cannot afford.
+				iconAdapter.setNotifyOnChange(false);
 				iconAdapter.clear();
-				String query = e.toString();
 				Locale defaultLocale = Locale.getDefault();
+				String query = e.toString().toLowerCase(defaultLocale);
 				for (int i = 0, size = drawableNames.size(); i < size; ++i) {
-					if (drawableNames.get(i).toLowerCase(defaultLocale)
-							.contains(query.toLowerCase(defaultLocale))) {
-						iconAdapter.add(drawableNames.get(i));
+					String name = drawableNames.get(i);
+					if (name.toLowerCase(defaultLocale).contains(query)) {
+						iconAdapter.add(name);
 					}
 				}
+				iconAdapter.notifyDataSetChanged();
 			}
 		});
 		searchInput.post(searchInput::requestFocus);
