@@ -165,6 +165,8 @@
 	<string name="want_to_delete_folder">Voulez-vous supprimer ce dossier ? Les applications qu’il contient sont conservées.</string>
 	<string name="hide_folder_contents">Masquer le contenu de la liste</string>
 	<string name="show_folder_contents">Afficher le contenu dans la liste</string>
+	<string name="pin_folder">Épingler en haut</string>
+	<string name="unpin_folder">Ne plus épingler en haut</string>
 	<string name="remove_shortcut">Supprimer le raccourci</string>
 	<string name="want_to_remove_shortcut">Voulez-vous supprimer ce raccourci ?</string>
 	<string name="folder_dwell">Maintenir pour ouvrir un dossier</string>

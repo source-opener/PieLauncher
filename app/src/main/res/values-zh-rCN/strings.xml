@@ -165,6 +165,8 @@
 	<string name="want_to_delete_folder">要删除此文件夹吗？其中的应用会保留。</string>
 	<string name="hide_folder_contents">在列表中隐藏内容</string>
 	<string name="show_folder_contents">在列表中显示内容</string>
+	<string name="pin_folder">置顶</string>
+	<string name="unpin_folder">取消置顶</string>
 	<string name="remove_shortcut">移除快捷方式</string>
 	<string name="want_to_remove_shortcut">要移除此快捷方式吗？</string>
 	<string name="folder_dwell">长按打开文件夹</string>

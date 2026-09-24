@@ -165,6 +165,8 @@
 	<string name="want_to_delete_folder">Möchten Sie diesen Ordner löschen? Die Apps darin bleiben erhalten.</string>
 	<string name="hide_folder_contents">Inhalt in der Liste verstecken</string>
 	<string name="show_folder_contents">Inhalt in der Liste anzeigen</string>
+	<string name="pin_folder">Oben anheften</string>
+	<string name="unpin_folder">Nicht mehr oben anheften</string>
 	<string name="remove_shortcut">Verknüpfung entfernen</string>
 	<string name="want_to_remove_shortcut">Möchten Sie diese Verknüpfung entfernen?</string>
 	<string name="folder_dwell">Ordner durch Halten öffnen</string>

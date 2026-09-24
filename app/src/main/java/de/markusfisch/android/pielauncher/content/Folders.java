@@ -23,11 +23,17 @@ public class Folders {
 		public final long id;
 		public final String name;
 		public final boolean hideContents;
+		public final boolean pinned;
 
-		public Folder(long id, String name, boolean hideContents) {
+		public Folder(
+				long id,
+				String name,
+				boolean hideContents,
+				boolean pinned) {
 			this.id = id;
 			this.name = name;
 			this.hideContents = hideContents;
+			this.pinned = pinned;
 		}
 	}
 
@@ -107,6 +113,11 @@ public class Folders {
 		return null;
 	}
 
+	public synchronized boolean isPinned(long id) {
+		Folder folder = getFolder(id);
+		return folder != null && folder.pinned;
+	}
+
 	public synchronized boolean contains(long id, LauncherItemKey key) {
 		Set<LauncherItemKey> keys = items.get(id);
 		return keys != null && keys.contains(key);
@@ -161,9 +172,10 @@ public class Folders {
 			Context context,
 			long id,
 			String name,
-			boolean hideContents) {
+			boolean hideContents,
+			boolean pinned) {
 		PieLauncherApp.getDatabase(context).updateFolder(id, name,
-				hideContents);
+				hideContents, pinned);
 		reload(context);
 	}
 

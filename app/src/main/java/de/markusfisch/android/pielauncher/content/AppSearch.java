@@ -85,9 +85,10 @@ public class AppSearch {
 				null, -1L);
 	}
 
-	// Like filterAppsBy() but with folders: folders matching the query are
-	// listed first, unless folderId names an open folder, in which case the
-	// result is restricted to that folder's items.
+	// Like filterAppsBy() but with folders: pinned folders matching the
+	// query are listed first, the others are sorted in with the apps,
+	// unless folderId names an open folder, in which case the result is
+	// restricted to that folder's items.
 	public static List<AppIcon> filterDrawerBy(
 			Apps repo,
 			Context context,
@@ -209,8 +210,21 @@ public class AppSearch {
 			}
 		}
 
+		boolean noAppMatches = list.isEmpty();
+		List<AppIcon> pinnedFolders = new ArrayList<>();
+		if (folders != null && !inFolder) {
+			for (AppIcon icon : folders.match(query, strategy,
+					defaultLocale)) {
+				if (folders.isPinned(Folders.idOf(icon))) {
+					pinnedFolders.add(icon);
+				} else {
+					list.add(icon);
+				}
+			}
+		}
+
 		Collections.sort(list, appComparator);
-		if (!hamming.isEmpty() && (list.isEmpty() ||
+		if (!hamming.isEmpty() && (noAppMatches ||
 				strategy == Preferences.SEARCH_STRICTNESS_HAMMING)) {
 			// Only append hamming matches as they're less likely
 			// as good as exact matches.
@@ -224,12 +238,8 @@ public class AppSearch {
 				list.add(hit.appIcon);
 			}
 		}
-		if (folders != null && !inFolder) {
-			List<AppIcon> folderIcons = folders.match(query, strategy,
-					defaultLocale);
-			Collections.sort(folderIcons, appLabelComparator);
-			list.addAll(0, folderIcons);
-		}
+		Collections.sort(pinnedFolders, appLabelComparator);
+		list.addAll(0, pinnedFolders);
 		return list;
 	}
 

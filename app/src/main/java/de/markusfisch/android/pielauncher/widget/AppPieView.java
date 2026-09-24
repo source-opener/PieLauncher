@@ -1251,7 +1251,7 @@ public class AppPieView extends View {
 		addOption(labels, actions, context.getString(R.string.rename_folder),
 				() -> askForFolderName(context, folder.name, name -> {
 					PieLauncherApp.folders.update(context, id, name,
-							folder.hideContents);
+							folder.hideContents, folder.pinned);
 					// The menus hold the icon this replaced.
 					PieLauncherApp.apps.indexAppsAsync(context);
 					resetSearch();
@@ -1261,7 +1261,15 @@ public class AppPieView extends View {
 						: R.string.hide_folder_contents),
 				() -> {
 					PieLauncherApp.folders.update(context, id, folder.name,
-							!folder.hideContents);
+							!folder.hideContents, folder.pinned);
+					resetSearch();
+				});
+		addOption(labels, actions, context.getString(folder.pinned
+						? R.string.unpin_folder
+						: R.string.pin_folder),
+				() -> {
+					PieLauncherApp.folders.update(context, id, folder.name,
+							folder.hideContents, !folder.pinned);
 					resetSearch();
 				});
 		addOption(labels, actions, context.getString(R.string.app_tags),
