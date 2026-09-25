@@ -165,6 +165,8 @@
 	<string name="want_to_delete_folder">Vill du ta bort den här mappen? Apparna i den behålls.</string>
 	<string name="hide_folder_contents">Dölj innehållet i listan</string>
 	<string name="show_folder_contents">Visa innehållet i listan</string>
+	<string name="pin_folder">Fäst överst</string>
+	<string name="unpin_folder">Lossa från toppen</string>
 	<string name="remove_shortcut">Ta bort genväg</string>
 	<string name="want_to_remove_shortcut">Vill du ta bort den här genvägen?</string>
 	<string name="folder_dwell">Håll kvar för att öppna mapp</string>

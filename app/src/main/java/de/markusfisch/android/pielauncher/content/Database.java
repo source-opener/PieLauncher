@@ -62,6 +62,7 @@ public class Database {
 	private static final String FOLDER_ID = "folder_id";
 	private static final String NAME = "name";
 	private static final String HIDE_CONTENTS = "hide_contents";
+	private static final String PINNED = "pinned";
 	private static final String APP_TAGS = "app_tags";
 	private static final String TAGS = "tags";
 
@@ -801,14 +802,15 @@ public class Database {
 		items.clear();
 		SQLiteDatabase db = openHelper.getReadableDatabase();
 		Cursor cursor = db.query(FOLDERS,
-				new String[]{ID, NAME, HIDE_CONTENTS},
+				new String[]{ID, NAME, HIDE_CONTENTS, PINNED},
 				null, null, null, null, NAME);
 		try {
 			while (cursor.moveToNext()) {
 				folders.add(new Folders.Folder(
 						cursor.getLong(0),
 						cursor.getString(1),
-						cursor.getInt(2) != 0));
+						cursor.getInt(2) != 0,
+						cursor.getInt(3) != 0));
 			}
 		} finally {
 			cursor.close();
@@ -840,13 +842,19 @@ public class Database {
 		ContentValues values = new ContentValues();
 		values.put(NAME, name);
 		values.put(HIDE_CONTENTS, 0);
+		values.put(PINNED, 1);
 		return openHelper.getWritableDatabase().insert(FOLDERS, null, values);
 	}
 
-	public void updateFolder(long id, String name, boolean hideContents) {
+	public void updateFolder(
+			long id,
+			String name,
+			boolean hideContents,
+			boolean pinned) {
 		ContentValues values = new ContentValues();
 		values.put(NAME, name);
 		values.put(HIDE_CONTENTS, hideContents ? 1 : 0);
+		values.put(PINNED, pinned ? 1 : 0);
 		openHelper.getWritableDatabase().update(FOLDERS, values,
 				ID + "=?", new String[]{String.valueOf(id)});
 	}
@@ -1111,7 +1119,7 @@ public class Database {
 
 	private static class OpenHelper extends SQLiteOpenHelper {
 		OpenHelper(Context context) {
-			super(context, "app_cache.db", null, 8);
+			super(context, "app_cache.db", null, 9);
 		}
 
 		@Override
@@ -1184,7 +1192,8 @@ public class Database {
 			db.execSQL("CREATE TABLE " + FOLDERS + " (" +
 					ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
 					NAME + " TEXT NOT NULL," +
-					HIDE_CONTENTS + " INTEGER NOT NULL);");
+					HIDE_CONTENTS + " INTEGER NOT NULL," +
+					PINNED + " INTEGER NOT NULL DEFAULT 1);");
 			db.execSQL("CREATE TABLE " + FOLDER_ITEMS + " (" +
 					FOLDER_ID + " INTEGER NOT NULL," +
 					ITEM_KEY + " TEXT NOT NULL," +
@@ -1241,6 +1250,9 @@ public class Database {
 			}
 			if (oldVersion < 8) {
 				createFolderTables(db);
+			} else if (oldVersion < 9) {
+				db.execSQL("ALTER TABLE " + FOLDERS + " ADD COLUMN " +
+						PINNED + " INTEGER NOT NULL DEFAULT 1;");
 			}
 		}
 
