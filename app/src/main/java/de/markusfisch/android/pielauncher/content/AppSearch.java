@@ -153,7 +153,10 @@ public class AppSearch {
 		Set<LauncherItemKey> only = inFolder
 				? folders.getItems(folderId)
 				: null;
-		Set<LauncherItemKey> hidden = folders != null && !inFolder
+		// Hidden folder contents are kept out of the list but still found
+		// by a search.
+		Set<LauncherItemKey> hidden = folders != null && !inFolder &&
+				query.isEmpty()
 				? folders.getHiddenItems()
 				: Collections.<LauncherItemKey>emptySet();
 
