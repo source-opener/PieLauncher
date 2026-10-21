@@ -22,6 +22,16 @@ public class ManagedProfileEventReceiver extends BroadcastReceiver {
 				Intent.ACTION_MANAGED_PROFILE_REMOVED.equals(action)) {
 			PieLauncherApp.apps.indexAppsAsync(context);
 		} else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N &&
+				(Intent.ACTION_MANAGED_PROFILE_AVAILABLE.equals(action) ||
+						Intent.ACTION_MANAGED_PROFILE_UNAVAILABLE.equals(
+								action))) {
+			PieLauncherApp.workPausedIcons.restore(context);
+			if (!PieLauncherApp.workPausedIcons.keys().isEmpty()) {
+				// Icons are picked when apps and folders are read.
+				PieLauncherApp.folders.invalidate();
+				PieLauncherApp.apps.indexAppsAsync(context);
+			}
+		} else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N &&
 				Intent.ACTION_PROFILE_AVAILABLE.equals(action)) {
 			PieLauncherApp.apps.propagateUpdate();
 		}

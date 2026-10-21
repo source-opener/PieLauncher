@@ -566,6 +566,8 @@ public class Apps {
 		PieLauncherApp.appLabels.restore(context);
 		PieLauncherApp.appTags.restore(context);
 		PieLauncherApp.appIcons.restore(context);
+		PieLauncherApp.workPausedIcons.restore(context);
+		workPaused = AppLauncher.isWorkProfilePaused(context);
 		if (AppLauncher.HAS_LAUNCHER_APP) {
 			indexProfilesApps(
 					AppLauncher.getLauncherApps(context),
@@ -676,13 +678,23 @@ public class Apps {
 			UserHandle userHandle) {
 		LauncherItemKey key = new LauncherItemKey(componentName, userHandle);
 		String customLabel = PieLauncherApp.appLabels.get(key);
-		Bitmap customIcon = PieLauncherApp.appIcons.get(key);
+		Bitmap customIcon = getCustomIcon(key);
 		String name = customLabel != null ? customLabel : label;
 		AppIcon appIcon = customIcon != null
 				? new AppIcon(componentName, name, customIcon, userHandle)
 				: new AppIcon(componentName, name, icon, userHandle);
 		allApps.put(key, appIcon);
 		return appIcon;
+	}
+
+	// Set on every indexing, so all icons of one pass agree on it.
+	private static volatile boolean workPaused;
+
+	static Bitmap getCustomIcon(LauncherItemKey key) {
+		Bitmap icon = workPaused
+				? PieLauncherApp.workPausedIcons.get(key)
+				: null;
+		return icon != null ? icon : PieLauncherApp.appIcons.get(key);
 	}
 
 	private List<AppIcon> getPrimaryMenu(Context context,

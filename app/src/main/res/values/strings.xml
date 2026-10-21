@@ -146,6 +146,8 @@
 	<string name="app_tags_hint">Extra words to find this app by</string>
 	<string name="pick_image">Pick image</string>
 	<string name="reset_icon">Reset icon</string>
+	<string name="pick_work_paused_image">Pick image for paused work profile</string>
+	<string name="reset_work_paused_icon">Reset icon for paused work profile</string>
 	<string name="pick_image_failed">Could not read that image</string>
 	<string name="import_settings_restart">Settings imported. Pie Launcher needs to restart to use them.</string>
 	<string name="customised_apps">Customised apps</string>

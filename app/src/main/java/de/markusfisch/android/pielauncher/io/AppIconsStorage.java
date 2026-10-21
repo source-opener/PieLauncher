@@ -13,8 +13,13 @@ import de.markusfisch.android.pielauncher.content.LauncherItemKey;
 
 public class AppIconsStorage {
 	private final Map<LauncherItemKey, Bitmap> icons = new HashMap<>();
+	private final String table;
 
 	private boolean restored = false;
+
+	public AppIconsStorage(String table) {
+		this.table = table;
+	}
 
 	public synchronized Bitmap get(LauncherItemKey key) {
 		return icons.get(key);
@@ -33,7 +38,8 @@ public class AppIconsStorage {
 		} else {
 			icons.put(key, bitmap);
 		}
-		PieLauncherApp.getDatabase(context).storeAppIcon(context, key, bitmap);
+		PieLauncherApp.getDatabase(context).storeAppIcon(context, table, key,
+				bitmap);
 		// Folders bake their icon in when they are read, so make them
 		// pick this up whether or not the key belongs to one.
 		PieLauncherApp.folders.invalidate();
@@ -47,7 +53,8 @@ public class AppIconsStorage {
 		if (restored) {
 			return;
 		}
-		PieLauncherApp.getDatabase(context).restoreAppIcons(context, icons);
+		PieLauncherApp.getDatabase(context).restoreAppIcons(context, table,
+				icons);
 		restored = true;
 	}
 }
