@@ -1173,6 +1173,12 @@ public class AppPieView extends View {
 					});
 		}
 		if (AppLauncher.hasWorkProfile(context)) {
+			if (PieLauncherApp.iconPack.hasPacks()) {
+				addOption(labels, actions,
+						context.getString(R.string.pick_work_paused_icon),
+						() -> PickIconActivity.startForWorkPaused(context,
+								key));
+			}
 			addOption(labels, actions,
 					context.getString(R.string.pick_work_paused_image),
 					() -> PickImageActivity.start(context, key, true));
@@ -1299,6 +1305,12 @@ public class AppPieView extends View {
 					});
 		}
 		if (AppLauncher.hasWorkProfile(context)) {
+			if (PieLauncherApp.iconPack.hasPacks()) {
+				addOption(labels, actions,
+						context.getString(R.string.pick_work_paused_icon),
+						() -> PickIconActivity.startForWorkPaused(context,
+								key));
+			}
 			addOption(labels, actions,
 					context.getString(R.string.pick_work_paused_image),
 					() -> PickImageActivity.start(context, key, true));

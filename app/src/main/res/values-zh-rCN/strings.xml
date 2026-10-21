@@ -146,6 +146,7 @@
 	<string name="app_tags_hint">用于查找此应用的额外关键词</string>
 	<string name="pick_image">选择图片</string>
 	<string name="reset_icon">重置图标</string>
+	<string name="pick_work_paused_icon">为已暂停的工作资料选择图标</string>
 	<string name="pick_work_paused_image">为已暂停的工作资料选择图片</string>
 	<string name="reset_work_paused_icon">重置已暂停工作资料的图标</string>
 	<string name="pick_image_failed">无法读取该图片</string>

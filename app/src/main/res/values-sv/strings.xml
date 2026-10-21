@@ -146,6 +146,7 @@
 	<string name="app_tags_hint">Extra ord för att hitta appen</string>
 	<string name="pick_image">Välj bild</string>
 	<string name="reset_icon">Återställ ikon</string>
+	<string name="pick_work_paused_icon">Välj ikon för pausad jobbprofil</string>
 	<string name="pick_work_paused_image">Välj bild för pausad jobbprofil</string>
 	<string name="reset_work_paused_icon">Återställ ikon för pausad jobbprofil</string>
 	<string name="pick_image_failed">Kunde inte läsa bilden</string>

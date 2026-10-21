@@ -146,6 +146,7 @@
 	<string name="app_tags_hint">Zusätzliche Wörter, um diese App zu finden</string>
 	<string name="pick_image">Bild auswählen</string>
 	<string name="reset_icon">Icon zurücksetzen</string>
+	<string name="pick_work_paused_icon">Symbol für pausiertes Arbeitsprofil wählen</string>
 	<string name="pick_work_paused_image">Bild für pausiertes Arbeitsprofil wählen</string>
 	<string name="reset_work_paused_icon">Symbol für pausiertes Arbeitsprofil zurücksetzen</string>
 	<string name="pick_image_failed">Bild konnte nicht gelesen werden</string>
