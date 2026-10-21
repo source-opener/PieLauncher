@@ -146,6 +146,8 @@
 	<string name="app_tags_hint">Додаткові слова для пошуку цієї програми</string>
 	<string name="pick_image">Вибрати зображення</string>
 	<string name="reset_icon">Скинути іконку</string>
+	<string name="pick_work_paused_image">Вибрати зображення для призупиненого робочого профілю</string>
+	<string name="reset_work_paused_icon">Скинути значок для призупиненого робочого профілю</string>
 	<string name="pick_image_failed">Не вдалося прочитати зображення</string>
 	<string name="import_settings_restart">Налаштування імпортовано. Щоб застосувати їх, Pie Launcher потрібно перезапустити.</string>
 	<string name="customised_apps">Змінені програми</string>

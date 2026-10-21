@@ -55,7 +55,8 @@ public class Database {
 	private static final String HIDDEN_APPS = "hidden_apps";
 
 	private static final String APP_LABELS = "app_labels";
-	private static final String APP_ICONS = "app_icons";
+	public static final String APP_ICONS = "app_icons";
+	public static final String WORK_PAUSED_ICONS = "work_paused_icons";
 	private static final String ID = "_id";
 	private static final String FOLDERS = "folders";
 	private static final String FOLDER_ITEMS = "folder_items";
@@ -94,6 +95,7 @@ public class Database {
 			APP_LABELS,
 			APP_TAGS,
 			APP_ICONS,
+			WORK_PAUSED_ICONS,
 			FOLDERS,
 			FOLDER_ITEMS,
 			ICON_MAPPING_SETS,
@@ -893,9 +895,10 @@ public class Database {
 
 	public void restoreAppIcons(
 			Context context,
+			String table,
 			Map<LauncherItemKey, Bitmap> icons) {
 		icons.clear();
-		Cursor cursor = openHelper.getReadableDatabase().query(APP_ICONS,
+		Cursor cursor = openHelper.getReadableDatabase().query(table,
 				new String[]{ITEM_KEY, ICON},
 				null, null, null, null, null);
 		try {
@@ -919,13 +922,14 @@ public class Database {
 
 	public void storeAppIcon(
 			Context context,
+			String table,
 			LauncherItemKey key,
 			Bitmap bitmap) {
 		String itemKey = LauncherItemKey.flattenToString(context,
 				key.componentName, key.userHandle);
 		SQLiteDatabase db = openHelper.getWritableDatabase();
 		if (bitmap == null) {
-			db.delete(APP_ICONS, ITEM_KEY + "=?", new String[]{itemKey});
+			db.delete(table, ITEM_KEY + "=?", new String[]{itemKey});
 			return;
 		}
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -933,7 +937,7 @@ public class Database {
 		ContentValues values = new ContentValues();
 		values.put(ITEM_KEY, itemKey);
 		values.put(ICON, out.toByteArray());
-		db.insertWithOnConflict(APP_ICONS, null, values,
+		db.insertWithOnConflict(table, null, values,
 				SQLiteDatabase.CONFLICT_REPLACE);
 	}
 
@@ -1119,7 +1123,7 @@ public class Database {
 
 	private static class OpenHelper extends SQLiteOpenHelper {
 		OpenHelper(Context context) {
-			super(context, "app_cache.db", null, 9);
+			super(context, "app_cache.db", null, 10);
 		}
 
 		@Override
@@ -1154,7 +1158,8 @@ public class Database {
 					COMPONENT_NAME + " TEXT PRIMARY KEY NOT NULL);");
 			createLabelsTable(db);
 			createTagsTable(db);
-			createIconsTable(db);
+			createIconsTable(db, APP_ICONS);
+			createIconsTable(db, WORK_PAUSED_ICONS);
 			createFolderTables(db);
 			db.execSQL("CREATE TABLE " + ICON_MAPPING_SETS + " (" +
 					ICON_PACK + " TEXT PRIMARY KEY NOT NULL);");
@@ -1182,8 +1187,8 @@ public class Database {
 					TAGS + " TEXT NOT NULL);");
 		}
 
-		private static void createIconsTable(SQLiteDatabase db) {
-			db.execSQL("CREATE TABLE " + APP_ICONS + " (" +
+		private static void createIconsTable(SQLiteDatabase db, String table) {
+			db.execSQL("CREATE TABLE " + table + " (" +
 					ITEM_KEY + " TEXT PRIMARY KEY NOT NULL," +
 					ICON + " BLOB NOT NULL);");
 		}
@@ -1246,13 +1251,16 @@ public class Database {
 				createTagsTable(db);
 			}
 			if (oldVersion < 7) {
-				createIconsTable(db);
+				createIconsTable(db, APP_ICONS);
 			}
 			if (oldVersion < 8) {
 				createFolderTables(db);
 			} else if (oldVersion < 9) {
 				db.execSQL("ALTER TABLE " + FOLDERS + " ADD COLUMN " +
 						PINNED + " INTEGER NOT NULL DEFAULT 1;");
+			}
+			if (oldVersion < 10) {
+				createIconsTable(db, WORK_PAUSED_ICONS);
 			}
 		}
 

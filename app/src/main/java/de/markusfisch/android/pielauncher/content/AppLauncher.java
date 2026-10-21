@@ -239,6 +239,37 @@ public class AppLauncher {
 		}
 	}
 
+	// The private space is a profile too, so this is the other one.
+	@SuppressLint("UseRequiresApi")
+	@TargetApi(Build.VERSION_CODES.LOLLIPOP)
+	public static UserHandle findWorkProfileUser(Context context) {
+		if (!HAS_LAUNCHER_APP) {
+			return null;
+		}
+		LauncherApps la = getLauncherApps(context);
+		UserHandle self = Process.myUserHandle();
+		for (UserHandle profile : getProfiles(getUserManager(context))) {
+			if (!profile.equals(self) && !isPrivateProfile(la, profile)) {
+				return profile;
+			}
+		}
+		return null;
+	}
+
+	// Pausing needs quiet mode, which is Android 7.
+	public static boolean hasWorkProfile(Context context) {
+		return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N &&
+				findWorkProfileUser(context) != null;
+	}
+
+	public static boolean isWorkProfilePaused(Context context) {
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+			return false;
+		}
+		UserHandle work = findWorkProfileUser(context);
+		return work != null && getUserManager(context).isQuietModeEnabled(work);
+	}
+
 	public static UserHandle findPrivateProfileUser(Context context) {
 		if (!HAS_LAUNCHER_APP) {
 			return null;

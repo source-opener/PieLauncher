@@ -146,6 +146,8 @@
 	<string name="app_tags_hint">Extra woorden om deze app mee te vinden</string>
 	<string name="pick_image">Afbeelding kiezen</string>
 	<string name="reset_icon">Pictogram herstellen</string>
+	<string name="pick_work_paused_image">Afbeelding kiezen voor gepauzeerd werkprofiel</string>
+	<string name="reset_work_paused_icon">Pictogram voor gepauzeerd werkprofiel herstellen</string>
 	<string name="pick_image_failed">Kan die afbeelding niet lezen</string>
 	<string name="import_settings_restart">Instellingen geïmporteerd. Pie Launcher moet opnieuw starten om ze te gebruiken.</string>
 	<string name="customised_apps">Aangepaste apps</string>

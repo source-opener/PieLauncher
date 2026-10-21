@@ -23,14 +23,24 @@ import de.markusfisch.android.pielauncher.graphics.Converter;
 
 public class PickImageActivity extends Activity {
 	private static final String ITEM_KEY = "item_key";
+	private static final String WORK_PAUSED = "work_paused";
 	private static final int PICK_IMAGE = 1;
 
 	private LauncherItemKey key;
+	private boolean workPaused;
 
 	public static void start(Context context, LauncherItemKey key) {
+		start(context, key, false);
+	}
+
+	public static void start(
+			Context context,
+			LauncherItemKey key,
+			boolean workPaused) {
 		Intent intent = new Intent(context, PickImageActivity.class);
 		intent.putExtra(ITEM_KEY, LauncherItemKey.flattenToString(context,
 				key.componentName, key.userHandle));
+		intent.putExtra(WORK_PAUSED, workPaused);
 		context.startActivity(intent);
 	}
 
@@ -43,6 +53,8 @@ public class PickImageActivity extends Activity {
 		if (itemKey != null) {
 			key = LauncherItemKey.unflattenFromString(this, itemKey);
 		}
+		workPaused = getIntent() != null &&
+				getIntent().getBooleanExtra(WORK_PAUSED, false);
 		if (key == null || key.componentName == null ||
 				Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
 			finish();
@@ -101,7 +113,9 @@ public class PickImageActivity extends Activity {
 					Toast.LENGTH_SHORT).show();
 			return;
 		}
-		PieLauncherApp.appIcons.store(this, key,
+		(workPaused
+				? PieLauncherApp.workPausedIcons
+				: PieLauncherApp.appIcons).store(this, key,
 				Converter.getBitmapFromDrawable(
 						new BitmapDrawable(getResources(), bitmap)));
 		PieLauncherApp.apps.indexAppsAsync(this);

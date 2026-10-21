@@ -185,6 +185,7 @@ public class Folders {
 		LauncherItemKey key = keyOf(id);
 		PieLauncherApp.appTags.store(context, key, null);
 		PieLauncherApp.appIcons.store(context, key, null);
+		PieLauncherApp.workPausedIcons.store(context, key, null);
 		if (PieLauncherApp.iconPack.hasMapping(key.componentName)) {
 			PieLauncherApp.iconPack.removeMapping(key.componentName);
 			PieLauncherApp.iconPack.storeMappings(context);
@@ -221,6 +222,7 @@ public class Folders {
 
 	private synchronized void reload(Context context) {
 		PieLauncherApp.appIcons.restore(context);
+		PieLauncherApp.workPausedIcons.restore(context);
 		if (bitmap == null) {
 			// One bitmap for all folders; the drawer draws hundreds of
 			// icons per frame and does not need one more per folder.
@@ -245,7 +247,7 @@ public class Folders {
 	// mapped to it, then the built-in folder symbol. Must be called from
 	// reload() only, which makes sure the fallback is there.
 	private Bitmap iconFor(LauncherItemKey key) {
-		Bitmap custom = PieLauncherApp.appIcons.get(key);
+		Bitmap custom = Apps.getCustomIcon(key);
 		if (custom != null) {
 			return custom;
 		}
