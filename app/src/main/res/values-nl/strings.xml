@@ -149,6 +149,13 @@
 	<string name="pick_work_paused_icon">Pictogram kiezen voor gepauzeerd werkprofiel</string>
 	<string name="pick_work_paused_image">Afbeelding kiezen voor gepauzeerd werkprofiel</string>
 	<string name="reset_work_paused_icon">Pictogram voor gepauzeerd werkprofiel herstellen</string>
+	<string name="move_work_apps">Werk-apps naar een map verplaatsen</string>
+	<string name="work_folder_name">Werk</string>
+	<string name="work_folder_exists">Map %1$s bestaat al</string>
+	<string name="work_folder_hides">Hiermee worden deze apps in de lijst verborgen:\n\n%1$s</string>
+	<string name="other_folder_name">Andere naam</string>
+	<string name="work_apps_moved">Werk-apps verplaatst naar %1$s</string>
+	<string name="no_work_apps">Geen werk-apps gevonden</string>
 	<string name="pick_image_failed">Kan die afbeelding niet lezen</string>
 	<string name="import_settings_restart">Instellingen geïmporteerd. Pie Launcher moet opnieuw starten om ze te gebruiken.</string>
 	<string name="customised_apps">Aangepaste apps</string>

@@ -149,6 +149,13 @@
 	<string name="pick_work_paused_icon">Escolher ícone para perfil de trabalho pausado</string>
 	<string name="pick_work_paused_image">Escolher imagem para perfil de trabalho pausado</string>
 	<string name="reset_work_paused_icon">Redefinir ícone do perfil de trabalho pausado</string>
+	<string name="move_work_apps">Mover apps de trabalho para uma pasta</string>
+	<string name="work_folder_name">Trabalho</string>
+	<string name="work_folder_exists">A pasta %1$s já existe</string>
+	<string name="work_folder_hides">Usá-la oculta estes apps da lista:\n\n%1$s</string>
+	<string name="other_folder_name">Outro nome</string>
+	<string name="work_apps_moved">Apps de trabalho movidos para %1$s</string>
+	<string name="no_work_apps">Nenhum app de trabalho encontrado</string>
 	<string name="pick_image_failed">Não foi possível ler essa imagem</string>
 	<string name="import_settings_restart">Configurações importadas. O Pie Launcher precisa reiniciar para usá-las.</string>
 	<string name="customised_apps">Aplicativos personalizados</string>

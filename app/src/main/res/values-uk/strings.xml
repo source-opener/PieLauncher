@@ -149,6 +149,13 @@
 	<string name="pick_work_paused_icon">Вибрати значок для призупиненого робочого профілю</string>
 	<string name="pick_work_paused_image">Вибрати зображення для призупиненого робочого профілю</string>
 	<string name="reset_work_paused_icon">Скинути значок для призупиненого робочого профілю</string>
+	<string name="move_work_apps">Перемістити робочі застосунки в теку</string>
+	<string name="work_folder_name">Робота</string>
+	<string name="work_folder_exists">Тека %1$s уже існує</string>
+	<string name="work_folder_hides">Це приховає зі списку такі застосунки:\n\n%1$s</string>
+	<string name="other_folder_name">Інша назва</string>
+	<string name="work_apps_moved">Робочі застосунки переміщено до %1$s</string>
+	<string name="no_work_apps">Робочих застосунків не знайдено</string>
 	<string name="pick_image_failed">Не вдалося прочитати зображення</string>
 	<string name="import_settings_restart">Налаштування імпортовано. Щоб застосувати їх, Pie Launcher потрібно перезапустити.</string>
 	<string name="customised_apps">Змінені програми</string>

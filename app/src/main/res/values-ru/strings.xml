@@ -149,6 +149,13 @@
 	<string name="pick_work_paused_icon">Выбрать значок для приостановленного рабочего профиля</string>
 	<string name="pick_work_paused_image">Выбрать изображение для приостановленного рабочего профиля</string>
 	<string name="reset_work_paused_icon">Сбросить значок для приостановленного рабочего профиля</string>
+	<string name="move_work_apps">Переместить рабочие приложения в папку</string>
+	<string name="work_folder_name">Работа</string>
+	<string name="work_folder_exists">Папка %1$s уже существует</string>
+	<string name="work_folder_hides">Это скроет из списка следующие приложения:\n\n%1$s</string>
+	<string name="other_folder_name">Другое имя</string>
+	<string name="work_apps_moved">Рабочие приложения перемещены в %1$s</string>
+	<string name="no_work_apps">Рабочие приложения не найдены</string>
 	<string name="pick_image_failed">Не удалось прочитать изображение</string>
 	<string name="import_settings_restart">Настройки импортированы. Для их применения Pie Launcher нужно перезапустить.</string>
 	<string name="customised_apps">Изменённые приложения</string>

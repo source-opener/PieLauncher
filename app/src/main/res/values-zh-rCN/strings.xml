@@ -149,6 +149,13 @@
 	<string name="pick_work_paused_icon">为已暂停的工作资料选择图标</string>
 	<string name="pick_work_paused_image">为已暂停的工作资料选择图片</string>
 	<string name="reset_work_paused_icon">重置已暂停工作资料的图标</string>
+	<string name="move_work_apps">将工作应用移到文件夹</string>
+	<string name="work_folder_name">工作</string>
+	<string name="work_folder_exists">文件夹 %1$s 已存在</string>
+	<string name="work_folder_hides">使用它会在列表中隐藏这些应用：\n\n%1$s</string>
+	<string name="other_folder_name">其他名称</string>
+	<string name="work_apps_moved">工作应用已移到 %1$s</string>
+	<string name="no_work_apps">未找到工作应用</string>
 	<string name="pick_image_failed">无法读取该图片</string>
 	<string name="import_settings_restart">设置已导入。Pie 启动器需要重启才能使用这些设置。</string>
 	<string name="customised_apps">自定义的应用</string>
