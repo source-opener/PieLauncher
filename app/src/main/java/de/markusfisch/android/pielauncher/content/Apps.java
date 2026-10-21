@@ -231,6 +231,12 @@ public class Apps {
 			Context context,
 			String packageName,
 			UserHandle userHandle) {
+		// An updated icon pack can bring icons for every app, not just
+		// for its own.
+		if (PieLauncherApp.iconPack.isPack(packageName)) {
+			updateIconsAsync(context);
+			return;
+		}
 		if (!indexAppsAsync(context, packageName, userHandle)) {
 			handler.postDelayed(() -> updatePackageAsync(
 					context, packageName, userHandle), 1000L);
