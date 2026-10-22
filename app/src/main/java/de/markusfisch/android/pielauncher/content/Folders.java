@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -199,6 +200,17 @@ public class Folders {
 			long id,
 			LauncherItemKey key) {
 		PieLauncherApp.getDatabase(context).addToFolder(context, id, key);
+		reload(context);
+	}
+
+	public synchronized void addAll(
+			Context context,
+			long id,
+			Collection<LauncherItemKey> keys) {
+		Database database = PieLauncherApp.getDatabase(context);
+		for (LauncherItemKey key : keys) {
+			database.addToFolder(context, id, key);
+		}
 		reload(context);
 	}
 

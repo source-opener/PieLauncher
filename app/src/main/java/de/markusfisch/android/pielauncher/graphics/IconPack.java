@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -185,49 +186,97 @@ public class IconPack {
 			}
 		}
 
+		// Like the icon lists, the list of which icon goes to which app
+		// can be an asset or a compiled resource, under either name.
+		// Reading only the asset left every app without its icon in a
+		// pack that compiles it. The first place to name an app wins.
 		public void loadComponentAndDrawableNames(
 				LinkedHashMap<String, String> map) {
+			for (String name : new String[]{"appfilter", "app_filter"}) {
+				LinkedHashMap<String, String> found = new LinkedHashMap<>();
+				loadComponentsFromAsset(name + ".xml", found);
+				addMissing(map, found);
+				found.clear();
+				loadComponentsFromResource(name, found);
+				addMissing(map, found);
+			}
+		}
+
+		private void loadComponentsFromAsset(
+				String fileName,
+				Map<String, String> map) {
 			InputStream is = null;
 			try {
-				is = resources.getAssets().open("appfilter.xml");
+				is = resources.getAssets().open(fileName);
 				XmlPullParser parser = Xml.newPullParser();
 				parser.setInput(new InputStreamReader(is));
-				for (int eventType = parser.getEventType();
-						eventType != XmlPullParser.END_DOCUMENT;
-						eventType = parser.next()) {
-					if (eventType == XmlPullParser.START_TAG &&
-							"item".equals(parser.getName())) {
-						String component = parser.getAttributeValue(
-								null, "component");
-						if (component == null) {
-							component = parser.getAttributeValue(
-									null, "activity");
-						}
-						if (component == null || component.isEmpty()) {
-							continue;
-						}
-						String drawable = parser.getAttributeValue(
-								null, "drawable");
-						if (drawable == null || drawable.isEmpty()) {
-							continue;
-						}
-						ComponentName cn = parseComponent(component);
-						if (cn != null) {
-							map.put(cn.flattenToShortString(), drawable);
-						} else {
-							map.put(component, drawable);
-						}
-					}
-				}
+				collectComponents(parser, map);
 			} catch (XmlPullParserException | IOException e) {
-				// Ignore.
+				// Not every pack ships every one of these.
 			} finally {
-				if (is != null) {
-					try {
-						is.close();
-					} catch (IOException e) {
-						// Ignore.
-					}
+				close(is);
+			}
+		}
+
+		private void loadComponentsFromResource(
+				String name,
+				Map<String, String> map) {
+			@SuppressLint("DiscouragedApi")
+			int id = resources.getIdentifier(name, "xml", packageName);
+			if (id == 0) {
+				return;
+			}
+			XmlResourceParser parser = null;
+			try {
+				parser = resources.getXml(id);
+				collectComponents(parser, map);
+			} catch (XmlPullParserException | IOException |
+					NotFoundException e) {
+				// Keep what was read up to here.
+			} finally {
+				if (parser != null) {
+					parser.close();
+				}
+			}
+		}
+
+		private static void collectComponents(
+				XmlPullParser parser,
+				Map<String, String> map)
+				throws XmlPullParserException, IOException {
+			for (int eventType = parser.getEventType();
+					eventType != XmlPullParser.END_DOCUMENT;
+					eventType = parser.next()) {
+				if (eventType != XmlPullParser.START_TAG ||
+						!"item".equals(parser.getName())) {
+					continue;
+				}
+				String component = parser.getAttributeValue(
+						null, "component");
+				if (component == null) {
+					component = parser.getAttributeValue(
+							null, "activity");
+				}
+				if (component == null || component.isEmpty()) {
+					continue;
+				}
+				String drawable = parser.getAttributeValue(
+						null, "drawable");
+				if (drawable == null || drawable.isEmpty()) {
+					continue;
+				}
+				ComponentName cn = parseComponent(component);
+				map.put(cn != null ? cn.flattenToShortString() : component,
+						drawable);
+			}
+		}
+
+		private static void addMissing(
+				Map<String, String> map,
+				Map<String, String> found) {
+			for (Map.Entry<String, String> entry : found.entrySet()) {
+				if (!map.containsKey(entry.getKey())) {
+					map.put(entry.getKey(), entry.getValue());
 				}
 			}
 		}
@@ -258,6 +307,10 @@ public class IconPack {
 	// folder resolves its icon, so guard them.
 	public synchronized boolean hasPacks() {
 		return !packs.isEmpty();
+	}
+
+	public synchronized boolean isPack(String packageName) {
+		return packs.containsKey(packageName);
 	}
 
 	public synchronized void restoreMappings(Context context) {

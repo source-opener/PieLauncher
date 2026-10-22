@@ -146,8 +146,16 @@
 	<string name="app_tags_hint">Extra ord för att hitta appen</string>
 	<string name="pick_image">Välj bild</string>
 	<string name="reset_icon">Återställ ikon</string>
+	<string name="pick_work_paused_icon">Välj ikon för pausad jobbprofil</string>
 	<string name="pick_work_paused_image">Välj bild för pausad jobbprofil</string>
 	<string name="reset_work_paused_icon">Återställ ikon för pausad jobbprofil</string>
+	<string name="move_work_apps">Flytta jobbappar till en mapp</string>
+	<string name="work_folder_name">Jobb</string>
+	<string name="work_folder_exists">Mappen %1$s finns redan</string>
+	<string name="work_folder_hides">Om den används döljs dessa appar i listan:\n\n%1$s</string>
+	<string name="other_folder_name">Annat namn</string>
+	<string name="work_apps_moved">Jobbappar flyttade till %1$s</string>
+	<string name="no_work_apps">Inga jobbappar hittades</string>
 	<string name="pick_image_failed">Kunde inte läsa bilden</string>
 	<string name="import_settings_restart">Inställningar importerade. Pie Launcher måste startas om för att använda dem.</string>
 	<string name="customised_apps">Anpassade appar</string>

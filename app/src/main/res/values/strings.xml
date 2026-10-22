@@ -146,8 +146,16 @@
 	<string name="app_tags_hint">Extra words to find this app by</string>
 	<string name="pick_image">Pick image</string>
 	<string name="reset_icon">Reset icon</string>
+	<string name="pick_work_paused_icon">Pick icon for paused work profile</string>
 	<string name="pick_work_paused_image">Pick image for paused work profile</string>
 	<string name="reset_work_paused_icon">Reset icon for paused work profile</string>
+	<string name="move_work_apps">Move work apps to a folder</string>
+	<string name="work_folder_name">Work</string>
+	<string name="work_folder_exists">Folder %1$s exists already</string>
+	<string name="work_folder_hides">Using it hides these apps from the drawer:\n\n%1$s</string>
+	<string name="other_folder_name">Other name</string>
+	<string name="work_apps_moved">Work apps moved to %1$s</string>
+	<string name="no_work_apps">No work apps found</string>
 	<string name="pick_image_failed">Could not read that image</string>
 	<string name="import_settings_restart">Settings imported. Pie Launcher needs to restart to use them.</string>
 	<string name="customised_apps">Customised apps</string>
