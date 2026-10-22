@@ -227,4 +227,9 @@
 	<string name="cloud_backup">Sicherung im Google-Konto</string>
 	<string name="cloud_backup_blocked">Gesperrt (Standard)</string>
 	<string name="cloud_backup_allowed">Erlaubt</string>
+	<string name="folder_edit">Bearbeiten</string>
+	<string name="folder_undo">Zurück</string>
+	<string name="folder_reset">Zurücksetzen</string>
+	<string name="folder_done">Fertig</string>
+	<string name="folder_drag_hint">Apps zum Verschieben ziehen</string>
 </resources>

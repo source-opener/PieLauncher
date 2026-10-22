@@ -227,4 +227,9 @@
 	<string name="cloud_backup">Säkerhetskopiering till Google-konto</string>
 	<string name="cloud_backup_blocked">Blockerad (standard)</string>
 	<string name="cloud_backup_allowed">Tillåten</string>
+	<string name="folder_edit">Redigera</string>
+	<string name="folder_undo">Ångra</string>
+	<string name="folder_reset">Återställ</string>
+	<string name="folder_done">Klar</string>
+	<string name="folder_drag_hint">Dra appar för att flytta dem</string>
 </resources>

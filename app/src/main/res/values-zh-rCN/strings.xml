@@ -227,4 +227,9 @@
 	<string name="cloud_backup">备份到 Google 帐号</string>
 	<string name="cloud_backup_blocked">已阻止（默认）</string>
 	<string name="cloud_backup_allowed">已允许</string>
+	<string name="folder_edit">编辑</string>
+	<string name="folder_undo">撤销</string>
+	<string name="folder_reset">重置</string>
+	<string name="folder_done">完成</string>
+	<string name="folder_drag_hint">拖动应用以移动</string>
 </resources>

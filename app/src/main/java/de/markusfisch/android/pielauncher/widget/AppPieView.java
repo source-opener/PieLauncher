@@ -67,6 +67,8 @@ public class AppPieView extends View {
 		void onDragDown(float alpha);
 
 		void onResetSearch();
+
+		void onOpenFolder(Apps.AppIcon folder);
 	}
 
 	private interface NameListener {
@@ -1267,6 +1269,17 @@ public class AppPieView extends View {
 		return max;
 	}
 
+	public void launchFromFolder(Apps.AppIcon icon) {
+		launchApp(getContext(), icon);
+		if (listListener != null) {
+			listListener.onHideList();
+		}
+	}
+
+	public void showOptionsFor(Apps.AppIcon icon) {
+		showIconOptions(getContext(), icon);
+	}
+
 	private void showIconOptions(Context context, Apps.AppIcon icon) {
 		if (icon == null) {
 			return;
@@ -1636,6 +1649,11 @@ public class AppPieView extends View {
 	private boolean openFolder(Apps.AppIcon appIcon) {
 		if (!Folders.isFolder(appIcon)) {
 			return false;
+		}
+		if (listListener != null) {
+			// Shown in a panel over the drawer.
+			listListener.onOpenFolder(appIcon);
+			return true;
 		}
 		openFolderId = Folders.idOf(appIcon);
 		folderFromPie = false;

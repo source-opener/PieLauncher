@@ -28,6 +28,7 @@ import de.markusfisch.android.pielauncher.preference.Preferences;
 import de.markusfisch.android.pielauncher.view.SoftKeyboard;
 import de.markusfisch.android.pielauncher.view.SystemBars;
 import de.markusfisch.android.pielauncher.widget.AppPieView;
+import de.markusfisch.android.pielauncher.widget.FolderPanelView;
 
 public class HomeActivity extends Activity {
 	private Preferences prefs;
@@ -35,6 +36,7 @@ public class HomeActivity extends Activity {
 	private GestureDetector gestureDetector;
 	private ToolbarBackground toolbarBackground;
 	private AppPieView pieView;
+	private FolderPanelView folderPanel;
 	private EditText searchInput;
 	private ImageView prefsButton;
 	private boolean updateAfterTextChange = true;
@@ -50,6 +52,9 @@ public class HomeActivity extends Activity {
 	}
 
 	private void handleBack() {
+		if (folderPanel.hide()) {
+			return;
+		}
 		if (pieView.inEditMode()) {
 			pieView.endEditMode();
 			showAllApps();
@@ -72,7 +77,10 @@ public class HomeActivity extends Activity {
 			// bring it back if it was put away.
 			kb.showFor(searchInput);
 		}
-		if (pieView.inListMode() && gestureDetector.onTouchEvent(ev)) {
+		// The folder panel takes all touches while it shows, including
+		// drags that would otherwise pull the drawer down.
+		if (pieView.inListMode() && !folderPanel.isShowing() &&
+				gestureDetector.onTouchEvent(ev)) {
 			return true;
 		}
 		try {
@@ -102,6 +110,7 @@ public class HomeActivity extends Activity {
 
 		toolbarBackground = new ToolbarBackground(getResources());
 		pieView = findViewById(R.id.pie);
+		folderPanel = findViewById(R.id.folder_panel);
 		searchInput = findViewById(R.id.search);
 		prefsButton = findViewById(R.id.preferences);
 
@@ -255,6 +264,21 @@ public class HomeActivity extends Activity {
 			}
 
 			@Override
+			public void onOpenFolder(Apps.AppIcon folder) {
+				folderPanel.show(folder, new FolderPanelView.Listener() {
+					@Override
+					public void onLaunch(Apps.AppIcon icon) {
+						pieView.launchFromFolder(icon);
+					}
+
+					@Override
+					public void onOptions(Apps.AppIcon icon) {
+						pieView.showOptionsFor(icon);
+					}
+				});
+			}
+
+			@Override
 			public void onScrollList(int y, boolean isScrolling) {
 				if (isScrolling && y != 0) {
 					hideKeyboadAndPrefsButton();
@@ -316,7 +340,10 @@ public class HomeActivity extends Activity {
 			public void afterTextChanged(Editable e) {
 				if (!updateAfterTextChange) {
 					return;
-				} else if (e.length() > 0) {
+				}
+				// Typing searches the whole drawer again.
+				folderPanel.hide();
+				if (e.length() > 0) {
 					hidePrefsButton();
 				}
 				String s = e.toString();
@@ -445,6 +472,7 @@ public class HomeActivity extends Activity {
 	}
 
 	private void hideAllApps() {
+		folderPanel.hide();
 		if (isSearchVisible()) {
 			searchInput.setVisibility(View.GONE);
 			hideKeyboadAndPrefsButton();

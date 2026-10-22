@@ -227,4 +227,9 @@
 	<string name="cloud_backup">Backup to Google account</string>
 	<string name="cloud_backup_blocked">Blocked (default)</string>
 	<string name="cloud_backup_allowed">Allowed</string>
+	<string name="folder_edit">Edit</string>
+	<string name="folder_undo">Undo</string>
+	<string name="folder_reset">Reset</string>
+	<string name="folder_done">Done</string>
+	<string name="folder_drag_hint">Drag apps to move them</string>
 </resources>

@@ -227,4 +227,9 @@
 	<string name="cloud_backup">Back-up naar Google-account</string>
 	<string name="cloud_backup_blocked">Geblokkeerd (standaard)</string>
 	<string name="cloud_backup_allowed">Toegestaan</string>
+	<string name="folder_edit">Bewerken</string>
+	<string name="folder_undo">Ongedaan</string>
+	<string name="folder_reset">Herstellen</string>
+	<string name="folder_done">Klaar</string>
+	<string name="folder_drag_hint">Sleep apps om ze te verplaatsen</string>
 </resources>

@@ -46,6 +46,9 @@ public class Folders {
 
 	private final List<Folder> folders = new ArrayList<>();
 	private final Map<Long, Set<LauncherItemKey>> items = new HashMap<>();
+	// Where items were put by hand, by folder; missing for the rest.
+	private final Map<Long, Map<LauncherItemKey, Integer>> positions =
+			new HashMap<>();
 	private final List<Apps.AppIcon> icons = new ArrayList<>();
 
 	private Bitmap bitmap;
@@ -148,6 +151,45 @@ public class Folders {
 			}
 		}
 		return badges;
+	}
+
+	// The folder's apps in the order they were arranged in, with the ones
+	// never moved by hand after them by name. Apps that are not indexed,
+	// like hidden ones, are left out.
+	public synchronized List<Apps.AppIcon> getOrderedApps(
+			long id,
+			Map<LauncherItemKey, Apps.AppIcon> apps) {
+		Map<LauncherItemKey, Integer> order = positions.get(id);
+		List<Apps.AppIcon> placed = new ArrayList<>();
+		List<Apps.AppIcon> rest = new ArrayList<>();
+		Map<Apps.AppIcon, Integer> at = new HashMap<>();
+		for (LauncherItemKey key : getItems(id)) {
+			Apps.AppIcon icon = apps.get(key);
+			if (icon == null) {
+				continue;
+			}
+			Integer position = order != null ? order.get(key) : null;
+			if (position != null) {
+				at.put(icon, position);
+				placed.add(icon);
+			} else {
+				rest.add(icon);
+			}
+		}
+		Collections.sort(placed, (left, right) ->
+				at.get(left) - at.get(right));
+		Collections.sort(rest, (left, right) ->
+				left.label.compareToIgnoreCase(right.label));
+		placed.addAll(rest);
+		return placed;
+	}
+
+	public synchronized void setOrder(
+			Context context,
+			long id,
+			List<LauncherItemKey> keys) {
+		PieLauncherApp.getDatabase(context).setFolderOrder(context, id, keys);
+		reload(context);
 	}
 
 	public synchronized Set<LauncherItemKey> getHiddenItems() {
@@ -261,7 +303,7 @@ public class Folders {
 					context.getResources(), R.drawable.ic_folder);
 		}
 		PieLauncherApp.getDatabase(context).restoreFolders(context, folders,
-				items);
+				items, positions);
 		icons.clear();
 		for (Folder folder : folders) {
 			LauncherItemKey key = keyOf(folder.id);
