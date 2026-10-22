@@ -11,4 +11,7 @@
 	<color name="text_color_preference">#afff</color>
 	<color name="separator">#1fff</color>
 	<color name="bg_card">#14ffffff</color>
+	<color name="bg_panel">#e61c1c1e</color>
+	<color name="bg_panel_light">#f2fafafa</color>
+	<color name="bg_panel_pressed">#33808080</color>
 </resources>

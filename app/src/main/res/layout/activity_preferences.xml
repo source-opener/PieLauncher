@@ -44,22 +44,10 @@
 					android:orientation="vertical">
 					<de.markusfisch.android.pielauncher.widget.PreferenceView
 						style="@style/Section"
-						android:id="@+id/section_home"
-						android:drawableLeft="@drawable/ic_section_home"
-						android:drawableStart="@drawable/ic_section_home"
-						android:text="@string/category_home" />
-					<de.markusfisch.android.pielauncher.widget.PreferenceView
-						style="@style/Section"
 						android:id="@+id/section_pie"
 						android:drawableLeft="@drawable/ic_section_pie"
 						android:drawableStart="@drawable/ic_section_pie"
 						android:text="@string/category_pie_menu" />
-					<de.markusfisch.android.pielauncher.widget.PreferenceView
-						style="@style/Section"
-						android:id="@+id/section_look"
-						android:drawableLeft="@drawable/ic_section_look"
-						android:drawableStart="@drawable/ic_section_look"
-						android:text="@string/category_look" />
 					<de.markusfisch.android.pielauncher.widget.PreferenceView
 						style="@style/Section"
 						android:id="@+id/section_drawer"
@@ -74,6 +62,12 @@
 						android:text="@string/category_search" />
 					<de.markusfisch.android.pielauncher.widget.PreferenceView
 						style="@style/Section"
+						android:id="@+id/section_look"
+						android:drawableLeft="@drawable/ic_section_look"
+						android:drawableStart="@drawable/ic_section_look"
+						android:text="@string/category_look" />
+					<de.markusfisch.android.pielauncher.widget.PreferenceView
+						style="@style/Section"
 						android:id="@+id/section_apps"
 						android:drawableLeft="@drawable/ic_section_folders"
 						android:drawableStart="@drawable/ic_section_folders"
@@ -85,43 +79,17 @@
 						android:drawableStart="@drawable/ic_section_backup"
 						android:text="@string/category_backup" />
 					<de.markusfisch.android.pielauncher.widget.PreferenceView
-						style="@style/SectionLast"
+						style="@style/Section"
 						android:id="@+id/section_advanced"
 						android:drawableLeft="@drawable/ic_preferences"
 						android:drawableStart="@drawable/ic_preferences"
 						android:text="@string/category_advanced" />
-				</LinearLayout>
-				<LinearLayout
-					style="@style/Card"
-					android:id="@+id/page_home"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:orientation="vertical"
-					android:visibility="gone">
 					<de.markusfisch.android.pielauncher.widget.PreferenceView
-						style="@style/PreferenceWithSeparator"
-						android:id="@+id/orientation"
-						android:text="@string/orientation_portrait" />
-					<de.markusfisch.android.pielauncher.widget.PreferenceView
-						style="@style/PreferenceWithSeparator"
-						android:id="@+id/dead_zone"
-						android:text="@string/dead_zone_top_bottom" />
-					<de.markusfisch.android.pielauncher.widget.PreferenceView
-						style="@style/PreferenceWithSeparator"
-						android:id="@+id/expand_panel_in_dead_zone"
-						android:text="@string/expand_panel_in_dead_zone_yes" />
-					<de.markusfisch.android.pielauncher.widget.PreferenceView
-						style="@style/PreferenceWithSeparator"
-						android:id="@+id/immersive_mode"
-						android:text="@string/immersive_mode_disabled" />
-					<de.markusfisch.android.pielauncher.widget.PreferenceView
-						style="@style/PreferenceWithSeparator"
-						android:id="@+id/home_button_opens_drawer"
-						android:text="@string/home_button_opens_drawer_yes" />
-					<de.markusfisch.android.pielauncher.widget.PreferenceView
-						style="@style/Preference"
-						android:id="@+id/open_list_with"
-						android:text="@string/open_list_with_tap" />
+						style="@style/SectionLast"
+						android:id="@+id/section_about"
+						android:drawableLeft="@drawable/ic_info"
+						android:drawableStart="@drawable/ic_info"
+						android:text="@string/category_about" />
 				</LinearLayout>
 				<LinearLayout
 					style="@style/Card"
@@ -143,9 +111,85 @@
 						android:id="@+id/folder_dwell"
 						android:text="@string/folder_dwell_medium" />
 					<de.markusfisch.android.pielauncher.widget.PreferenceView
-						style="@style/Preference"
+						style="@style/PreferenceWithSeparator"
 						android:id="@+id/animate_in_out"
 						android:text="@string/animate_in_out_yes" />
+					<de.markusfisch.android.pielauncher.widget.PreferenceView
+						style="@style/PreferenceWithSeparator"
+						android:id="@+id/dead_zone"
+						android:text="@string/dead_zone_top_bottom" />
+					<de.markusfisch.android.pielauncher.widget.PreferenceView
+						style="@style/Preference"
+						android:id="@+id/expand_panel_in_dead_zone"
+						android:text="@string/expand_panel_in_dead_zone_yes" />
+				</LinearLayout>
+				<LinearLayout
+					style="@style/Card"
+					android:id="@+id/page_drawer"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:orientation="vertical"
+					android:visibility="gone">
+					<de.markusfisch.android.pielauncher.widget.PreferenceView
+						style="@style/PreferenceWithSeparator"
+						android:id="@+id/open_list_with"
+						android:text="@string/open_list_with_tap" />
+					<de.markusfisch.android.pielauncher.widget.PreferenceView
+						style="@style/PreferenceWithSeparator"
+						android:id="@+id/home_button_opens_drawer"
+						android:text="@string/home_button_opens_drawer_yes" />
+					<de.markusfisch.android.pielauncher.widget.PreferenceView
+						style="@style/PreferenceWithSeparator"
+						android:id="@+id/drawer_layout"
+						android:text="@string/drawer_layout_vertical" />
+					<de.markusfisch.android.pielauncher.widget.PreferenceView
+						style="@style/PreferenceWithSeparator"
+						android:id="@+id/list_animation_appearance"
+						android:text="@string/list_animation_appearance_slide" />
+					<de.markusfisch.android.pielauncher.widget.PreferenceView
+						style="@style/PreferenceWithSeparator"
+						android:id="@+id/show_app_names"
+						android:text="@string/show_app_names_always" />
+					<de.markusfisch.android.pielauncher.widget.PreferenceView
+						style="@style/PreferenceWithSeparator"
+						android:id="@+id/app_sorting"
+						android:text="@string/app_sorting_alphabetical" />
+					<de.markusfisch.android.pielauncher.widget.PreferenceView
+						style="@style/PreferenceWithSeparator"
+						android:id="@+id/exclude_pie"
+						android:text="@string/exclude_pie_no" />
+					<de.markusfisch.android.pielauncher.widget.PreferenceView
+						style="@style/Preference"
+						android:id="@+id/icon_press"
+						android:text="@string/icon_press_default" />
+				</LinearLayout>
+				<LinearLayout
+					style="@style/Card"
+					android:id="@+id/page_search"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:orientation="vertical"
+					android:visibility="gone">
+					<de.markusfisch.android.pielauncher.widget.PreferenceView
+						style="@style/PreferenceWithSeparator"
+						android:id="@+id/display_keyboard"
+						android:text="@string/display_keyboard_yes" />
+					<de.markusfisch.android.pielauncher.widget.PreferenceView
+						style="@style/PreferenceWithSeparator"
+						android:id="@+id/search_strictness"
+						android:text="@string/search_strictness_hamming" />
+					<de.markusfisch.android.pielauncher.widget.PreferenceView
+						style="@style/PreferenceWithSeparator"
+						android:id="@+id/search_parameter"
+						android:text="@string/search_parameter_app_label" />
+					<de.markusfisch.android.pielauncher.widget.PreferenceView
+						style="@style/PreferenceWithSeparator"
+						android:id="@+id/space_action"
+						android:text="@string/space_action_move_selection" />
+					<de.markusfisch.android.pielauncher.widget.PreferenceView
+						style="@style/Preference"
+						android:id="@+id/auto_launch_matching"
+						android:text="@string/auto_launch_matching_no" />
 				</LinearLayout>
 				<LinearLayout
 					style="@style/Card"
@@ -172,68 +216,16 @@
 						android:text="@string/icon_pack_default" />
 					<de.markusfisch.android.pielauncher.widget.PreferenceView
 						style="@style/PreferenceWithSeparator"
-						android:id="@+id/show_app_names"
-						android:text="@string/show_app_names_always" />
-					<de.markusfisch.android.pielauncher.widget.PreferenceView
-						style="@style/PreferenceWithSeparator"
-						android:id="@+id/list_animation_appearance"
-						android:text="@string/list_animation_appearance_slide" />
-					<de.markusfisch.android.pielauncher.widget.PreferenceView
-						style="@style/Preference"
 						android:id="@+id/use_light_dialogs"
 						android:text="@string/use_light_dialogs_no" />
-				</LinearLayout>
-				<LinearLayout
-					style="@style/Card"
-					android:id="@+id/page_drawer"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:orientation="vertical"
-					android:visibility="gone">
 					<de.markusfisch.android.pielauncher.widget.PreferenceView
 						style="@style/PreferenceWithSeparator"
-						android:id="@+id/app_sorting"
-						android:text="@string/app_sorting_alphabetical" />
-					<de.markusfisch.android.pielauncher.widget.PreferenceView
-						style="@style/PreferenceWithSeparator"
-						android:id="@+id/exclude_pie"
-						android:text="@string/exclude_pie_no" />
-					<de.markusfisch.android.pielauncher.widget.PreferenceView
-						style="@style/PreferenceWithSeparator"
-						android:id="@+id/icon_press"
-						android:text="@string/icon_press_default" />
-					<de.markusfisch.android.pielauncher.widget.PreferenceView
-						style="@style/PreferenceWithSeparator"
-						android:id="@+id/display_keyboard"
-						android:text="@string/display_keyboard_yes" />
+						android:id="@+id/immersive_mode"
+						android:text="@string/immersive_mode_disabled" />
 					<de.markusfisch.android.pielauncher.widget.PreferenceView
 						style="@style/Preference"
-						android:id="@+id/drawer_layout"
-						android:text="@string/drawer_layout_vertical" />
-				</LinearLayout>
-				<LinearLayout
-					style="@style/Card"
-					android:id="@+id/page_search"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:orientation="vertical"
-					android:visibility="gone">
-					<de.markusfisch.android.pielauncher.widget.PreferenceView
-						style="@style/PreferenceWithSeparator"
-						android:id="@+id/search_strictness"
-						android:text="@string/search_strictness_hamming" />
-					<de.markusfisch.android.pielauncher.widget.PreferenceView
-						style="@style/PreferenceWithSeparator"
-						android:id="@+id/search_parameter"
-						android:text="@string/search_parameter_app_label" />
-					<de.markusfisch.android.pielauncher.widget.PreferenceView
-						style="@style/PreferenceWithSeparator"
-						android:id="@+id/space_action"
-						android:text="@string/space_action_move_selection" />
-					<de.markusfisch.android.pielauncher.widget.PreferenceView
-						style="@style/Preference"
-						android:id="@+id/auto_launch_matching"
-						android:text="@string/auto_launch_matching_no" />
+						android:id="@+id/orientation"
+						android:text="@string/orientation_portrait" />
 				</LinearLayout>
 				<LinearLayout
 					style="@style/Card"
@@ -272,9 +264,13 @@
 						android:visibility="gone"
 						android:text="@string/sync_from_beta" />
 					<de.markusfisch.android.pielauncher.widget.PreferenceView
-						style="@style/Preference"
+						style="@style/PreferenceWithSeparator"
 						android:id="@+id/import_settings"
 						android:text="@string/import_settings" />
+					<de.markusfisch.android.pielauncher.widget.PreferenceView
+						style="@style/Preference"
+						android:id="@+id/cloud_backup"
+						android:text="@string/cloud_backup_blocked" />
 				</LinearLayout>
 				<LinearLayout
 					style="@style/Card"
@@ -291,6 +287,29 @@
 						style="@style/Preference"
 						android:id="@+id/force_relaunch"
 						android:text="@string/force_relaunch_no" />
+				</LinearLayout>
+				<LinearLayout
+					style="@style/Card"
+					android:id="@+id/page_about"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:orientation="vertical"
+					android:visibility="gone">
+					<de.markusfisch.android.pielauncher.widget.PreferenceView
+						style="@style/PreferenceWithSeparator"
+						android:id="@+id/about_app" />
+					<de.markusfisch.android.pielauncher.widget.PreferenceView
+						style="@style/PreferenceWithSeparator"
+						android:id="@+id/about_original" />
+					<de.markusfisch.android.pielauncher.widget.PreferenceView
+						style="@style/PreferenceWithSeparator"
+						android:id="@+id/about_fork" />
+					<de.markusfisch.android.pielauncher.widget.PreferenceView
+						style="@style/PreferenceWithSeparator"
+						android:id="@+id/about_privacy" />
+					<de.markusfisch.android.pielauncher.widget.PreferenceView
+						style="@style/Preference"
+						android:id="@+id/about_license" />
 				</LinearLayout>
 			</LinearLayout>
 			<Button

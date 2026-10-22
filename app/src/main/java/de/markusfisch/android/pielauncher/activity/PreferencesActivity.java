@@ -54,18 +54,16 @@ public class PreferencesActivity extends Activity {
 	private static final int REQUEST_IMPORT = 2;
 	// Entry in the section list, its page, title and what is in it.
 	private static final int[][] SECTIONS = {
-			{R.id.section_home, R.id.page_home, R.string.category_home,
-					R.string.section_home_summary},
 			{R.id.section_pie, R.id.page_pie, R.string.category_pie_menu,
 					R.string.section_pie_summary},
-			{R.id.section_look, R.id.page_look, R.string.category_look,
-					R.string.section_look_summary},
 			{R.id.section_drawer, R.id.page_drawer,
 					R.string.category_app_drawer,
 					R.string.section_drawer_summary},
 			{R.id.section_search, R.id.page_search,
 					R.string.category_search,
 					R.string.section_search_summary},
+			{R.id.section_look, R.id.page_look, R.string.category_look,
+					R.string.section_look_summary},
 			{R.id.section_apps, R.id.page_apps, R.string.category_apps,
 					R.string.section_apps_summary},
 			{R.id.category_backup, R.id.page_backup,
@@ -74,7 +72,13 @@ public class PreferencesActivity extends Activity {
 			{R.id.section_advanced, R.id.page_advanced,
 					R.string.category_advanced,
 					R.string.section_advanced_summary},
+			{R.id.section_about, R.id.page_about, R.string.category_about,
+					R.string.section_about_summary},
 	};
+	private static final String ORIGINAL_URL =
+			"https://github.com/markusfisch/PieLauncher";
+	private static final String FORK_URL =
+			"https://github.com/source-opener/PieLauncher";
 
 	private final Handler handler = new Handler(Looper.getMainLooper());
 	private final ExecutorService executor =
@@ -146,6 +150,7 @@ public class PreferencesActivity extends Activity {
 
 			initPreferences();
 			initSections();
+			initAbout();
 			findViewById(R.id.hidden_apps).setOnClickListener((view) -> {
 				HiddenAppsActivity.start(this);
 			});
@@ -239,6 +244,36 @@ public class PreferencesActivity extends Activity {
 			TextView entry = findViewById(section[0]);
 			updatePreference(entry, title, section[3]);
 			entry.setOnClickListener((v) -> showPage(page, title));
+		}
+	}
+
+	// This fork is someone else's launcher with additions, and says so.
+	// The links only hand a web address to a browser on a tap; this app
+	// has no internet access of its own.
+	private void initAbout() {
+		String version = SettingsSync.versionNameOf(this, getPackageName());
+		updatePreference(findViewById(R.id.about_app), R.string.app_name,
+				getString(R.string.about_version,
+						version == null ? "" : version));
+		updatePreference(findViewById(R.id.about_original),
+				R.string.about_original, R.string.about_original_summary);
+		findViewById(R.id.about_original).setOnClickListener((v) ->
+				openUrl(ORIGINAL_URL));
+		updatePreference(findViewById(R.id.about_fork),
+				R.string.about_fork, R.string.about_fork_summary);
+		findViewById(R.id.about_fork).setOnClickListener((v) ->
+				openUrl(FORK_URL));
+		updatePreference(findViewById(R.id.about_privacy),
+				R.string.about_privacy, R.string.about_privacy_summary);
+		updatePreference(findViewById(R.id.about_license),
+				R.string.about_license, R.string.about_license_summary);
+	}
+
+	private void openUrl(String url) {
+		try {
+			startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+		} catch (ActivityNotFoundException e) {
+			toast(R.string.no_browser);
 		}
 	}
 
@@ -533,6 +568,16 @@ public class PreferencesActivity extends Activity {
 				PreferencesActivity::getListAnimationAppearanceOptions,
 				() -> prefs.listAnimationAppearance(),
 				(value) -> prefs.setListAnimationAppearance(value));
+		// Android only backs apps up on its own from 6 on.
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+			initPreference(R.id.cloud_backup,
+					R.string.cloud_backup,
+					PreferencesActivity::getCloudBackupOptions,
+					() -> prefs.cloudBackup(),
+					(value) -> prefs.setCloudBackup(value));
+		} else {
+			findViewById(R.id.cloud_backup).setVisibility(View.GONE);
+		}
 		initPreference(R.id.drawer_layout,
 				R.string.drawer_layout,
 				PreferencesActivity::getDrawerLayoutOptions,
@@ -870,6 +915,13 @@ public class PreferencesActivity extends Activity {
 				R.string.list_animation_appearance_slide);
 		map.put(Preferences.LIST_APPEARANCE_ANIMATION_FADE,
 				R.string.list_animation_appearance_fade);
+		return map;
+	}
+
+	private static Map<Boolean, Integer> getCloudBackupOptions() {
+		Map<Boolean, Integer> map = new LinkedHashMap<>();
+		map.put(Boolean.FALSE, R.string.cloud_backup_blocked);
+		map.put(Boolean.TRUE, R.string.cloud_backup_allowed);
 		return map;
 	}
 
