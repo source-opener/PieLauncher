@@ -35,6 +35,32 @@
 		android:contentDescription="@string/preferences"
 		android:src="@drawable/ic_preferences"
 		android:visibility="gone"/>
+	<LinearLayout
+		android:id="@+id/arrange_bar"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="top|center_horizontal"
+		android:layout_marginTop="48dp"
+		android:background="@drawable/panel"
+		android:orientation="horizontal"
+		android:padding="8dp"
+		android:visibility="gone">
+		<TextView
+			style="@style/ArrangeButton"
+			android:id="@+id/arrange_undo"
+			android:drawableTop="@drawable/ic_undo"
+			android:text="@string/folder_undo" />
+		<TextView
+			style="@style/ArrangeButton"
+			android:id="@+id/arrange_reset"
+			android:drawableTop="@drawable/ic_restore"
+			android:text="@string/folder_reset" />
+		<TextView
+			style="@style/ArrangeButton"
+			android:id="@+id/arrange_done"
+			android:drawableTop="@drawable/ic_done"
+			android:text="@string/folder_done" />
+	</LinearLayout>
 	<de.markusfisch.android.pielauncher.widget.FolderPanelView
 		android:id="@+id/folder_panel"
 		android:layout_width="match_parent"

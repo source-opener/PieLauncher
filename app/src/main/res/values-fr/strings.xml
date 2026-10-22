@@ -232,4 +232,6 @@
 	<string name="folder_reset">Réinitialiser</string>
 	<string name="folder_done">OK</string>
 	<string name="folder_drag_hint">Faites glisser les apps pour les déplacer</string>
+	<string name="action_arrange">Organiser</string>
+	<string name="app_sorting_custom">À la main</string>
 </resources>

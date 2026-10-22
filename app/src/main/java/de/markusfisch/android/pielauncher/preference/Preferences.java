@@ -40,6 +40,7 @@ public class Preferences {
 	public static final int SEARCH_PARAMETER_PACKAGE_NAME = 1;
 	public static final int APP_SORT_ALPHABETICAL = 0;
 	public static final int APP_SORT_FRECENCY = 1;
+	public static final int APP_SORT_CUSTOM = 2;
 	public static final int SHOW_APP_NAMES_ALWAYS = 0;
 	public static final int SHOW_APP_NAMES_SEARCH = 1;
 	public static final int SHOW_APP_NAMES_NEVER = 2;

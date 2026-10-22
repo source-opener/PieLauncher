@@ -232,4 +232,6 @@
 	<string name="folder_reset">Zurücksetzen</string>
 	<string name="folder_done">Fertig</string>
 	<string name="folder_drag_hint">Apps zum Verschieben ziehen</string>
+	<string name="action_arrange">Anordnen</string>
+	<string name="app_sorting_custom">Von Hand</string>
 </resources>
