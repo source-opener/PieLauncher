@@ -33,9 +33,19 @@
 	<style name="PreferenceWithSeparator" parent="Preference">
 		<item name="android:background">@drawable/bottom_border</item>
 	</style>
+	<style name="Card">
+		<item name="android:layout_width">match_parent</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:layout_marginLeft">12dp</item>
+		<item name="android:layout_marginRight">12dp</item>
+		<item name="android:layout_marginTop">6dp</item>
+		<item name="android:layout_marginBottom">6dp</item>
+		<item name="android:background">@drawable/card</item>
+		<item name="android:orientation">vertical</item>
+	</style>
 	<style name="SectionLast" parent="Preference">
-		<item name="android:textColor">@color/text_color</item>
-		<item name="android:textSize">18sp</item>
+		<item name="android:drawablePadding">20dp</item>
+		<item name="android:gravity">center_vertical</item>
 	</style>
 	<style name="Section" parent="SectionLast">
 		<item name="android:background">@drawable/bottom_border</item>

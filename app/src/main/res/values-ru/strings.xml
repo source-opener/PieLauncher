@@ -198,4 +198,12 @@
 	<string name="drawer_layout_horizontal">Горизонтально (экспериментально)</string>
 	<string name="organise">Упорядочить</string>
 	<string name="icon_menu">Значок</string>
+	<string name="section_home_summary">Ориентация, мёртвая зона, кнопка «Домой»</string>
+	<string name="section_pie_summary">Разделённое меню, круг, папки</string>
+	<string name="section_look_summary">Фон, размытие, значки, названия</string>
+	<string name="section_drawer_summary">Сортировка, клавиатура, расположение</string>
+	<string name="section_search_summary">Точность, пробел, автозапуск</string>
+	<string name="section_apps_summary">Скрытые, изменённые, рабочая папка</string>
+	<string name="section_backup_summary">Экспорт, импорт, синхронизация</string>
+	<string name="section_advanced_summary">Вибрация, перезапуск</string>
 </resources>

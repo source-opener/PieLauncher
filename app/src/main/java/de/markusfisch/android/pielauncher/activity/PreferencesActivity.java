@@ -52,20 +52,28 @@ public class PreferencesActivity extends Activity {
 	private static final String WELCOME = "welcome";
 	private static final int REQUEST_EXPORT = 1;
 	private static final int REQUEST_IMPORT = 2;
-	// Entry in the section list, its page, and the page's title.
+	// Entry in the section list, its page, title and what is in it.
 	private static final int[][] SECTIONS = {
-			{R.id.section_home, R.id.page_home, R.string.category_home},
-			{R.id.section_pie, R.id.page_pie, R.string.category_pie_menu},
-			{R.id.section_look, R.id.page_look, R.string.category_look},
+			{R.id.section_home, R.id.page_home, R.string.category_home,
+					R.string.section_home_summary},
+			{R.id.section_pie, R.id.page_pie, R.string.category_pie_menu,
+					R.string.section_pie_summary},
+			{R.id.section_look, R.id.page_look, R.string.category_look,
+					R.string.section_look_summary},
 			{R.id.section_drawer, R.id.page_drawer,
-					R.string.category_app_drawer},
+					R.string.category_app_drawer,
+					R.string.section_drawer_summary},
 			{R.id.section_search, R.id.page_search,
-					R.string.category_search},
-			{R.id.section_apps, R.id.page_apps, R.string.category_apps},
+					R.string.category_search,
+					R.string.section_search_summary},
+			{R.id.section_apps, R.id.page_apps, R.string.category_apps,
+					R.string.section_apps_summary},
 			{R.id.category_backup, R.id.page_backup,
-					R.string.category_backup},
+					R.string.category_backup,
+					R.string.section_backup_summary},
 			{R.id.section_advanced, R.id.page_advanced,
-					R.string.category_advanced},
+					R.string.category_advanced,
+					R.string.section_advanced_summary},
 	};
 
 	private final Handler handler = new Handler(Looper.getMainLooper());
@@ -228,8 +236,9 @@ public class PreferencesActivity extends Activity {
 		for (int[] section : SECTIONS) {
 			View page = findViewById(section[1]);
 			int title = section[2];
-			findViewById(section[0]).setOnClickListener((v) ->
-					showPage(page, title));
+			TextView entry = findViewById(section[0]);
+			updatePreference(entry, title, section[3]);
+			entry.setOnClickListener((v) -> showPage(page, title));
 		}
 	}
 

@@ -37,6 +37,7 @@
 				android:layout_height="wrap_content"
 				android:orientation="vertical">
 				<LinearLayout
+					style="@style/Card"
 					android:id="@+id/sections"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
@@ -44,37 +45,54 @@
 					<de.markusfisch.android.pielauncher.widget.PreferenceView
 						style="@style/Section"
 						android:id="@+id/section_home"
+						android:drawableLeft="@drawable/ic_section_home"
+						android:drawableStart="@drawable/ic_section_home"
 						android:text="@string/category_home" />
 					<de.markusfisch.android.pielauncher.widget.PreferenceView
 						style="@style/Section"
 						android:id="@+id/section_pie"
+						android:drawableLeft="@drawable/ic_section_pie"
+						android:drawableStart="@drawable/ic_section_pie"
 						android:text="@string/category_pie_menu" />
 					<de.markusfisch.android.pielauncher.widget.PreferenceView
 						style="@style/Section"
 						android:id="@+id/section_look"
+						android:drawableLeft="@drawable/ic_section_look"
+						android:drawableStart="@drawable/ic_section_look"
 						android:text="@string/category_look" />
 					<de.markusfisch.android.pielauncher.widget.PreferenceView
 						style="@style/Section"
 						android:id="@+id/section_drawer"
+						android:drawableLeft="@drawable/ic_section_drawer"
+						android:drawableStart="@drawable/ic_section_drawer"
 						android:text="@string/category_app_drawer" />
 					<de.markusfisch.android.pielauncher.widget.PreferenceView
 						style="@style/Section"
 						android:id="@+id/section_search"
+						android:drawableLeft="@drawable/ic_search"
+						android:drawableStart="@drawable/ic_search"
 						android:text="@string/category_search" />
 					<de.markusfisch.android.pielauncher.widget.PreferenceView
 						style="@style/Section"
 						android:id="@+id/section_apps"
+						android:drawableLeft="@drawable/ic_section_folders"
+						android:drawableStart="@drawable/ic_section_folders"
 						android:text="@string/category_apps" />
 					<de.markusfisch.android.pielauncher.widget.PreferenceView
 						style="@style/Section"
 						android:id="@+id/category_backup"
+						android:drawableLeft="@drawable/ic_section_backup"
+						android:drawableStart="@drawable/ic_section_backup"
 						android:text="@string/category_backup" />
 					<de.markusfisch.android.pielauncher.widget.PreferenceView
 						style="@style/SectionLast"
 						android:id="@+id/section_advanced"
+						android:drawableLeft="@drawable/ic_preferences"
+						android:drawableStart="@drawable/ic_preferences"
 						android:text="@string/category_advanced" />
 				</LinearLayout>
 				<LinearLayout
+					style="@style/Card"
 					android:id="@+id/page_home"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
@@ -106,6 +124,7 @@
 						android:text="@string/open_list_with_tap" />
 				</LinearLayout>
 				<LinearLayout
+					style="@style/Card"
 					android:id="@+id/page_pie"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
@@ -129,6 +148,7 @@
 						android:text="@string/animate_in_out_yes" />
 				</LinearLayout>
 				<LinearLayout
+					style="@style/Card"
 					android:id="@+id/page_look"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
@@ -164,6 +184,7 @@
 						android:text="@string/use_light_dialogs_no" />
 				</LinearLayout>
 				<LinearLayout
+					style="@style/Card"
 					android:id="@+id/page_drawer"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
@@ -191,6 +212,7 @@
 						android:text="@string/drawer_layout_vertical" />
 				</LinearLayout>
 				<LinearLayout
+					style="@style/Card"
 					android:id="@+id/page_search"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
@@ -214,6 +236,7 @@
 						android:text="@string/auto_launch_matching_no" />
 				</LinearLayout>
 				<LinearLayout
+					style="@style/Card"
 					android:id="@+id/page_apps"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
@@ -233,6 +256,7 @@
 						android:text="@string/move_work_apps" />
 				</LinearLayout>
 				<LinearLayout
+					style="@style/Card"
 					android:id="@+id/page_backup"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
@@ -253,6 +277,7 @@
 						android:text="@string/import_settings" />
 				</LinearLayout>
 				<LinearLayout
+					style="@style/Card"
 					android:id="@+id/page_advanced"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"

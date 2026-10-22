@@ -198,4 +198,12 @@
 	<string name="drawer_layout_horizontal">横向（实验性）</string>
 	<string name="organise">整理</string>
 	<string name="icon_menu">图标</string>
+	<string name="section_home_summary">方向、死区、主页键</string>
+	<string name="section_pie_summary">分割菜单、画圈、文件夹</string>
+	<string name="section_look_summary">背景、模糊、图标包、名称</string>
+	<string name="section_drawer_summary">排序、键盘、布局</string>
+	<string name="section_search_summary">精确度、空格键、自动启动</string>
+	<string name="section_apps_summary">隐藏、自定义、工作文件夹</string>
+	<string name="section_backup_summary">导出、导入、同步</string>
+	<string name="section_advanced_summary">触感反馈、重启</string>
 </resources>

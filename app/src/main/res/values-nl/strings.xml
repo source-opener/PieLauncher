@@ -198,4 +198,12 @@
 	<string name="drawer_layout_horizontal">Horizontaal (experimenteel)</string>
 	<string name="organise">Ordenen</string>
 	<string name="icon_menu">Pictogram</string>
+	<string name="section_home_summary">Oriëntatie, dode zone, thuisknop</string>
+	<string name="section_pie_summary">Gesplitst menu, cirkelen, mappen</string>
+	<string name="section_look_summary">Achtergrond, vervaging, pictogrampakket, namen</string>
+	<string name="section_drawer_summary">Sortering, toetsenbord, indeling</string>
+	<string name="section_search_summary">Nauwkeurigheid, spatie, automatisch starten</string>
+	<string name="section_apps_summary">Verborgen, aangepast, werkmap</string>
+	<string name="section_backup_summary">Exporteren, importeren, synchroniseren</string>
+	<string name="section_advanced_summary">Haptiek, herstarten</string>
 </resources>

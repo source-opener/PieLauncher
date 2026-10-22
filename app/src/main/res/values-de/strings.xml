@@ -198,4 +198,12 @@
 	<string name="drawer_layout_horizontal">Horizontal (experimentell)</string>
 	<string name="organise">Organisieren</string>
 	<string name="icon_menu">Symbol</string>
+	<string name="section_home_summary">Ausrichtung, tote Zone, Home-Taste</string>
+	<string name="section_pie_summary">Geteiltes Menü, Kreisen, Ordner</string>
+	<string name="section_look_summary">Hintergrund, Unschärfe, Symbolpaket, Namen</string>
+	<string name="section_drawer_summary">Sortierung, Tastatur, Anordnung</string>
+	<string name="section_search_summary">Genauigkeit, Leertaste, Autostart</string>
+	<string name="section_apps_summary">Versteckt, angepasst, Arbeitsordner</string>
+	<string name="section_backup_summary">Export, Import, Abgleich</string>
+	<string name="section_advanced_summary">Haptik, Neustart</string>
 </resources>

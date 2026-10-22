@@ -198,4 +198,12 @@
 	<string name="drawer_layout_horizontal">Horizontal (experimental)</string>
 	<string name="organise">Organizar</string>
 	<string name="icon_menu">Ícone</string>
+	<string name="section_home_summary">Orientação, zona morta, botão início</string>
+	<string name="section_pie_summary">Menu dividido, círculo, pastas</string>
+	<string name="section_look_summary">Fundo, desfoque, pacote de ícones, nomes</string>
+	<string name="section_drawer_summary">Ordenação, teclado, layout</string>
+	<string name="section_search_summary">Precisão, espaço, abrir sozinho</string>
+	<string name="section_apps_summary">Ocultos, personalizados, pasta de trabalho</string>
+	<string name="section_backup_summary">Exportar, importar, sincronizar</string>
+	<string name="section_advanced_summary">Vibração, reinício</string>
 </resources>
