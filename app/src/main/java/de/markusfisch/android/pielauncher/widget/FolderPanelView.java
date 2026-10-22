@@ -26,11 +26,11 @@ import de.markusfisch.android.pielauncher.content.Folders;
 import de.markusfisch.android.pielauncher.content.LauncherItemKey;
 import de.markusfisch.android.pielauncher.graphics.Converter;
 
-// Shows the apps of a folder in a panel right above the keyboard, filled
-// from the bottom row up. Drawn on top of the drawer in the same window,
-// so the keyboard stays where it is. In edit mode apps can be dragged to
-// another place; every move can be undone, and the order can be reset to
-// alphabetical.
+// Shows the apps of a folder in a panel right above the keyboard, as
+// icons only like a small drawer of its own, filled from the bottom row
+// up. Drawn on top of the drawer in the same window, so the keyboard
+// stays where it is. In edit mode apps can be dragged to another place;
+// every move can be undone, and the order can be reset to alphabetical.
 public class FolderPanelView extends View {
 	public interface Listener {
 		void onLaunch(Apps.AppIcon icon);
@@ -181,7 +181,7 @@ public class FolderPanelView extends View {
 		canvas.restore();
 		if (dragging) {
 			drawIcon(canvas, icons.get(pressed), touchX - cellWidth / 2,
-					touchY - iconSize / 2);
+					touchY - cellHeight / 2);
 		}
 	}
 
@@ -340,7 +340,7 @@ public class FolderPanelView extends View {
 				Math.round(480f * dp));
 		int left = (width - panelWidth) / 2;
 		cellWidth = (panelWidth - padding * 2) / COLUMNS;
-		cellHeight = iconSize + Math.round(paintText.getTextSize() * 2.2f);
+		cellHeight = iconSize + Math.round(16f * dp);
 		gridLeft = left + padding;
 		int bottom = getHeight() - covered - padding;
 		int buttonHeight = iconSize + Math.round(paintText.getTextSize());
@@ -411,11 +411,9 @@ public class FolderPanelView extends View {
 
 	private void drawIcon(Canvas canvas, Apps.AppIcon icon, int x, int y) {
 		int ix = x + (cellWidth - iconSize) / 2;
-		drawRect.set(ix, y, ix + iconSize, y + iconSize);
+		int iy = y + (cellHeight - iconSize) / 2;
+		drawRect.set(ix, iy, ix + iconSize, iy + iconSize);
 		canvas.drawBitmap(icon.bitmap, null, drawRect, paintIcon);
-		CharSequence label = icon.fitLabel(paintText, cellWidth - 4f * dp);
-		canvas.drawText(label, 0, label.length(), x + cellWidth / 2f,
-				y + iconSize + paintText.getTextSize() * 1.3f, paintText);
 	}
 
 	// Rows count from the bottom, so the first app sits bottom left.
