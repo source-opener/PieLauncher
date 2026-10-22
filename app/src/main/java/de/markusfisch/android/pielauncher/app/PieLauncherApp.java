@@ -17,6 +17,7 @@ import de.markusfisch.android.pielauncher.graphics.IconPack;
 import de.markusfisch.android.pielauncher.io.AppIconsStorage;
 import de.markusfisch.android.pielauncher.io.AppLabelsStorage;
 import de.markusfisch.android.pielauncher.io.AppTagsStorage;
+import de.markusfisch.android.pielauncher.io.DrawerOrderStorage;
 import de.markusfisch.android.pielauncher.preference.Preferences;
 import de.markusfisch.android.pielauncher.receiver.ConfigurationChangedReceiver;
 import de.markusfisch.android.pielauncher.receiver.ManagedProfileEventReceiver;
@@ -27,6 +28,8 @@ public class PieLauncherApp extends Application {
 	public static final IconPack iconPack = new IconPack();
 	public static final AppLabelsStorage appLabels = new AppLabelsStorage();
 	public static final AppTagsStorage appTags = new AppTagsStorage();
+	public static final DrawerOrderStorage drawerOrder =
+			new DrawerOrderStorage();
 	public static final AppIconsStorage appIcons =
 			new AppIconsStorage(Database.APP_ICONS);
 	// Shown instead of appIcons while the work profile is paused.

@@ -37,6 +37,7 @@ public class HomeActivity extends Activity {
 	private ToolbarBackground toolbarBackground;
 	private AppPieView pieView;
 	private FolderPanelView folderPanel;
+	private View arrangeBar;
 	private EditText searchInput;
 	private ImageView prefsButton;
 	private boolean updateAfterTextChange = true;
@@ -53,6 +54,10 @@ public class HomeActivity extends Activity {
 
 	private void handleBack() {
 		if (folderPanel.hide()) {
+			return;
+		}
+		if (pieView.isArranging()) {
+			pieView.stopArranging();
 			return;
 		}
 		if (pieView.inEditMode()) {
@@ -111,6 +116,7 @@ public class HomeActivity extends Activity {
 		toolbarBackground = new ToolbarBackground(getResources());
 		pieView = findViewById(R.id.pie);
 		folderPanel = findViewById(R.id.folder_panel);
+		initArrangeBar();
 		searchInput = findViewById(R.id.search);
 		prefsButton = findViewById(R.id.preferences);
 
@@ -249,6 +255,16 @@ public class HomeActivity extends Activity {
 		super.onDestroy();
 	}
 
+	private void initArrangeBar() {
+		arrangeBar = findViewById(R.id.arrange_bar);
+		arrangeBar.findViewById(R.id.arrange_undo).setOnClickListener((v) ->
+				pieView.undoArrangement());
+		arrangeBar.findViewById(R.id.arrange_reset).setOnClickListener((v) ->
+				pieView.resetArrangement());
+		arrangeBar.findViewById(R.id.arrange_done).setOnClickListener((v) ->
+				pieView.stopArranging());
+	}
+
 	private void initPieView() {
 		pieView.setWindow(getWindow());
 		pieView.setListListener(new AppPieView.ListListener() {
@@ -276,6 +292,23 @@ public class HomeActivity extends Activity {
 						pieView.showOptionsFor(icon);
 					}
 				});
+			}
+
+			@Override
+			public void onArrange(boolean arranging) {
+				// The bar takes the place of the search field, which
+				// would only filter what is being arranged.
+				if (arranging) {
+					hideKeyboadAndPrefsButton();
+				}
+				searchInput.setVisibility(arranging
+						? View.INVISIBLE
+						: View.VISIBLE);
+				arrangeBar.setVisibility(arranging
+						? View.VISIBLE
+						: View.GONE);
+				setAlpha(arrangeBar.findViewById(R.id.arrange_undo),
+						pieView.canUndoArrangement() ? 1f : .4f);
 			}
 
 			@Override
@@ -473,6 +506,7 @@ public class HomeActivity extends Activity {
 
 	private void hideAllApps() {
 		folderPanel.hide();
+		pieView.stopArranging();
 		if (isSearchVisible()) {
 			searchInput.setVisibility(View.GONE);
 			hideKeyboadAndPrefsButton();

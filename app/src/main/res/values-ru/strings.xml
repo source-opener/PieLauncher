@@ -232,4 +232,6 @@
 	<string name="folder_reset">Сбросить</string>
 	<string name="folder_done">Готово</string>
 	<string name="folder_drag_hint">Перетаскивайте приложения</string>
+	<string name="action_arrange">Расставить</string>
+	<string name="app_sorting_custom">Вручную</string>
 </resources>

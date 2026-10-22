@@ -232,4 +232,6 @@
 	<string name="folder_reset">Reset</string>
 	<string name="folder_done">Done</string>
 	<string name="folder_drag_hint">Drag apps to move them</string>
+	<string name="action_arrange">Arrange</string>
+	<string name="app_sorting_custom">By hand</string>
 </resources>

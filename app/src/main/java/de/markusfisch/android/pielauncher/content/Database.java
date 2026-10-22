@@ -65,6 +65,7 @@ public class Database {
 	private static final String HIDE_CONTENTS = "hide_contents";
 	private static final String PINNED = "pinned";
 	private static final String APP_TAGS = "app_tags";
+	private static final String DRAWER_ORDER = "drawer_order";
 	private static final String TAGS = "tags";
 
 	private static final String PINNED_SHORTCUTS = "pinned_shortcuts";
@@ -94,6 +95,7 @@ public class Database {
 			HIDDEN_APPS,
 			APP_LABELS,
 			APP_TAGS,
+			DRAWER_ORDER,
 			APP_ICONS,
 			WORK_PAUSED_ICONS,
 			FOLDERS,
@@ -984,6 +986,47 @@ public class Database {
 				SQLiteDatabase.CONFLICT_REPLACE);
 	}
 
+	public void restoreDrawerOrder(
+			Context context,
+			Map<LauncherItemKey, Integer> positions) {
+		positions.clear();
+		Cursor cursor = openHelper.getReadableDatabase().query(DRAWER_ORDER,
+				new String[]{ITEM_KEY, POSITION},
+				null, null, null, null, null);
+		try {
+			while (cursor.moveToNext()) {
+				LauncherItemKey key = LauncherItemKey.unflattenFromString(
+						context, cursor.getString(0));
+				if (key != null && key.componentName != null) {
+					positions.put(key, cursor.getInt(1));
+				}
+			}
+		} finally {
+			cursor.close();
+		}
+	}
+
+	public void storeDrawerOrder(Context context, List<LauncherItemKey> keys) {
+		SQLiteDatabase db = openHelper.getWritableDatabase();
+		db.beginTransaction();
+		try {
+			db.delete(DRAWER_ORDER, null, null);
+			ContentValues values = new ContentValues();
+			for (int i = 0, size = keys == null ? 0 : keys.size();
+					i < size; ++i) {
+				LauncherItemKey key = keys.get(i);
+				values.put(ITEM_KEY, LauncherItemKey.flattenToString(context,
+						key.componentName, key.userHandle));
+				values.put(POSITION, i);
+				db.insertWithOnConflict(DRAWER_ORDER, null, values,
+						SQLiteDatabase.CONFLICT_REPLACE);
+			}
+			db.setTransactionSuccessful();
+		} finally {
+			db.endTransaction();
+		}
+	}
+
 	public void restoreAppTags(
 			Context context,
 			Map<LauncherItemKey, String> tags) {
@@ -1166,7 +1209,7 @@ public class Database {
 
 	private static class OpenHelper extends SQLiteOpenHelper {
 		OpenHelper(Context context) {
-			super(context, "app_cache.db", null, 11);
+			super(context, "app_cache.db", null, 12);
 		}
 
 		@Override
@@ -1201,6 +1244,7 @@ public class Database {
 					COMPONENT_NAME + " TEXT PRIMARY KEY NOT NULL);");
 			createLabelsTable(db);
 			createTagsTable(db);
+			createDrawerOrderTable(db);
 			createIconsTable(db, APP_ICONS);
 			createIconsTable(db, WORK_PAUSED_ICONS);
 			createFolderTables(db);
@@ -1234,6 +1278,12 @@ public class Database {
 			db.execSQL("CREATE TABLE " + table + " (" +
 					ITEM_KEY + " TEXT PRIMARY KEY NOT NULL," +
 					ICON + " BLOB NOT NULL);");
+		}
+
+		private static void createDrawerOrderTable(SQLiteDatabase db) {
+			db.execSQL("CREATE TABLE " + DRAWER_ORDER + " (" +
+					ITEM_KEY + " TEXT PRIMARY KEY NOT NULL," +
+					POSITION + " INTEGER NOT NULL);");
 		}
 
 		private static void createFolderTables(SQLiteDatabase db) {
@@ -1312,6 +1362,9 @@ public class Database {
 			}
 			if (oldVersion < 10) {
 				createIconsTable(db, WORK_PAUSED_ICONS);
+			}
+			if (oldVersion < 12) {
+				createDrawerOrderTable(db);
 			}
 		}
 

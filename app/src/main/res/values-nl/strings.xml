@@ -232,4 +232,6 @@
 	<string name="folder_reset">Herstellen</string>
 	<string name="folder_done">Klaar</string>
 	<string name="folder_drag_hint">Sleep apps om ze te verplaatsen</string>
+	<string name="action_arrange">Ordenen</string>
+	<string name="app_sorting_custom">Met de hand</string>
 </resources>

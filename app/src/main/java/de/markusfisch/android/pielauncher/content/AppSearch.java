@@ -119,6 +119,7 @@ public class AppSearch {
 		if (repo.isIndexing()) {
 			return null;
 		}
+		PieLauncherApp.drawerOrder.restore(context);
 
 		UserHandle privateUser = AppLauncher.findPrivateProfileUser(context);
 		boolean privateOnly = false;
@@ -254,6 +255,18 @@ public class AppSearch {
 	}
 
 	static Comparator<AppIcon> getAppComparator(int sorting, long now) {
+		if (sorting == Preferences.APP_SORT_CUSTOM) {
+			// Apps put somewhere by hand first, in that order, then the
+			// rest by name.
+			return (left, right) -> {
+				int l = PieLauncherApp.drawerOrder.positionOf(keyOf(left));
+				int r = PieLauncherApp.drawerOrder.positionOf(keyOf(right));
+				if (l != r) {
+					return l < 0 ? 1 : r < 0 ? -1 : l - r;
+				}
+				return appLabelComparator.compare(left, right);
+			};
+		}
 		if (sorting != Preferences.APP_SORT_FRECENCY) {
 			return appLabelComparator;
 		}
@@ -268,6 +281,10 @@ public class AppSearch {
 					? result
 					: appLabelComparator.compare(left, right);
 		};
+	}
+
+	private static LauncherItemKey keyOf(AppIcon icon) {
+		return new LauncherItemKey(icon.componentName, icon.userHandle);
 	}
 
 	static boolean matches(String subject, String query, int strategy) {

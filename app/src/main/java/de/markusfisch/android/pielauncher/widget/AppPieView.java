@@ -69,6 +69,8 @@ public class AppPieView extends View {
 		void onResetSearch();
 
 		void onOpenFolder(Apps.AppIcon folder);
+
+		void onArrange(boolean arranging);
 	}
 
 	private interface NameListener {
@@ -197,6 +199,14 @@ public class AppPieView extends View {
 	// Pinned folders lead the list; the horizontal layout gives them a
 	// row of their own.
 	private int pinnedFolderCount;
+	// Arranging the drawer by hand: the app being dragged, where the
+	// finger is, and the orders to go back to.
+	private final List<List<Apps.AppIcon>> arrangeUndo = new ArrayList<>();
+	private List<Apps.AppIcon> dragStart;
+	private boolean arranging;
+	private int dragIndex = -1;
+	private int dragX;
+	private int dragY;
 	private int lastScrollY;
 	private int lastInsertAt;
 	private int lastSelectedIcon;
@@ -384,7 +394,130 @@ public class AppPieView extends View {
 	}
 
 	public boolean appListNotScrolled() {
-		return mode != MODE_LIST || (getScrollY() == 0 && !scrollingFolders);
+		return mode != MODE_LIST || (getScrollY() == 0 &&
+				!scrollingFolders && !arranging);
+	}
+
+	public boolean isArranging() {
+		return arranging;
+	}
+
+	public boolean canUndoArrangement() {
+		return !arrangeUndo.isEmpty();
+	}
+
+	// Lets apps be dragged to another place in the drawer. Sorting turns
+	// to "By hand", starting from the order shown now.
+	public void startArranging() {
+		if (mode != MODE_LIST || appListIsFiltered || openFolderId > -1) {
+			return;
+		}
+		if (prefs.getAppSorting() != Preferences.APP_SORT_CUSTOM) {
+			saveArrangement();
+			prefs.setAppSorting(Preferences.APP_SORT_CUSTOM);
+		}
+		arranging = true;
+		arrangeUndo.clear();
+		notifyArrange();
+	}
+
+	public void stopArranging() {
+		if (!arranging) {
+			return;
+		}
+		arranging = false;
+		dragIndex = -1;
+		notifyArrange();
+	}
+
+	public void undoArrangement() {
+		if (arrangeUndo.isEmpty()) {
+			return;
+		}
+		appList = arrangeUndo.remove(arrangeUndo.size() - 1);
+		saveArrangement();
+		notifyArrange();
+	}
+
+	// Back to alphabetical, which can be undone too.
+	public void resetArrangement() {
+		arrangeUndo.add(new ArrayList<>(appList));
+		PieLauncherApp.drawerOrder.store(getContext(), null);
+		filterAppList("", false);
+		notifyArrange();
+	}
+
+	private void notifyArrange() {
+		if (listListener != null) {
+			listListener.onArrange(arranging);
+		}
+		invalidate();
+	}
+
+	// Leading pinned folders keep their place and are not stored.
+	private void saveArrangement() {
+		List<LauncherItemKey> keys = new ArrayList<>();
+		for (int i = pinnedFolderCount, size = getIconCount(); i < size;
+				++i) {
+			Apps.AppIcon icon = appList.get(i);
+			keys.add(new LauncherItemKey(icon.componentName,
+					icon.userHandle));
+		}
+		PieLauncherApp.drawerOrder.store(getContext(), keys);
+	}
+
+	private boolean pickUp(int x, int y) {
+		int index = appList == null
+				? -1
+				: appList.indexOf(getListIconAt(x, y));
+		if (index < pinnedFolderCount) {
+			return false;
+		}
+		dragIndex = index;
+		dragStart = new ArrayList<>(appList);
+		dragX = x;
+		dragY = y;
+		return true;
+	}
+
+	// The dragged app takes the place of the one under the finger. Near
+	// an edge, the list scrolls on so far places can be reached.
+	private void dragTo(int x, int y) {
+		dragX = x;
+		dragY = y;
+		int edge = Math.round(48f * dp);
+		int step = Math.round(12f * dp);
+		if (prefs.horizontalDrawer()) {
+			if (x < edge) {
+				listScrollX = Math.max(0, listScrollX - step);
+			} else if (x > viewWidth - edge) {
+				listScrollX = Math.min(maxScrollX, listScrollX + step);
+			}
+		} else {
+			int scrollY = getScrollY();
+			if (y < searchInputHeight + edge) {
+				lastScrollY = Math.max(0, scrollY - step);
+				scrollList(lastScrollY, false);
+			} else if (y > viewHeight - getPaddingBottom() - edge) {
+				lastScrollY = Math.min(maxScrollY, scrollY + step);
+				scrollList(lastScrollY, false);
+			}
+		}
+		int target = appList.indexOf(getListIconAt(x, y));
+		if (target >= pinnedFolderCount && target != dragIndex) {
+			appList.add(target, appList.remove(dragIndex));
+			dragIndex = target;
+		}
+	}
+
+	private void drop() {
+		if (dragStart != null && !dragStart.equals(appList)) {
+			arrangeUndo.add(dragStart);
+			saveArrangement();
+			notifyArrange();
+		}
+		dragStart = null;
+		dragIndex = -1;
 	}
 
 	// Measured on window inset changes rather than on every frame,
@@ -418,6 +551,8 @@ public class AppPieView extends View {
 			appList = newAppList;
 		}
 		appListIsFiltered = !TextUtils.isEmpty(query);
+		// A new list drops whatever was being dragged.
+		dragIndex = -1;
 		updateFolderBadges();
 		countPinnedFolders();
 		selectedApp = prefs.doubleSpaceLaunch()
@@ -684,6 +819,10 @@ public class AppPieView extends View {
 								if (fadeList.isFadingIn(eventTime)) {
 									return false;
 								}
+								if (arranging && pickUp(touch.x, touch.y)) {
+									invalidate();
+									break;
+								}
 								initScroll(event);
 								initLongPress(v.getContext());
 								break;
@@ -698,10 +837,14 @@ public class AppPieView extends View {
 							expandPanel(v.getContext(), event);
 							spin(event);
 						} else if (mode == MODE_LIST) {
-							if (isScroll(event)) {
-								cancelLongPress();
+							if (dragIndex > -1) {
+								dragTo(touch.x, touch.y);
+							} else {
+								if (isScroll(event)) {
+									cancelLongPress();
+								}
+								scroll(event);
 							}
-							scroll(event);
 						}
 						invalidate();
 						break;
@@ -713,6 +856,11 @@ public class AppPieView extends View {
 						} else if (mode == MODE_LIST) {
 							cancelLongPress();
 							cancelDragDownList();
+							if (dragIndex > -1) {
+								drop();
+								invalidate();
+								break;
+							}
 							keepScrolling(event);
 						}
 						postPerformAction(v, event);
@@ -727,6 +875,9 @@ public class AppPieView extends View {
 							cancelLongPress();
 							cancelDragDownList();
 							recycleVelocityTracker();
+							if (dragIndex > -1) {
+								drop();
+							}
 						}
 						releaseIcon();
 						invalidate();
@@ -942,7 +1093,8 @@ public class AppPieView extends View {
 			}
 
 			private void initLongPress(Context context) {
-				if (prefs.getIconPress() == Preferences.ICON_LOCK_MENU) {
+				if (arranging ||
+						prefs.getIconPress() == Preferences.ICON_LOCK_MENU) {
 					return;
 				}
 				cancelLongPress();
@@ -1308,11 +1460,21 @@ public class AppPieView extends View {
 				() -> editTags(context, icon));
 		panel.add(R.drawable.ic_edit, R.string.action_edit_pie,
 				() -> addIconInteractively(null));
+		addArrange(panel);
 		if (Apps.isShortcut(icon)) {
 			panel.add(R.drawable.ic_remove, R.string.action_remove,
 					() -> askToRemoveShortcut(context, icon));
 		}
 		panel.show();
+	}
+
+	// Only the full drawer can be arranged, not search results or an
+	// open folder.
+	private void addArrange(ItemPanel panel) {
+		if (mode == MODE_LIST && !appListIsFiltered && openFolderId < 0) {
+			panel.add(R.drawable.ic_arrange, R.string.action_arrange,
+					this::startArranging);
+		}
 	}
 
 	private void addToPie(Apps.AppIcon icon) {
@@ -1456,6 +1618,7 @@ public class AppPieView extends View {
 				() -> editTags(context, icon));
 		panel.add(R.drawable.ic_delete, R.string.action_delete,
 				() -> askToDeleteFolder(context, id));
+		addArrange(panel);
 		panel.show();
 	}
 
@@ -1621,6 +1784,10 @@ public class AppPieView extends View {
 	}
 
 	private boolean performListAction(Context context, Point at) {
+		if (arranging) {
+			// Nothing launches while things are moved around.
+			return false;
+		}
 		Apps.AppIcon appIcon = getListIconAt(at.x, at.y);
 		if (appIcon == null) {
 			switch (prefs.openListWith()) {
@@ -2169,6 +2336,10 @@ public class AppPieView extends View {
 				y = top + i / columns * cellHeight;
 			}
 			Apps.AppIcon appIcon = appList.get(i);
+			if (i == dragIndex) {
+				// Drawn last, under the finger.
+				continue;
+			}
 			if (i < pinned
 					? y <= folderAreaTop - cellHeight || y >= bottom
 					: horizontal
@@ -2219,6 +2390,15 @@ public class AppPieView extends View {
 			if (i < pinned) {
 				canvas.restore();
 			}
+		}
+
+		if (dragIndex > -1 && dragIndex < size) {
+			int half = iconSize / 2;
+			int dx = dragX - half;
+			int dy = dragY + scrollY - half;
+			drawRect.set(dx, dy, dx + iconSize, dy + iconSize);
+			canvas.drawBitmap(appList.get(dragIndex).bitmap, null, drawRect,
+					paintList);
 		}
 
 		int maxHeight;

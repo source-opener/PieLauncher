@@ -986,6 +986,8 @@ public class PreferencesActivity extends Activity {
 				R.string.app_sorting_alphabetical);
 		map.put(Preferences.APP_SORT_FRECENCY,
 				R.string.app_sorting_frecency);
+		map.put(Preferences.APP_SORT_CUSTOM,
+				R.string.app_sorting_custom);
 		return map;
 	}
 
