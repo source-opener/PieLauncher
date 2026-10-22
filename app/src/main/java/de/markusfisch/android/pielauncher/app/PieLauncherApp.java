@@ -27,7 +27,11 @@ public class PieLauncherApp extends Application {
 	public static final IconPack iconPack = new IconPack();
 	public static final AppLabelsStorage appLabels = new AppLabelsStorage();
 	public static final AppTagsStorage appTags = new AppTagsStorage();
-	public static final AppIconsStorage appIcons = new AppIconsStorage();
+	public static final AppIconsStorage appIcons =
+			new AppIconsStorage(Database.APP_ICONS);
+	// Shown instead of appIcons while the work profile is paused.
+	public static final AppIconsStorage workPausedIcons =
+			new AppIconsStorage(Database.WORK_PAUSED_ICONS);
 	public static final Folders folders = new Folders();
 
 	private static final ConfigurationChangedReceiver configurationChangedReceiver =
@@ -100,6 +104,10 @@ public class PieLauncherApp extends Application {
 		IntentFilter filter = new IntentFilter();
 		filter.addAction(Intent.ACTION_MANAGED_PROFILE_ADDED);
 		filter.addAction(Intent.ACTION_MANAGED_PROFILE_REMOVED);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+			filter.addAction(Intent.ACTION_MANAGED_PROFILE_AVAILABLE);
+			filter.addAction(Intent.ACTION_MANAGED_PROFILE_UNAVAILABLE);
+		}
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
 			filter.addAction(Intent.ACTION_PROFILE_AVAILABLE);
 		}

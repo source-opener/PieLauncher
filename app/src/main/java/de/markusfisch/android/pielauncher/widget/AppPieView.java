@@ -1172,6 +1172,26 @@ public class AppPieView extends View {
 						PieLauncherApp.apps.indexAppsAsync(context);
 					});
 		}
+		if (AppLauncher.hasWorkProfile(context)) {
+			if (PieLauncherApp.iconPack.hasPacks()) {
+				addOption(labels, actions,
+						context.getString(R.string.pick_work_paused_icon),
+						() -> PickIconActivity.startForWorkPaused(context,
+								key));
+			}
+			addOption(labels, actions,
+					context.getString(R.string.pick_work_paused_image),
+					() -> PickImageActivity.start(context, key, true));
+			if (PieLauncherApp.workPausedIcons.has(key)) {
+				addOption(labels, actions,
+						context.getString(R.string.reset_work_paused_icon),
+						() -> {
+							PieLauncherApp.workPausedIcons.store(context, key,
+									null);
+							PieLauncherApp.apps.indexAppsAsync(context);
+						});
+			}
+		}
 		if (PieLauncherApp.iconPack.hasPacks()) {
 			addOption(labels, actions, context.getString(R.string.change_icon),
 					() -> {
@@ -1283,6 +1303,26 @@ public class AppPieView extends View {
 						PieLauncherApp.appIcons.store(context, key, null);
 						resetSearch();
 					});
+		}
+		if (AppLauncher.hasWorkProfile(context)) {
+			if (PieLauncherApp.iconPack.hasPacks()) {
+				addOption(labels, actions,
+						context.getString(R.string.pick_work_paused_icon),
+						() -> PickIconActivity.startForWorkPaused(context,
+								key));
+			}
+			addOption(labels, actions,
+					context.getString(R.string.pick_work_paused_image),
+					() -> PickImageActivity.start(context, key, true));
+			if (PieLauncherApp.workPausedIcons.has(key)) {
+				addOption(labels, actions,
+						context.getString(R.string.reset_work_paused_icon),
+						() -> {
+							PieLauncherApp.workPausedIcons.store(context, key,
+									null);
+							resetSearch();
+						});
+			}
 		}
 		if (PieLauncherApp.iconPack.hasPacks()) {
 			addOption(labels, actions, context.getString(R.string.change_icon),

@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -28,6 +29,8 @@ import de.markusfisch.android.pielauncher.adapter.PickIconAdapter;
 import de.markusfisch.android.pielauncher.app.PieLauncherApp;
 import de.markusfisch.android.pielauncher.content.AppSearch;
 import de.markusfisch.android.pielauncher.content.Folders;
+import de.markusfisch.android.pielauncher.content.LauncherItemKey;
+import de.markusfisch.android.pielauncher.graphics.Converter;
 import de.markusfisch.android.pielauncher.graphics.BackgroundBlur;
 import de.markusfisch.android.pielauncher.graphics.IconPack;
 import de.markusfisch.android.pielauncher.graphics.ToolbarBackground;
@@ -42,6 +45,7 @@ public class PickIconActivity extends Activity {
 	}
 
 	private static final String COMPONENT_NAME = "package_name";
+	private static final String WORK_PAUSED_KEY = "work_paused_key";
 
 	private final Handler handler = new Handler(Looper.getMainLooper());
 	private final ExecutorService executor =
@@ -56,10 +60,23 @@ public class PickIconActivity extends Activity {
 	private ArrayList<String> drawableNames;
 	private ArrayList<String> searchNames;
 	private PickIconAdapter iconAdapter;
+	// Set when picking the icon shown while the work profile is paused,
+	// which is stored as an image rather than as a mapping.
+	private LauncherItemKey workPausedKey;
 
 	public static void start(Context context, ComponentName componentName) {
 		Intent intent = new Intent(context, PickIconActivity.class);
 		intent.putExtra(COMPONENT_NAME, componentName);
+		context.startActivity(intent);
+	}
+
+	public static void startForWorkPaused(
+			Context context,
+			LauncherItemKey key) {
+		Intent intent = new Intent(context, PickIconActivity.class);
+		intent.putExtra(COMPONENT_NAME, key.componentName);
+		intent.putExtra(WORK_PAUSED_KEY, LauncherItemKey.flattenToString(
+				context, key.componentName, key.userHandle));
 		context.startActivity(intent);
 	}
 
@@ -97,6 +114,12 @@ public class PickIconActivity extends Activity {
 				getComponentNameFromIntent(intent)) == null) {
 			finish();
 			return;
+		}
+
+		String itemKey = intent.getStringExtra(WORK_PAUSED_KEY);
+		if (itemKey != null) {
+			workPausedKey = LauncherItemKey.unflattenFromString(this,
+					itemKey);
 		}
 
 		setContentView(R.layout.activity_pick_icon);
@@ -166,6 +189,11 @@ public class PickIconActivity extends Activity {
 	private void initGridView(ComponentName componentName) {
 		gridView = findViewById(R.id.icons);
 		gridView.setOnItemClickListener((parent, view, position, id) -> {
+			if (workPausedKey != null) {
+				storeWorkPausedIcon(iconAdapter.getItem(position));
+				finish();
+				return;
+			}
 			PieLauncherApp.iconPack.addMapping(
 					iconPackPackageName,
 					componentName,
@@ -175,6 +203,20 @@ public class PickIconActivity extends Activity {
 			finish();
 		});
 		loadPack(iconPackPackageName);
+	}
+
+	private void storeWorkPausedIcon(String drawableName) {
+		IconPack.Pack pack = PieLauncherApp.iconPack.packs.get(
+				iconPackPackageName);
+		Drawable drawable = pack != null
+				? pack.getDrawable(drawableName)
+				: null;
+		if (drawable == null) {
+			return;
+		}
+		PieLauncherApp.workPausedIcons.store(this, workPausedKey,
+				Converter.getBitmapFromDrawable(drawable));
+		PieLauncherApp.apps.indexAppsAsync(this);
 	}
 
 	private void initSearch() {
@@ -213,7 +255,8 @@ public class PickIconActivity extends Activity {
 
 	private void initReset(ComponentName componentName) {
 		View resetButton = findViewById(R.id.reset);
-		if (PieLauncherApp.iconPack.hasMapping(componentName)) {
+		if (workPausedKey == null &&
+				PieLauncherApp.iconPack.hasMapping(componentName)) {
 			resetButton.setOnClickListener((v) -> {
 				askToRestore(componentName);
 			});
@@ -246,7 +289,8 @@ public class PickIconActivity extends Activity {
 	private void initHide(ComponentName componentName) {
 		View hideButton = findViewById(R.id.hide_app);
 		// Neither the drawer icon nor a folder is an app to hide.
-		if (Folders.isFolder(componentName) ||
+		if (workPausedKey != null ||
+				Folders.isFolder(componentName) ||
 				PieLauncherApp.apps.isDrawerPackageName(
 						componentName.getPackageName())) {
 			hideButton.setVisibility(View.INVISIBLE);

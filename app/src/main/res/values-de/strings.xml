@@ -146,6 +146,16 @@
 	<string name="app_tags_hint">Zusätzliche Wörter, um diese App zu finden</string>
 	<string name="pick_image">Bild auswählen</string>
 	<string name="reset_icon">Icon zurücksetzen</string>
+	<string name="pick_work_paused_icon">Symbol für pausiertes Arbeitsprofil wählen</string>
+	<string name="pick_work_paused_image">Bild für pausiertes Arbeitsprofil wählen</string>
+	<string name="reset_work_paused_icon">Symbol für pausiertes Arbeitsprofil zurücksetzen</string>
+	<string name="move_work_apps">Arbeits-Apps in einen Ordner verschieben</string>
+	<string name="work_folder_name">Arbeit</string>
+	<string name="work_folder_exists">Ordner %1$s gibt es bereits</string>
+	<string name="work_folder_hides">Damit werden diese Apps in der Liste versteckt:\n\n%1$s</string>
+	<string name="other_folder_name">Anderer Name</string>
+	<string name="work_apps_moved">Arbeits-Apps nach %1$s verschoben</string>
+	<string name="no_work_apps">Keine Arbeits-Apps gefunden</string>
 	<string name="pick_image_failed">Bild konnte nicht gelesen werden</string>
 	<string name="import_settings_restart">Einstellungen importiert. Pie Launcher muss neu starten, um sie zu verwenden.</string>
 	<string name="customised_apps">Angepasste Apps</string>

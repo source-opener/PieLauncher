@@ -146,6 +146,16 @@
 	<string name="app_tags_hint">Mots supplémentaires pour trouver cette application</string>
 	<string name="pick_image">Choisir une image</string>
 	<string name="reset_icon">Réinitialiser l\'icône</string>
+	<string name="pick_work_paused_icon">Choisir une icône pour le profil professionnel en pause</string>
+	<string name="pick_work_paused_image">Choisir une image pour le profil professionnel en pause</string>
+	<string name="reset_work_paused_icon">Réinitialiser l’icône du profil professionnel en pause</string>
+	<string name="move_work_apps">Déplacer les applications professionnelles dans un dossier</string>
+	<string name="work_folder_name">Travail</string>
+	<string name="work_folder_exists">Le dossier %1$s existe déjà</string>
+	<string name="work_folder_hides">L’utiliser masque ces applications de la liste :\n\n%1$s</string>
+	<string name="other_folder_name">Autre nom</string>
+	<string name="work_apps_moved">Applications professionnelles déplacées dans %1$s</string>
+	<string name="no_work_apps">Aucune application professionnelle trouvée</string>
 	<string name="pick_image_failed">Impossible de lire cette image</string>
 	<string name="import_settings_restart">Paramètres importés. Pie Launcher doit redémarrer pour les utiliser.</string>
 	<string name="customised_apps">Applications personnalisées</string>

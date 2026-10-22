@@ -123,12 +123,14 @@ public class CustomisedAppsActivity extends Activity {
 		PieLauncherApp.appLabels.restore(this);
 		PieLauncherApp.appTags.restore(this);
 		PieLauncherApp.appIcons.restore(this);
+		PieLauncherApp.workPausedIcons.restore(this);
 		PieLauncherApp.folders.restore(this);
 
 		Set<LauncherItemKey> keys = new HashSet<>();
 		keys.addAll(PieLauncherApp.appLabels.keys());
 		keys.addAll(PieLauncherApp.appTags.keys());
 		keys.addAll(PieLauncherApp.appIcons.keys());
+		keys.addAll(PieLauncherApp.workPausedIcons.keys());
 
 		progressView.setVisibility(View.VISIBLE);
 		executor.execute(() -> {
@@ -253,11 +255,17 @@ public class CustomisedAppsActivity extends Activity {
 			actions.add(() -> PieLauncherApp.appIcons.store(this, app.key,
 					null));
 		}
+		if (PieLauncherApp.workPausedIcons.has(app.key)) {
+			labels.add(getString(R.string.reset_work_paused_icon));
+			actions.add(() -> PieLauncherApp.workPausedIcons.store(this,
+					app.key, null));
+		}
 		labels.add(getString(R.string.reset_all));
 		actions.add(() -> {
 			PieLauncherApp.appLabels.store(this, app.key, null);
 			PieLauncherApp.appTags.store(this, app.key, null);
 			PieLauncherApp.appIcons.store(this, app.key, null);
+			PieLauncherApp.workPausedIcons.store(this, app.key, null);
 		});
 		OptionsDialog.show(this, R.string.customised_apps,
 				labels.toArray(new CharSequence[0]),
