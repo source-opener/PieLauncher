@@ -189,4 +189,21 @@
 	<string name="sync_from_release"><big><font color="#ffffff">从稳定版同步</font></big>\n采用并排安装的稳定版应用的设置</string>
 	<string name="sync_settings_confirm">这将用 %1$s (%2$s) 的设置替换本应用 (%3$s) 的饼状菜单、隐藏的应用程序、图标映射和所有设置。是否继续？</string>
 	<string name="sync_settings_older">这些设置来自比本应用更旧的版本。</string>
+	<string name="category_pie_menu">饼状菜单</string>
+	<string name="category_look">外观</string>
+	<string name="category_search">搜索</string>
+	<string name="category_apps">应用和文件夹</string>
+	<string name="drawer_layout">抽屉布局</string>
+	<string name="drawer_layout_vertical">竖向</string>
+	<string name="drawer_layout_horizontal">横向（实验性）</string>
+	<string name="organise">整理</string>
+	<string name="icon_menu">图标</string>
+	<string name="section_home_summary">方向、死区、主页键</string>
+	<string name="section_pie_summary">分割菜单、画圈、文件夹</string>
+	<string name="section_look_summary">背景、模糊、图标包、名称</string>
+	<string name="section_drawer_summary">排序、键盘、布局</string>
+	<string name="section_search_summary">精确度、空格键、自动启动</string>
+	<string name="section_apps_summary">隐藏、自定义、工作文件夹</string>
+	<string name="section_backup_summary">导出、导入、同步</string>
+	<string name="section_advanced_summary">触感反馈、重启</string>
 </resources>

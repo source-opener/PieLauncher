@@ -189,4 +189,21 @@
 	<string name="sync_from_release"><big><font color="#ffffff">Reprendre ceux de la version stable</font></big>\nReprendre les paramètres de l\'application stable installée à côté</string>
 	<string name="sync_settings_confirm">Cela remplace le menu Pie, les applications cachées, les associations d\'icônes et tous les paramètres de cette application (%3$s) par ceux de %1$s (%2$s). Continuer ?</string>
 	<string name="sync_settings_older">Ces paramètres proviennent d\'une version plus ancienne que celle-ci.</string>
+	<string name="category_pie_menu">Menu circulaire</string>
+	<string name="category_look">Apparence</string>
+	<string name="category_search">Recherche</string>
+	<string name="category_apps">Applications et dossiers</string>
+	<string name="drawer_layout">Disposition de la liste</string>
+	<string name="drawer_layout_vertical">Verticale</string>
+	<string name="drawer_layout_horizontal">Horizontale (expérimental)</string>
+	<string name="organise">Organiser</string>
+	<string name="icon_menu">Icône</string>
+	<string name="section_home_summary">Orientation, zone morte, bouton d\'accueil</string>
+	<string name="section_pie_summary">Menu divisé, cercle, dossiers</string>
+	<string name="section_look_summary">Fond, flou, pack d\'icônes, noms</string>
+	<string name="section_drawer_summary">Tri, clavier, disposition</string>
+	<string name="section_search_summary">Précision, espace, lancement auto</string>
+	<string name="section_apps_summary">Masquées, personnalisées, dossier pro</string>
+	<string name="section_backup_summary">Export, import, synchronisation</string>
+	<string name="section_advanced_summary">Vibrations, relance</string>
 </resources>

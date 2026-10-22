@@ -189,4 +189,21 @@
 	<string name="sync_from_release"><big><font color="#ffffff">Hämta från den stabila appen</font></big>\nAnvänd inställningarna från den stabila appen som är installerad bredvid</string>
 	<string name="sync_settings_confirm">Detta ersätter cirkelmenyn, dolda appar, ikonkopplingar och alla inställningar i den här appen (%3$s) med de från %1$s (%2$s). Fortsätta?</string>
 	<string name="sync_settings_older">De inställningarna kommer från en äldre version än den här appen.</string>
+	<string name="category_pie_menu">Cirkelmeny</string>
+	<string name="category_look">Utseende</string>
+	<string name="category_search">Sök</string>
+	<string name="category_apps">Appar och mappar</string>
+	<string name="drawer_layout">Lådans layout</string>
+	<string name="drawer_layout_vertical">Vertikal</string>
+	<string name="drawer_layout_horizontal">Horisontell (experimentell)</string>
+	<string name="organise">Organisera</string>
+	<string name="icon_menu">Ikon</string>
+	<string name="section_home_summary">Orientering, död zon, hemknapp</string>
+	<string name="section_pie_summary">Delad meny, cirklar, mappar</string>
+	<string name="section_look_summary">Bakgrund, oskärpa, ikonpaket, namn</string>
+	<string name="section_drawer_summary">Sortering, tangentbord, layout</string>
+	<string name="section_search_summary">Noggrannhet, mellanslag, autostart</string>
+	<string name="section_apps_summary">Dolda, anpassade, jobbmapp</string>
+	<string name="section_backup_summary">Exportera, importera, synka</string>
+	<string name="section_advanced_summary">Haptik, omstart</string>
 </resources>
