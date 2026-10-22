@@ -31,6 +31,8 @@
 		tools:ignore="UnusedAttribute"
 		android:name=".app.PieLauncherApp"
 		android:allowBackup="true"
+		android:backupAgent=".app.BackupGate"
+		android:fullBackupOnly="true"
 		android:supportsRtl="true"
 		android:resizeableActivity="true"
 		android:theme="@style/HomeTheme"

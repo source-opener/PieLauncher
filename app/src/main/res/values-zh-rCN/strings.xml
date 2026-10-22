@@ -225,4 +225,7 @@
 	<string name="about_license">许可证</string>
 	<string name="about_license_summary">MIT 许可证，© Markus Fisch</string>
 	<string name="no_browser">没有可打开网页的应用</string>
+	<string name="cloud_backup">备份到 Google 帐号</string>
+	<string name="cloud_backup_blocked">已阻止（默认）</string>
+	<string name="cloud_backup_allowed">已允许</string>
 </resources>

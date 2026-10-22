@@ -84,6 +84,7 @@ public class Preferences {
 	private static final String LIST_ANIMATION_APPEARANCE = "list_animation_appearance";
 	private static final String DISPLAY_KEYBOARD = "display_keyboard";
 	private static final String HORIZONTAL_DRAWER = "horizontal_drawer";
+	private static final String CLOUD_BACKUP = "cloud_backup";
 	private static final String DOUBLE_SPACE_LAUNCH = "space_action_double_launch";
 	private static final String AUTO_LAUNCH_MATCHING = "auto_launch_matching";
 	private static final String SEARCH_STRICTNESS = "strictness";
@@ -122,6 +123,7 @@ public class Preferences {
 	private int listAnimationAppearance = LIST_APPEARANCE_ANIMATION_SLIDE;
 	private boolean displayKeyboard = true;
 	private boolean horizontalDrawer = false;
+	private boolean cloudBackup = false;
 	private boolean doubleSpaceLaunch = false;
 	private boolean autoLaunchMatching = false;
 	private int searchStrictness = SEARCH_STRICTNESS_HAMMING;
@@ -212,6 +214,7 @@ public class Preferences {
 				displayKeyboard);
 		horizontalDrawer = preferences.getBoolean(HORIZONTAL_DRAWER,
 				horizontalDrawer);
+		cloudBackup = preferences.getBoolean(CLOUD_BACKUP, cloudBackup);
 		doubleSpaceLaunch = preferences.getBoolean(DOUBLE_SPACE_LAUNCH,
 				doubleSpaceLaunch);
 		autoLaunchMatching = preferences.getBoolean(AUTO_LAUNCH_MATCHING,
@@ -379,6 +382,23 @@ public class Preferences {
 	public void setDisplayKeyboard(boolean displayKeyboard) {
 		this.displayKeyboard = displayKeyboard;
 		put(DISPLAY_KEYBOARD, displayKeyboard).apply();
+	}
+
+	// Read without an instance because BackupGate runs before anything
+	// else of the app is set up.
+	@SuppressWarnings("deprecation")
+	public static boolean allowsCloudBackup(Context context) {
+		return PreferenceManager.getDefaultSharedPreferences(context)
+				.getBoolean(CLOUD_BACKUP, false);
+	}
+
+	public boolean cloudBackup() {
+		return cloudBackup;
+	}
+
+	public void setCloudBackup(boolean cloudBackup) {
+		this.cloudBackup = cloudBackup;
+		put(CLOUD_BACKUP, cloudBackup).apply();
 	}
 
 	public boolean horizontalDrawer() {

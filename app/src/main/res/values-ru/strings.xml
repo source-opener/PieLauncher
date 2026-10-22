@@ -225,4 +225,7 @@
 	<string name="about_license">Лицензия</string>
 	<string name="about_license_summary">Лицензия MIT, © Markus Fisch</string>
 	<string name="no_browser">Нет приложения для открытия веб-страниц</string>
+	<string name="cloud_backup">Резервная копия в аккаунт Google</string>
+	<string name="cloud_backup_blocked">Запрещено (по умолчанию)</string>
+	<string name="cloud_backup_allowed">Разрешено</string>
 </resources>

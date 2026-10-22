@@ -568,6 +568,16 @@ public class PreferencesActivity extends Activity {
 				PreferencesActivity::getListAnimationAppearanceOptions,
 				() -> prefs.listAnimationAppearance(),
 				(value) -> prefs.setListAnimationAppearance(value));
+		// Android only backs apps up on its own from 6 on.
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+			initPreference(R.id.cloud_backup,
+					R.string.cloud_backup,
+					PreferencesActivity::getCloudBackupOptions,
+					() -> prefs.cloudBackup(),
+					(value) -> prefs.setCloudBackup(value));
+		} else {
+			findViewById(R.id.cloud_backup).setVisibility(View.GONE);
+		}
 		initPreference(R.id.drawer_layout,
 				R.string.drawer_layout,
 				PreferencesActivity::getDrawerLayoutOptions,
@@ -905,6 +915,13 @@ public class PreferencesActivity extends Activity {
 				R.string.list_animation_appearance_slide);
 		map.put(Preferences.LIST_APPEARANCE_ANIMATION_FADE,
 				R.string.list_animation_appearance_fade);
+		return map;
+	}
+
+	private static Map<Boolean, Integer> getCloudBackupOptions() {
+		Map<Boolean, Integer> map = new LinkedHashMap<>();
+		map.put(Boolean.FALSE, R.string.cloud_backup_blocked);
+		map.put(Boolean.TRUE, R.string.cloud_backup_allowed);
 		return map;
 	}
 

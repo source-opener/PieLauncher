@@ -264,9 +264,13 @@
 						android:visibility="gone"
 						android:text="@string/sync_from_beta" />
 					<de.markusfisch.android.pielauncher.widget.PreferenceView
-						style="@style/Preference"
+						style="@style/PreferenceWithSeparator"
 						android:id="@+id/import_settings"
 						android:text="@string/import_settings" />
+					<de.markusfisch.android.pielauncher.widget.PreferenceView
+						style="@style/Preference"
+						android:id="@+id/cloud_backup"
+						android:text="@string/cloud_backup_blocked" />
 				</LinearLayout>
 				<LinearLayout
 					style="@style/Card"

@@ -225,4 +225,7 @@
 	<string name="about_license">License</string>
 	<string name="about_license_summary">MIT License, © Markus Fisch</string>
 	<string name="no_browser">No app to open web pages</string>
+	<string name="cloud_backup">Backup to Google account</string>
+	<string name="cloud_backup_blocked">Blocked (default)</string>
+	<string name="cloud_backup_allowed">Allowed</string>
 </resources>
