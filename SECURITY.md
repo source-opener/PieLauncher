@@ -2,7 +2,7 @@
 
 ## Supported Versions
 
-Only the latest released version of Pie Launcher is supported with
+Only the latest released version of CakeLauncher is supported with
 security updates.
 
 ## Reporting a Vulnerability

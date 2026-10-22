@@ -1,0 +1,7 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="108dp" android:height="108dp" android:viewportWidth="108" android:viewportHeight="108">
+	<!-- The pie menu ring with one segment left out, for the C of CakeLauncher, tilted like the original logo. -->
+	<group android:rotation="-20" android:pivotX="54" android:pivotY="54">
+		<path android:pathData="M66.30 72.24A22 22 0 0 1 41.70 72.24M35.76 66.30A22 22 0 0 1 35.76 41.70M41.70 35.76A22 22 0 0 1 66.30 35.76" android:strokeColor="#f2f2f2" android:strokeWidth="8"/>
+		<path android:pathData="M42.40 47.00V58.50M42.40 56.20a2.3 2.3 0 1 0 4.60 0a2.3 2.3 0 1 0 -4.60 0M48.60 56.20h4.60a2.3 2.3 0 1 0 -0.67 1.63M56.41 50.90V57.30a1.2 1.2 0 0 0 1.2 1.2h1.84M54.60 53.90h4.60M61.00 56.20a2.3 2.3 0 1 0 4.60 0a2.3 2.3 0 1 0 -4.60 0M65.60 53.90V58.50" android:strokeColor="#f2f2f2" android:strokeWidth="1.7" android:strokeLineCap="round" android:strokeLineJoin="round"/>
+	</group>
+</vector>

@@ -1,6 +1,6 @@
 # Privacy Policy
 
-Pie Launcher does not collect any personal information.
+CakeLauncher does not collect any personal information.
 
 If you have any questions or suggestions about this Privacy Policy, do not
 hesitate to contact me.
@@ -18,20 +18,20 @@ You can find more information about package visibility
 
 A launcher app is meant to be available all the time.
 
-Disabling battery optimizations for Pie Launcher actually saves energy
+Disabling battery optimizations for CakeLauncher actually saves energy
 and make it work faster because the app does not need to be reloaded every
 time you unlock your phone.
 
-Pie Launcher does not consume battery when not in use.
+CakeLauncher does not consume battery when not in use.
 
 ### [ACCESS_HIDDEN_PROFILES][ACCESS_HIDDEN_PROFILES]
 
-Pie Launcher needs to detect hidden profiles so it can accurately list
+CakeLauncher needs to detect hidden profiles so it can accurately list
 available apps for the active user profile.
 
 ### [EXPAND_STATUS_BAR][EXPAND_STATUS_BAR]
 
-Pie Launcher uses this permission to expand the notification panel when
+CakeLauncher uses this permission to expand the notification panel when
 you tap the dead zone of the pie menu, providing quick access to your
 notifications.
 

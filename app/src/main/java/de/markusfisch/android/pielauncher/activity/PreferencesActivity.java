@@ -26,7 +26,9 @@ import org.json.JSONException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -295,20 +297,37 @@ public class PreferencesActivity extends Activity {
 	// the background and only offer the entry once it answers.
 	private void initSync(boolean categoryVisible) {
 		executor.execute(() -> {
-			SettingsSync.Counterpart counterpart = SettingsSync.find(this);
-			if (counterpart == null) {
+			List<SettingsSync.Counterpart> found = SettingsSync.findAll(this);
+			if (found.isEmpty()) {
 				return;
 			}
+			List<SettingsSync.Counterpart> formers = new ArrayList<>();
+			SettingsSync.Counterpart counterpart = null;
+			for (SettingsSync.Counterpart c : found) {
+				if (c.former) {
+					formers.add(c);
+				} else {
+					counterpart = c;
+				}
+			}
+			SettingsSync.Counterpart other = counterpart;
 			handler.post(() -> {
 				if (isFinishing()) {
 					return;
 				}
-				TextView view = findViewById(R.id.sync_settings);
-				view.setText(SettingsSync.isBeta(this)
-						? R.string.sync_from_release
-						: R.string.sync_from_beta);
-				view.setOnClickListener((v) -> syncSettings(counterpart));
-				view.setVisibility(View.VISIBLE);
+				if (other != null) {
+					TextView view = findViewById(R.id.sync_settings);
+					view.setText(SettingsSync.isBeta(this)
+							? R.string.sync_from_release
+							: R.string.sync_from_beta);
+					view.setOnClickListener((v) -> syncSettings(other));
+					view.setVisibility(View.VISIBLE);
+				}
+				if (!formers.isEmpty()) {
+					View view = findViewById(R.id.import_former);
+					view.setOnClickListener((v) -> pickFormer(formers));
+					view.setVisibility(View.VISIBLE);
+				}
 				if (!categoryVisible) {
 					findViewById(R.id.category_backup).setVisibility(
 							View.VISIBLE);
@@ -320,8 +339,22 @@ public class PreferencesActivity extends Activity {
 	// The beta is where things are tried out, so it takes the stable
 	// settings on a tap. Going the other way replaces a working setup
 	// and says what it is about to apply first.
+	private void pickFormer(List<SettingsSync.Counterpart> formers) {
+		if (formers.size() == 1) {
+			syncSettings(formers.get(0));
+			return;
+		}
+		CharSequence[] items = new CharSequence[formers.size()];
+		for (int i = 0; i < items.length; ++i) {
+			SettingsSync.Counterpart c = formers.get(i);
+			items[i] = c.label + " " + c.versionName;
+		}
+		OptionsDialog.show(this, R.string.sync_settings, items,
+				(view, which) -> syncSettings(formers.get(which)));
+	}
+
 	private void syncSettings(SettingsSync.Counterpart counterpart) {
-		if (SettingsSync.isBeta(this)) {
+		if (SettingsSync.isBeta(this) && !counterpart.former) {
 			transferSettings(counterpart.uri, true);
 			return;
 		}

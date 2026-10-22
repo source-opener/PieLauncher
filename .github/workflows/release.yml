@@ -39,7 +39,7 @@ jobs:
               echo "name=beta"
               echo "variant=Beta"
               echo "dir=beta"
-              echo "label=Pie Launcher Beta"
+              echo "label=CakeLauncher Beta"
               echo "prerelease=true"
             } >> "$GITHUB_OUTPUT"
           else
@@ -47,7 +47,7 @@ jobs:
               echo "name=stable"
               echo "variant=Release"
               echo "dir=release"
-              echo "label=Pie Launcher"
+              echo "label=CakeLauncher"
               echo "prerelease=false"
             } >> "$GITHUB_OUTPUT"
           fi
@@ -183,9 +183,9 @@ jobs:
           fi
           mkdir -p dist
           if [ '${{ steps.channel.outputs.name }}' = 'beta' ]; then
-            name="PieLauncher-Beta-${{ steps.version.outputs.tag }}.apk"
+            name="CakeLauncher-Beta-${{ steps.version.outputs.tag }}.apk"
           else
-            name="PieLauncher-${{ steps.version.outputs.tag }}.apk"
+            name="CakeLauncher-${{ steps.version.outputs.tag }}.apk"
           fi
           cp "$apk" "dist/$name"
           ( cd dist && sha256sum "$name" > "$name.sha256" )

@@ -4,14 +4,23 @@
 
 | Branch | Channel | App on the phone | Published as |
 | --- | --- | --- | --- |
-| `master` | stable | Pie Launcher | release, tagged `v<upstream>.<fork>` |
-| `dev` | beta | Pie Launcher Beta | pre-release, tagged `v<upstream>.<fork>-beta.<build>` |
+| `master` | stable | CakeLauncher | release, tagged `v<upstream>.<fork>` |
+| `dev` | beta | CakeLauncher Beta | pre-release, tagged `v<upstream>.<fork>-beta.<build>` |
 | `feature/*`, `fix/*`, `ci/*` | none | - | nothing, CI on their pull request |
 
-The beta build carries the `.beta` application ID suffix, its own name and
-an orange launcher icon, so it installs next to the stable build instead
-of replacing it. The two do not share settings; use **Preferences >
-Export settings** and **Import settings** to copy a setup between them.
+The app id is `io.github.sourceopener.cakelauncher`. The beta build
+carries the `.beta` suffix, its own name and an orange launcher icon with
+"beta" in it, so it installs next to the stable build instead of
+replacing it. The code keeps the original's Java package, which is only
+a namespace and never seen on the phone.
+
+The builds can take each other's settings under **Settings > Backup**:
+the stable and the beta build sync with each other, and either imports
+from the builds this fork published as Pie Launcher before the rename,
+which used the original's id `de.markusfisch.android.pielauncher`. All of
+this goes through a provider guarded by a signature permission, so only
+builds signed with the same key see each other. The original Pie
+Launcher serves no settings, so nothing can be imported from it.
 
 ## Workflows
 
@@ -150,6 +159,9 @@ by package name, so both entries coexist.
 Each release lists its signing certificate SHA-256, which Obtainium can
 pin.
 
-The stable build keeps upstream's application ID but is signed with a
-different key, so it will not install over a copy from Google Play or
-F-Droid. The beta build has its own application ID and is unaffected.
+CakeLauncher has its own app id, so it installs next to the original
+Pie Launcher. Moving from a build of this fork that was still called Pie
+Launcher is a new install: install CakeLauncher, use **Settings >
+Backup > Import from Pie Launcher**, then uninstall the old build.
+Obtainium also needs the app added again, because it keys apps by
+package name.

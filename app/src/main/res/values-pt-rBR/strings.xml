@@ -1,5 +1,5 @@
 <resources>
-	<string name="app_name">Pie Launcher</string>
+	<string name="app_name">CakeLauncher</string>
 	<string name="tip_loading">Carregando…</string>
 	<string name="tip_drag_to_order">Arrastar para organizar, circular para alterar a ordem</string>
 	<string name="tip_remove_icon">Remover o ícone do menu Pie</string>
@@ -157,7 +157,7 @@
 	<string name="work_apps_moved">Apps de trabalho movidos para %1$s</string>
 	<string name="no_work_apps">Nenhum app de trabalho encontrado</string>
 	<string name="pick_image_failed">Não foi possível ler essa imagem</string>
-	<string name="import_settings_restart">Configurações importadas. O Pie Launcher precisa reiniciar para usá-las.</string>
+	<string name="import_settings_restart">Configurações importadas. O CakeLauncher precisa reiniciar para usá-las.</string>
 	<string name="customised_apps">Aplicativos personalizados</string>
 	<string name="show_customised_apps"><big><font color="#ffffff">Aplicativos personalizados</font></big>\nAplicativos com nome, etiquetas ou ícone personalizados</string>
 	<string name="no_customised_apps">Nenhum aplicativo personalizado</string>
@@ -206,4 +206,5 @@
 	<string name="section_apps_summary">Ocultos, personalizados, pasta de trabalho</string>
 	<string name="section_backup_summary">Exportar, importar, sincronizar</string>
 	<string name="section_advanced_summary">Vibração, reinício</string>
+	<string name="import_former"><big><font color="#ffffff">Importar do Pie Launcher</font></big>\nUsa as configurações da versão Pie Launcher deste fork instalada neste telefone</string>
 </resources>

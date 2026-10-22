@@ -1,5 +1,5 @@
 <resources>
-	<string name="app_name">Pie Launcher</string>
+	<string name="app_name">CakeLauncher</string>
 	<string name="tip_loading">Завантаження…</string>
 	<string name="tip_drag_to_order">Перетягніть, щоб упорядкувати</string>
 	<string name="tip_remove_icon">Видалити значок із кругового меню</string>
@@ -157,7 +157,7 @@
 	<string name="work_apps_moved">Робочі застосунки переміщено до %1$s</string>
 	<string name="no_work_apps">Робочих застосунків не знайдено</string>
 	<string name="pick_image_failed">Не вдалося прочитати зображення</string>
-	<string name="import_settings_restart">Налаштування імпортовано. Щоб застосувати їх, Pie Launcher потрібно перезапустити.</string>
+	<string name="import_settings_restart">Налаштування імпортовано. Щоб застосувати їх, CakeLauncher потрібно перезапустити.</string>
 	<string name="customised_apps">Змінені програми</string>
 	<string name="show_customised_apps"><big><font color="#ffffff">Змінені програми</font></big>\nПрограми з власною назвою, мітками або іконкою</string>
 	<string name="no_customised_apps">Немає змінених програм</string>
@@ -206,4 +206,5 @@
 	<string name="section_apps_summary">Приховані, змінені, робоча тека</string>
 	<string name="section_backup_summary">Експорт, імпорт, синхронізація</string>
 	<string name="section_advanced_summary">Вібрація, перезапуск</string>
+	<string name="import_former"><big><font color="#ffffff">Імпорт із Pie Launcher</font></big>\nПеренести налаштування версії Pie Launcher цього форку, встановленої на телефоні</string>
 </resources>

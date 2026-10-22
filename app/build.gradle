@@ -4,10 +4,13 @@ def versionCodeOverride = System.getenv('ANDROID_VERSION_CODE')
 def versionNameOverride = System.getenv('ANDROID_VERSION_NAME')
 
 android {
+	// The code keeps the package of the original Pie Launcher, the app
+	// gets its own id so both can be installed side by side.
 	namespace 'de.markusfisch.android.pielauncher'
 	compileSdk sdk_version
 
 	defaultConfig {
+		applicationId 'io.github.sourceopener.cakelauncher'
 		minSdk 9
 		targetSdk sdk_version
 

@@ -2,6 +2,7 @@ package de.markusfisch.android.pielauncher.io;
 
 import android.content.Context;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -9,15 +10,17 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import de.markusfisch.android.pielauncher.app.PieLauncherApp;
 
 public class SettingsBackup {
 	public static final String MIME_TYPE = "application/json";
-	public static final String FILE_NAME = "pielauncher-settings.json";
+	public static final String FILE_NAME = "cakelauncher-settings.json";
 
 	private static final int FORMAT = 1;
 	private static final String FORMAT_KEY = "format";
@@ -30,6 +33,8 @@ public class SettingsBackup {
 	private static final String LONG = "long";
 	private static final String FLOAT = "float";
 	private static final String STRING = "string";
+	// Apps.addDrawerIcon() keys the drawer icon like this.
+	private static final String DRAWER_SUFFIX = ".drawer/";
 
 	public static void export(Context context, OutputStream out)
 			throws IOException, JSONException {
@@ -52,6 +57,7 @@ public class SettingsBackup {
 
 		JSONObject tables = backup.optJSONObject(TABLES);
 		if (tables != null) {
+			adoptDrawerKeys(context, tables);
 			PieLauncherApp.getDatabase(context).importTables(tables);
 		}
 
@@ -59,6 +65,45 @@ public class SettingsBackup {
 		if (preferences != null) {
 			PieLauncherApp.getPrefs(context).importValues(
 					jsonToPreferences(preferences));
+		}
+	}
+
+	// The drawer icon is keyed by the package of the build that stored
+	// it, so one taken over from another build would not be found.
+	private static void adoptDrawerKeys(Context context, JSONObject tables)
+			throws JSONException {
+		String own = context.getPackageName() + DRAWER_SUFFIX;
+		List<String> others = new ArrayList<>();
+		for (String packageName : SettingsSync.knownPackages(context)) {
+			others.add(packageName + DRAWER_SUFFIX);
+		}
+		for (Iterator<String> it = tables.keys(); it.hasNext(); ) {
+			JSONArray rows = tables.optJSONArray(it.next());
+			for (int i = 0, len = rows == null ? 0 : rows.length();
+					i < len; ++i) {
+				JSONObject row = rows.optJSONObject(i);
+				if (row == null) {
+					continue;
+				}
+				List<String> columns = new ArrayList<>();
+				for (Iterator<String> c = row.keys(); c.hasNext(); ) {
+					columns.add(c.next());
+				}
+				for (String column : columns) {
+					Object value = row.opt(column);
+					if (!(value instanceof String)) {
+						continue;
+					}
+					String s = (String) value;
+					for (String other : others) {
+						if (s.startsWith(other)) {
+							row.put(column, own +
+									s.substring(other.length()));
+							break;
+						}
+					}
+				}
+			}
 		}
 	}
 

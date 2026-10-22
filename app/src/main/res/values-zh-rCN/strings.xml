@@ -1,5 +1,5 @@
 <resources>
-	<string name="app_name">Pie 启动器</string>
+	<string name="app_name">CakeLauncher</string>
 	<string name="tip_loading">正在加载</string>
 	<string name="tip_drag_to_order">拖动排列，圈选更改顺序</string>
 	<string name="tip_remove_icon">从饼状菜单中移除图标</string>
@@ -157,7 +157,7 @@
 	<string name="work_apps_moved">工作应用已移到 %1$s</string>
 	<string name="no_work_apps">未找到工作应用</string>
 	<string name="pick_image_failed">无法读取该图片</string>
-	<string name="import_settings_restart">设置已导入。Pie 启动器需要重启才能使用这些设置。</string>
+	<string name="import_settings_restart">设置已导入。CakeLauncher需要重启才能使用这些设置。</string>
 	<string name="customised_apps">自定义的应用</string>
 	<string name="show_customised_apps"><big><font color="#ffffff">自定义的应用</font></big>\n具有自定义名称、标签或图标的应用</string>
 	<string name="no_customised_apps">没有自定义的应用</string>
@@ -206,4 +206,5 @@
 	<string name="section_apps_summary">隐藏、自定义、工作文件夹</string>
 	<string name="section_backup_summary">导出、导入、同步</string>
 	<string name="section_advanced_summary">触感反馈、重启</string>
+	<string name="import_former"><big><font color="#ffffff">从 Pie Launcher 导入</font></big>\n获取本手机上安装的此分支的 Pie Launcher 版本的设置</string>
 </resources>

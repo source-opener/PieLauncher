@@ -1,5 +1,5 @@
 <resources>
-	<string name="app_name">Pie Launcher</string>
+	<string name="app_name">CakeLauncher</string>
 	<string name="tip_loading">Lade…</string>
 	<string name="tip_drag_to_order">Umkreisen um Reihenfolge zu ändern</string>
 	<string name="tip_remove_icon">Icon aus Menu entfernen</string>
@@ -8,7 +8,7 @@
 	<string name="welcome">Willkommen!</string>
 	<string name="check_these_settings">Überprüfen Sie bitte die folgenden Einstellungen:</string>
 	<string name="disable_battery_optimization"><big><font color="#ffffff">Akkuoptimierung deaktivieren</font></big>\nSpart Energie und sorgt dafür, dass der Launcher schneller arbeitet</string>
-	<string name="make_default_launcher"><big><font color="#ffffff">Zum Standard machen</font></big>\nÖffnet Pie Launcher anstelle des Systemstartbildschirms</string>
+	<string name="make_default_launcher"><big><font color="#ffffff">Zum Standard machen</font></big>\nÖffnet CakeLauncher anstelle des Systemstartbildschirms</string>
 	<string name="category_home">Startbildschirm</string>
 	<string name="orientation">Ausrichtung</string>
 	<string name="orientation_portrait">Hochformat (Standard)</string>
@@ -157,7 +157,7 @@
 	<string name="work_apps_moved">Arbeits-Apps nach %1$s verschoben</string>
 	<string name="no_work_apps">Keine Arbeits-Apps gefunden</string>
 	<string name="pick_image_failed">Bild konnte nicht gelesen werden</string>
-	<string name="import_settings_restart">Einstellungen importiert. Pie Launcher muss neu starten, um sie zu verwenden.</string>
+	<string name="import_settings_restart">Einstellungen importiert. CakeLauncher muss neu starten, um sie zu verwenden.</string>
 	<string name="customised_apps">Angepasste Apps</string>
 	<string name="show_customised_apps"><big><font color="#ffffff">Angepasste Apps</font></big>\nApps mit eigenem Namen, Schlagwörtern oder Icon</string>
 	<string name="no_customised_apps">Keine angepassten Apps</string>
@@ -206,4 +206,5 @@
 	<string name="section_apps_summary">Versteckt, angepasst, Arbeitsordner</string>
 	<string name="section_backup_summary">Export, Import, Abgleich</string>
 	<string name="section_advanced_summary">Haptik, Neustart</string>
+	<string name="import_former"><big><font color="#ffffff">Aus Pie Launcher importieren</font></big>\nÜbernimmt die Einstellungen des Pie-Launcher-Builds dieses Forks auf diesem Gerät</string>
 </resources>

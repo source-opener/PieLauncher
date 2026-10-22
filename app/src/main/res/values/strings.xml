@@ -1,5 +1,5 @@
 <resources>
-	<string name="app_name">Pie Launcher</string>
+	<string name="app_name">CakeLauncher</string>
 	<string name="tip_loading">Loading…</string>
 	<string name="tip_drag_to_order">Drag to arrange, circle to change order</string>
 	<string name="tip_remove_icon">Remove icon from pie menu</string>
@@ -157,7 +157,7 @@
 	<string name="work_apps_moved">Work apps moved to %1$s</string>
 	<string name="no_work_apps">No work apps found</string>
 	<string name="pick_image_failed">Could not read that image</string>
-	<string name="import_settings_restart">Settings imported. Pie Launcher needs to restart to use them.</string>
+	<string name="import_settings_restart">Settings imported. CakeLauncher needs to restart to use them.</string>
 	<string name="customised_apps">Customised apps</string>
 	<string name="show_customised_apps"><big><font color="#ffffff">Customised apps</font></big>\nApps with a custom name, tags or icon</string>
 	<string name="no_customised_apps">No customised apps</string>
@@ -206,4 +206,5 @@
 	<string name="section_apps_summary">Hidden, customised, work folder</string>
 	<string name="section_backup_summary">Export, import, sync</string>
 	<string name="section_advanced_summary">Haptics, relaunch</string>
+	<string name="import_former"><big><font color="#ffffff">Import from Pie Launcher</font></big>\nTake the settings of the Pie Launcher build of this fork installed on this phone</string>
 </resources>

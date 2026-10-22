@@ -1,5 +1,5 @@
 <resources>
-	<string name="app_name">Pie Launcher</string>
+	<string name="app_name">CakeLauncher</string>
 	<string name="tip_loading">Laddar …</string>
 	<string name="tip_drag_to_order">Dra för att ordna, cirkla för att ändra ordning</string>
 	<string name="tip_remove_icon">Ta bort ikon från cirkelmenyn</string>
@@ -157,7 +157,7 @@
 	<string name="work_apps_moved">Jobbappar flyttade till %1$s</string>
 	<string name="no_work_apps">Inga jobbappar hittades</string>
 	<string name="pick_image_failed">Kunde inte läsa bilden</string>
-	<string name="import_settings_restart">Inställningar importerade. Pie Launcher måste startas om för att använda dem.</string>
+	<string name="import_settings_restart">Inställningar importerade. CakeLauncher måste startas om för att använda dem.</string>
 	<string name="customised_apps">Anpassade appar</string>
 	<string name="show_customised_apps"><big><font color="#ffffff">Anpassade appar</font></big>\nAppar med eget namn, etiketter eller ikon</string>
 	<string name="no_customised_apps">Inga anpassade appar</string>
@@ -206,4 +206,5 @@
 	<string name="section_apps_summary">Dolda, anpassade, jobbmapp</string>
 	<string name="section_backup_summary">Exportera, importera, synka</string>
 	<string name="section_advanced_summary">Haptik, omstart</string>
+	<string name="import_former"><big><font color="#ffffff">Importera från Pie Launcher</font></big>\nHämtar inställningarna från Pie Launcher-versionen av denna fork på telefonen</string>
 </resources>

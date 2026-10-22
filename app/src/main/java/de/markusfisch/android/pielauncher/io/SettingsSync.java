@@ -5,6 +5,9 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 
+import java.util.ArrayList;
+import java.util.List;
+
 // The stable and the beta build are separate apps with separate data.
 // Each serves its settings to the other through SettingsProvider so one
 // can be brought in line with the other without going through a file.
@@ -13,11 +16,18 @@ public class SettingsSync {
 		public final Uri uri;
 		public final String label;
 		public final String versionName;
+		// A build from before the rename rather than the other channel.
+		public final boolean former;
 
-		private Counterpart(Uri uri, String label, String versionName) {
+		private Counterpart(
+				Uri uri,
+				String label,
+				String versionName,
+				boolean former) {
 			this.uri = uri;
 			this.label = label;
 			this.versionName = versionName;
+			this.former = former;
 		}
 	}
 
@@ -27,6 +37,13 @@ public class SettingsSync {
 	public static final String AUTHORITY_SUFFIX = ".settings";
 
 	private static final String BETA_SUFFIX = ".beta";
+	// This fork was released under the id of the original Pie Launcher
+	// before it was renamed. Those builds serve their settings to apps
+	// signed with the same key; the original serves none.
+	private static final String[] FORMER_PACKAGES = {
+			"de.markusfisch.android.pielauncher",
+			"de.markusfisch.android.pielauncher.beta",
+	};
 
 	public static boolean isBeta(Context context) {
 		return context.getPackageName().endsWith(BETA_SUFFIX);
@@ -46,11 +63,39 @@ public class SettingsSync {
 		}
 	}
 
-	// Null when the other app is not installed, is too old to serve its
+	// The other channel first, then the builds from before the rename.
+	public static List<String> knownPackages(Context context) {
+		List<String> packageNames = new ArrayList<>();
+		String self = context.getPackageName();
+		packageNames.add(otherPackageName(self));
+		for (String packageName : FORMER_PACKAGES) {
+			if (!packageName.equals(self)) {
+				packageNames.add(packageName);
+			}
+		}
+		return packageNames;
+	}
+
+	public static List<Counterpart> findAll(Context context) {
+		List<Counterpart> found = new ArrayList<>();
+		boolean former = false;
+		for (String packageName : knownPackages(context)) {
+			Counterpart counterpart = find(context, packageName, former);
+			if (counterpart != null) {
+				found.add(counterpart);
+			}
+			former = true;
+		}
+		return found;
+	}
+
+	// Null when the app is not installed, is too old to serve its
 	// settings or is signed with a different key, which makes the
 	// signature permission on its provider withhold them.
-	public static Counterpart find(Context context) {
-		String packageName = otherPackageName(context.getPackageName());
+	private static Counterpart find(
+			Context context,
+			String packageName,
+			boolean former) {
 		Cursor cursor;
 		try {
 			cursor = context.getContentResolver().query(
@@ -75,7 +120,8 @@ public class SettingsSync {
 			if (label == null || versionName == null) {
 				return null;
 			}
-			return new Counterpart(uriOf(packageName), label, versionName);
+			return new Counterpart(uriOf(packageName), label, versionName,
+					former);
 		} finally {
 			cursor.close();
 		}

@@ -272,6 +272,11 @@
 						android:visibility="gone"
 						android:text="@string/sync_from_beta" />
 					<de.markusfisch.android.pielauncher.widget.PreferenceView
+						style="@style/PreferenceWithSeparator"
+						android:id="@+id/import_former"
+						android:visibility="gone"
+						android:text="@string/import_former" />
+					<de.markusfisch.android.pielauncher.widget.PreferenceView
 						style="@style/Preference"
 						android:id="@+id/import_settings"
 						android:text="@string/import_settings" />

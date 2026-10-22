@@ -24,6 +24,12 @@
 		android:name="${applicationId}.permission.READ_SETTINGS"
 		android:protectionLevel="signature"/>
 	<uses-permission
+		android:name="io.github.sourceopener.cakelauncher.permission.READ_SETTINGS"/>
+	<uses-permission
+		android:name="io.github.sourceopener.cakelauncher.beta.permission.READ_SETTINGS"/>
+	<!-- The builds of this fork from before it was renamed, to take
+	     their settings over. The original Pie Launcher serves none. -->
+	<uses-permission
 		android:name="de.markusfisch.android.pielauncher.permission.READ_SETTINGS"/>
 	<uses-permission
 		android:name="de.markusfisch.android.pielauncher.beta.permission.READ_SETTINGS"/>
