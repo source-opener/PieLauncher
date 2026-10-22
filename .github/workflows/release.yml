@@ -207,6 +207,9 @@ jobs:
         if: steps.check.outputs.publish == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
+          # gh picks the repository from the git remotes and prefers one
+          # named upstream, which is added below for the commit history.
+          GH_REPO: ${{ github.repository }}
           UPSTREAM: https://github.com/markusfisch/PieLauncher
           CHANNEL: ${{ steps.channel.outputs.name }}
           BASE: ${{ steps.version.outputs.base }}
