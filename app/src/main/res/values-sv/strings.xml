@@ -203,7 +203,6 @@
 	<string name="action_hide">Dölj</string>
 	<string name="action_edit_pie">Ändra meny</string>
 	<string name="action_remove">Ta bort</string>
-	<string name="action_more">Mer</string>
 	<string name="action_pin">Fäst</string>
 	<string name="action_unpin">Lossa</string>
 	<string name="action_show_apps">Visa appar</string>
@@ -228,4 +227,9 @@
 	<string name="cloud_backup">Säkerhetskopiering till Google-konto</string>
 	<string name="cloud_backup_blocked">Blockerad (standard)</string>
 	<string name="cloud_backup_allowed">Tillåten</string>
+	<string name="folder_edit">Redigera</string>
+	<string name="folder_undo">Ångra</string>
+	<string name="folder_reset">Återställ</string>
+	<string name="folder_done">Klar</string>
+	<string name="folder_drag_hint">Dra appar för att flytta dem</string>
 </resources>

@@ -799,9 +799,11 @@ public class Database {
 	public void restoreFolders(
 			Context context,
 			List<Folders.Folder> folders,
-			Map<Long, Set<LauncherItemKey>> items) {
+			Map<Long, Set<LauncherItemKey>> items,
+			Map<Long, Map<LauncherItemKey, Integer>> positions) {
 		folders.clear();
 		items.clear();
+		positions.clear();
 		SQLiteDatabase db = openHelper.getReadableDatabase();
 		Cursor cursor = db.query(FOLDERS,
 				new String[]{ID, NAME, HIDE_CONTENTS, PINNED},
@@ -818,7 +820,7 @@ public class Database {
 			cursor.close();
 		}
 		cursor = db.query(FOLDER_ITEMS,
-				new String[]{FOLDER_ID, ITEM_KEY},
+				new String[]{FOLDER_ID, ITEM_KEY, POSITION},
 				null, null, null, null, null);
 		try {
 			while (cursor.moveToNext()) {
@@ -834,9 +836,50 @@ public class Database {
 					items.put(id, keys);
 				}
 				keys.add(key);
+				int position = cursor.getInt(2);
+				if (position > -1) {
+					Map<LauncherItemKey, Integer> order = positions.get(id);
+					if (order == null) {
+						order = new HashMap<>();
+						positions.put(id, order);
+					}
+					order.put(key, position);
+				}
 			}
 		} finally {
 			cursor.close();
+		}
+	}
+
+	// Stores the order of a folder's items as arranged by hand, or
+	// forgets it for null.
+	public void setFolderOrder(
+			Context context,
+			long id,
+			List<LauncherItemKey> keys) {
+		SQLiteDatabase db = openHelper.getWritableDatabase();
+		String folderId = String.valueOf(id);
+		db.beginTransaction();
+		try {
+			ContentValues values = new ContentValues();
+			values.put(POSITION, -1);
+			db.update(FOLDER_ITEMS, values, FOLDER_ID + "=?",
+					new String[]{folderId});
+			for (int i = 0, size = keys == null ? 0 : keys.size();
+					i < size; ++i) {
+				LauncherItemKey key = keys.get(i);
+				values.put(POSITION, i);
+				db.update(FOLDER_ITEMS, values,
+						FOLDER_ID + "=? AND " + ITEM_KEY + "=?",
+						new String[]{
+								folderId,
+								LauncherItemKey.flattenToString(context,
+										key.componentName, key.userHandle)
+						});
+			}
+			db.setTransactionSuccessful();
+		} finally {
+			db.endTransaction();
 		}
 	}
 
@@ -1123,7 +1166,7 @@ public class Database {
 
 	private static class OpenHelper extends SQLiteOpenHelper {
 		OpenHelper(Context context) {
-			super(context, "app_cache.db", null, 10);
+			super(context, "app_cache.db", null, 11);
 		}
 
 		@Override
@@ -1202,6 +1245,7 @@ public class Database {
 			db.execSQL("CREATE TABLE " + FOLDER_ITEMS + " (" +
 					FOLDER_ID + " INTEGER NOT NULL," +
 					ITEM_KEY + " TEXT NOT NULL," +
+					POSITION + " INTEGER NOT NULL DEFAULT -1," +
 					"PRIMARY KEY (" + FOLDER_ID + "," + ITEM_KEY + "));");
 		}
 
@@ -1255,9 +1299,16 @@ public class Database {
 			}
 			if (oldVersion < 8) {
 				createFolderTables(db);
-			} else if (oldVersion < 9) {
-				db.execSQL("ALTER TABLE " + FOLDERS + " ADD COLUMN " +
-						PINNED + " INTEGER NOT NULL DEFAULT 1;");
+			} else {
+				if (oldVersion < 9) {
+					db.execSQL("ALTER TABLE " + FOLDERS + " ADD COLUMN " +
+							PINNED + " INTEGER NOT NULL DEFAULT 1;");
+				}
+				if (oldVersion < 11) {
+					db.execSQL("ALTER TABLE " + FOLDER_ITEMS +
+							" ADD COLUMN " + POSITION +
+							" INTEGER NOT NULL DEFAULT -1;");
+				}
 			}
 			if (oldVersion < 10) {
 				createIconsTable(db, WORK_PAUSED_ICONS);

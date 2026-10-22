@@ -203,7 +203,6 @@
 	<string name="action_hide">Сховати</string>
 	<string name="action_edit_pie">Змінити меню</string>
 	<string name="action_remove">Прибрати</string>
-	<string name="action_more">Ще</string>
 	<string name="action_pin">Закріпити</string>
 	<string name="action_unpin">Відкріпити</string>
 	<string name="action_show_apps">Показати</string>
@@ -228,4 +227,9 @@
 	<string name="cloud_backup">Резервна копія в акаунт Google</string>
 	<string name="cloud_backup_blocked">Заборонено (типово)</string>
 	<string name="cloud_backup_allowed">Дозволено</string>
+	<string name="folder_edit">Змінити</string>
+	<string name="folder_undo">Скасувати</string>
+	<string name="folder_reset">Скинути</string>
+	<string name="folder_done">Готово</string>
+	<string name="folder_drag_hint">Перетягуйте застосунки</string>
 </resources>

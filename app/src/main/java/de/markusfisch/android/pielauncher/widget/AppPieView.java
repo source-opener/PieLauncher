@@ -67,6 +67,8 @@ public class AppPieView extends View {
 		void onDragDown(float alpha);
 
 		void onResetSearch();
+
+		void onOpenFolder(Apps.AppIcon folder);
 	}
 
 	private interface NameListener {
@@ -421,6 +423,13 @@ public class AppPieView extends View {
 		selectedApp = prefs.doubleSpaceLaunch()
 				? (appListIsFiltered ? 0 : -1)
 				: getSelectedAppFromTrailingSpace(query);
+		if (selectedApp > -1 && prefs.horizontalDrawer()) {
+			// Pinned folders lead the list here, but the first result is
+			// what a search is after.
+			selectedApp = pinnedFolderCount < getIconCount()
+					? selectedApp + pinnedFolderCount
+					: -1;
+		}
 		if (resetScroll) {
 			scrollList(0, false);
 			lastScrollY = 0;
@@ -456,6 +465,10 @@ public class AppPieView extends View {
 		if (openFolderId > -1 || appList == null) {
 			return;
 		}
+		if (prefs.horizontalDrawer()) {
+			keepAllPinnedFolders();
+			return;
+		}
 		for (Apps.AppIcon icon : appList) {
 			if (!Folders.isFolder(icon) ||
 					!PieLauncherApp.folders.isPinned(Folders.idOf(icon))) {
@@ -463,6 +476,29 @@ public class AppPieView extends View {
 			}
 			++pinnedFolderCount;
 		}
+	}
+
+	// The horizontal drawer keeps every pinned folder above the keyboard
+	// whatever is searched for, so put all of them in front of the
+	// results instead of only the matching ones.
+	private void keepAllPinnedFolders() {
+		List<Apps.AppIcon> list = new ArrayList<>();
+		for (Folders.Folder folder : PieLauncherApp.folders.getFolders()) {
+			Apps.AppIcon icon = folder.pinned
+					? PieLauncherApp.folders.getIcon(folder.id)
+					: null;
+			if (icon != null) {
+				list.add(icon);
+			}
+		}
+		pinnedFolderCount = list.size();
+		for (Apps.AppIcon icon : appList) {
+			if (!Folders.isFolder(icon) ||
+					!PieLauncherApp.folders.isPinned(Folders.idOf(icon))) {
+				list.add(icon);
+			}
+		}
+		appList = list;
 	}
 
 	public void launchSelectedAppFromList() {
@@ -1233,6 +1269,17 @@ public class AppPieView extends View {
 		return max;
 	}
 
+	public void launchFromFolder(Apps.AppIcon icon) {
+		launchApp(getContext(), icon);
+		if (listListener != null) {
+			listListener.onHideList();
+		}
+	}
+
+	public void showOptionsFor(Apps.AppIcon icon) {
+		showIconOptions(getContext(), icon);
+	}
+
 	private void showIconOptions(Context context, Apps.AppIcon icon) {
 		if (icon == null) {
 			return;
@@ -1244,25 +1291,25 @@ public class AppPieView extends View {
 		LauncherItemKey key = new LauncherItemKey(icon.componentName,
 				icon.userHandle);
 		ItemPanel panel = new ItemPanel(context, icon.bitmap, icon.label);
-		panel.add(R.drawable.ic_add, R.string.action_pie,
+		panel.add(R.drawable.ic_section_pie, R.string.action_pie,
 				() -> addToPie(icon));
 		panel.add(R.drawable.ic_section_folders, R.string.action_folder,
 				() -> showFolderList(context, key));
-		panel.add(R.drawable.ic_edit, R.string.action_rename,
+		panel.add(R.drawable.ic_rename, R.string.action_rename,
 				() -> renameApp(context, icon));
-		panel.add(R.drawable.ic_section_look, R.string.action_icon,
+		panel.add(R.drawable.ic_palette, R.string.action_icon,
 				() -> showIconMenu(context, icon, key,
 						() -> PieLauncherApp.apps.updateIconsAsync(context)));
 		panel.add(R.drawable.ic_info, R.string.action_info,
 				() -> AppLauncher.launchAppInfo(context, icon));
 		panel.add(R.drawable.ic_hide, R.string.action_hide,
 				() -> PickIconActivity.askToHide(context, icon.componentName));
-		panel.addMore(R.drawable.ic_tag, R.string.app_tags,
+		panel.add(R.drawable.ic_tag, R.string.app_tags,
 				() -> editTags(context, icon));
-		panel.addMore(R.drawable.ic_section_pie, R.string.action_edit_pie,
+		panel.add(R.drawable.ic_edit, R.string.action_edit_pie,
 				() -> addIconInteractively(null));
 		if (Apps.isShortcut(icon)) {
-			panel.addMore(R.drawable.ic_remove, R.string.action_remove,
+			panel.add(R.drawable.ic_remove, R.string.action_remove,
 					() -> askToRemoveShortcut(context, icon));
 		}
 		panel.show();
@@ -1284,6 +1331,13 @@ public class AppPieView extends View {
 		ItemPanel panel = new ItemPanel(context, icon.bitmap, icon.label);
 		boolean packs = PieLauncherApp.iconPack.hasPacks();
 		boolean work = AppLauncher.hasWorkProfile(context);
+		Bitmap workIcon = work
+				? PieLauncherApp.workPausedIcons.get(key)
+				: null;
+		if (workIcon != null) {
+			panel.addHeaderIcon(workIcon, R.string.icon_work_paused,
+					R.string.icon_normal);
+		}
 		if (work) {
 			panel.heading(R.string.icon_normal);
 		}
@@ -1296,7 +1350,7 @@ public class AppPieView extends View {
 			refresh.run();
 		});
 		if (packs) {
-			panel.add(R.drawable.ic_section_look, R.string.icon_pack, () -> {
+			panel.add(R.drawable.ic_shapes, R.string.icon_pack, () -> {
 				returnToList();
 				changeIcon(context, icon);
 			});
@@ -1310,7 +1364,7 @@ public class AppPieView extends View {
 				refresh.run();
 			});
 			if (packs) {
-				panel.add(R.drawable.ic_section_look, R.string.icon_pack,
+				panel.add(R.drawable.ic_shapes, R.string.icon_pack,
 						() -> PickIconActivity.startForWorkPaused(context,
 								key));
 			}
@@ -1366,7 +1420,7 @@ public class AppPieView extends View {
 			return;
 		}
 		ItemPanel panel = new ItemPanel(context, icon.bitmap, folder.name);
-		panel.add(R.drawable.ic_add, R.string.action_pie,
+		panel.add(R.drawable.ic_section_pie, R.string.action_pie,
 				() -> addToPie(icon));
 		panel.add(R.drawable.ic_pin, folder.pinned
 						? R.string.action_unpin
@@ -1387,7 +1441,7 @@ public class AppPieView extends View {
 							!folder.hideContents, folder.pinned);
 					resetSearch();
 				});
-		panel.add(R.drawable.ic_edit, R.string.action_rename,
+		panel.add(R.drawable.ic_rename, R.string.action_rename,
 				() -> askForFolderName(context, folder.name, name -> {
 					PieLauncherApp.folders.update(context, id, name,
 							folder.hideContents, folder.pinned);
@@ -1395,12 +1449,12 @@ public class AppPieView extends View {
 					PieLauncherApp.apps.indexAppsAsync(context);
 					resetSearch();
 				}));
-		panel.add(R.drawable.ic_section_look, R.string.action_icon,
+		panel.add(R.drawable.ic_palette, R.string.action_icon,
 				() -> showIconMenu(context, icon, Folders.keyOf(id),
 						this::resetSearch));
-		panel.addMore(R.drawable.ic_tag, R.string.app_tags,
+		panel.add(R.drawable.ic_tag, R.string.app_tags,
 				() -> editTags(context, icon));
-		panel.addMore(R.drawable.ic_delete, R.string.action_delete,
+		panel.add(R.drawable.ic_delete, R.string.action_delete,
 				() -> askToDeleteFolder(context, id));
 		panel.show();
 	}
@@ -1595,6 +1649,11 @@ public class AppPieView extends View {
 	private boolean openFolder(Apps.AppIcon appIcon) {
 		if (!Folders.isFolder(appIcon)) {
 			return false;
+		}
+		if (listListener != null) {
+			// Shown in a panel over the drawer.
+			listListener.onOpenFolder(appIcon);
+			return true;
 		}
 		openFolderId = Folders.idOf(appIcon);
 		folderFromPie = false;

@@ -35,4 +35,8 @@
 		android:contentDescription="@string/preferences"
 		android:src="@drawable/ic_preferences"
 		android:visibility="gone"/>
+	<de.markusfisch.android.pielauncher.widget.FolderPanelView
+		android:id="@+id/folder_panel"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"/>
 </merge>

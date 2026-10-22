@@ -203,7 +203,6 @@
 	<string name="action_hide">Ocultar</string>
 	<string name="action_edit_pie">Editar menu</string>
 	<string name="action_remove">Remover</string>
-	<string name="action_more">Mais</string>
 	<string name="action_pin">Fixar</string>
 	<string name="action_unpin">Soltar</string>
 	<string name="action_show_apps">Mostrar apps</string>
@@ -228,4 +227,9 @@
 	<string name="cloud_backup">Backup na conta Google</string>
 	<string name="cloud_backup_blocked">Bloqueado (padrão)</string>
 	<string name="cloud_backup_allowed">Permitido</string>
+	<string name="folder_edit">Editar</string>
+	<string name="folder_undo">Desfazer</string>
+	<string name="folder_reset">Redefinir</string>
+	<string name="folder_done">Pronto</string>
+	<string name="folder_drag_hint">Arraste os apps para movê-los</string>
 </resources>
