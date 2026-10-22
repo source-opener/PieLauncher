@@ -2275,12 +2275,14 @@ public class AppPieView extends View {
 		int viewBottom = scrollY + viewHeight;
 		int top = searchInputHeight + listPadding;
 
-		// Slide in/out animation.
-		if (prefs.listAnimationAppearance() ==
+		// Slide in/out animation. It only moves what is drawn; the
+		// layout stays as it is at rest, or the horizontal drawer would
+		// lose rows while being pulled down and its apps would jump.
+		int slide = prefs.listAnimationAppearance() ==
 				Preferences.LIST_APPEARANCE_ANIMATION_SLIDE ||
-				isDraggingDownList()) {
-			top += Math.round((1f - f) * listFadeHeight);
-		}
+				isDraggingDownList()
+				? Math.round((1f - f) * listFadeHeight)
+				: 0;
 		paintList.setAlpha(Math.round(f * 255f));
 		paintText.setAlpha(Math.round(f * alphaText));
 
@@ -2326,14 +2328,15 @@ public class AppPieView extends View {
 			int y;
 			if (i < pinned) {
 				x = listPadding + i % columns * cellWidth;
-				y = folderAreaTop + i / columns * cellHeight - folderScrollY;
+				y = folderAreaTop + i / columns * cellHeight - folderScrollY +
+						slide;
 			} else if (horizontal) {
 				int cell = i - pinned;
 				x = listPadding + cell / rows * cellWidth - listScrollX;
-				y = top + cell % rows * cellHeight;
+				y = top + cell % rows * cellHeight + slide;
 			} else {
 				x = listPadding + i % columns * cellWidth;
-				y = top + i / columns * cellHeight;
+				y = top + i / columns * cellHeight + slide;
 			}
 			Apps.AppIcon appIcon = appList.get(i);
 			if (i == dragIndex) {
@@ -2341,7 +2344,8 @@ public class AppPieView extends View {
 				continue;
 			}
 			if (i < pinned
-					? y <= folderAreaTop - cellHeight || y >= bottom
+					? y <= folderAreaTop + slide - cellHeight ||
+							y >= bottom + slide
 					: horizontal
 					? x <= -cellWidth || x >= viewWidth
 					: y <= viewTop || y >= viewBottom) {
@@ -2358,10 +2362,11 @@ public class AppPieView extends View {
 			appIcon.hitRect.set(x, y, x + cellWidth, y + cellHeight);
 			if (i < pinned) {
 				// Cut off at the edges of the folder area.
-				appIcon.hitRect.intersect(0, folderAreaTop, viewWidth,
-						bottom);
+				appIcon.hitRect.intersect(0, folderAreaTop + slide, viewWidth,
+						bottom + slide);
 				canvas.save();
-				canvas.clipRect(0, folderAreaTop, viewWidth, bottom);
+				canvas.clipRect(0, folderAreaTop + slide, viewWidth,
+						bottom + slide);
 			}
 			int ix = x + hpad;
 			int iy = y + vpad;
@@ -2412,7 +2417,8 @@ public class AppPieView extends View {
 			}
 			maxHeight = viewHeight;
 		} else {
-			maxHeight = top + (size + columns - 1) / columns * cellHeight +
+			maxHeight = top + slide +
+					(size + columns - 1) / columns * cellHeight +
 					listPadding;
 		}
 		int viewHeightMinusPadding = viewHeight - getPaddingBottom();
