@@ -205,29 +205,97 @@ jobs:
 
       - name: Assemble release notes
         if: steps.check.outputs.publish == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          UPSTREAM: https://github.com/markusfisch/PieLauncher
+          CHANNEL: ${{ steps.channel.outputs.name }}
+          BASE: ${{ steps.version.outputs.base }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
         run: |
           set -euo pipefail
+          # The lists of the last published release are edited by hand,
+          # so carry them over as they are and add only the commits made
+          # since. Fall back to the commit history where there is none.
+          section() {
+            awk -v h="## $2" '
+              /^## / { inside = index($0, h) == 1; next }
+              /^Signing certificate/ { inside = 0 }
+              inside && /^[*-] / && $0 !~ /^[*-] Nothing yet\.$/
+            ' "$1" | sed 's/^- /* /'
+          }
+          merge() {
+            printf '%s\n' "$@" | awk 'NF && !seen[$0]++'
+          }
+          commits() {
+            git log --no-merges --format='* %s' "$1"..HEAD
+          }
+          notes() {
+            gh release view "$1" --json body --jq .body | tr -d '\r' > "$2"
+          }
+
           git remote add upstream "$UPSTREAM" 2>/dev/null || true
           git fetch --no-tags --quiet upstream master
           # ^upstream/master keeps this to what the fork adds, so merging
           # an upstream release never floods the list with their commits.
-          fork=$(git log --no-merges --format='* %s' HEAD ^upstream/master)
-          [ -n "$fork" ] || fork="* Nothing yet."
-          {
-            if [ '${{ steps.channel.outputs.name }}' = 'beta' ]; then
-              git fetch --no-tags --quiet origin \
-                '${{ github.event.repository.default_branch }}' || true
+          history=$(git log --no-merges --format='* %s' HEAD ^upstream/master)
+
+          gh release list --exclude-drafts --limit 100 \
+              --json tagName,isPrerelease,publishedAt \
+              --jq 'sort_by(.publishedAt) | reverse | .[]
+                | "\(.tagName) \(.isPrerelease)"' > releases.txt
+          stable=$(awk '$2 == "false" { print $1; exit }' releases.txt)
+          # Only betas on the way to this version, so publishing a stable
+          # release starts the next beta list afresh.
+          beta=$(awk -v p="v$BASE-beta." \
+              '$2 == "true" && index($1, p) == 1 { print $1; exit }' \
+              releases.txt)
+          : > stable.md
+          : > beta.md
+          [ -z "$stable" ] || notes "$stable" stable.md
+          [ -z "$beta" ] || notes "$beta" beta.md
+          echo "Carrying over notes from ${stable:-no stable release}" \
+              "and ${beta:-no beta}."
+
+          if [ "$CHANNEL" = 'beta' ]; then
+            if [ -n "$beta" ]; then
+              new=$(merge "$(commits "$beta")" \
+                  "$(section beta.md 'New in this beta')")
+              fork=$(section beta.md 'Changes from')
+            elif [ -n "$stable" ]; then
+              new=$(commits "$stable")
+              fork=$(section stable.md 'Changes from')
+            else
+              git fetch --no-tags --quiet origin "$DEFAULT_BRANCH" || true
               since=$(git rev-parse -q --verify FETCH_HEAD || true)
-              beta=$(git log --no-merges --format='* %s' \
+              new=$(git log --no-merges --format='* %s' \
                   "${since:-HEAD}"..HEAD 2>/dev/null || true)
-              [ -n "$beta" ] || beta="* Nothing yet."
+              fork=
+            fi
+          else
+            new=
+            if [ -n "$beta" ]; then
+              fork=$(merge "$(commits "$beta")" \
+                  "$(section beta.md 'New in this beta')" \
+                  "$(section stable.md 'Changes from')")
+            elif [ -n "$stable" ]; then
+              fork=$(merge "$(commits "$stable")" \
+                  "$(section stable.md 'Changes from')")
+            else
+              fork=
+            fi
+          fi
+          [ -n "$fork" ] || fork=$history
+          [ -n "$fork" ] || fork="* Nothing yet."
+          [ -n "$new" ] || new="* Nothing yet."
+          {
+            if [ "$CHANNEL" = 'beta' ]; then
               echo "Beta ${{ steps.version.outputs.beta }} on the way to"
-              echo "${{ steps.version.outputs.base }}, built from"
+              echo "$BASE, built from"
               echo '`${{ github.sha }}`.'
               echo
               echo "## New in this beta"
               echo
-              echo "$beta"
+              echo "$new"
               echo
             fi
             echo "## Changes from Pie Launcher ${{ steps.version.outputs.upstream }}"
@@ -237,8 +305,6 @@ jobs:
             echo "Signing certificate (SHA-256): \`${{ steps.signature.outputs.fingerprint }}\`"
           } > release-notes.md
           cat release-notes.md
-        env:
-          UPSTREAM: https://github.com/markusfisch/PieLauncher
 
       - name: Publish release
         if: steps.check.outputs.publish == 'true'
