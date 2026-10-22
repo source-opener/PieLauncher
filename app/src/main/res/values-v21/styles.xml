@@ -8,4 +8,11 @@
 		<item name="android:windowNoTitle">true</item>
 	</style>
 	<style name="LightDialog" parent="android:Theme.Material.Light.Dialog.Alert"/>
+	<!-- Dialogs look like the long-press panel: rounded and see-through. -->
+	<style name="PanelDialog" parent="android:Theme.Material.Dialog.Alert">
+		<item name="android:windowBackground">@drawable/panel_dialog</item>
+	</style>
+	<style name="PanelDialogLight" parent="android:Theme.Material.Light.Dialog.Alert">
+		<item name="android:windowBackground">@drawable/panel_dialog_light</item>
+	</style>
 </resources>

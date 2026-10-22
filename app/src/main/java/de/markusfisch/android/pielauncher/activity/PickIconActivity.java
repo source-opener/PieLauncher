@@ -1,7 +1,6 @@
 package de.markusfisch.android.pielauncher.activity;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -266,7 +265,7 @@ public class PickIconActivity extends Activity {
 	}
 
 	private void askToRestore(ComponentName componentName) {
-		new AlertDialog.Builder(this)
+		Dialog.newDialog(this)
 				.setTitle(R.string.change_icon)
 				.setMessage(R.string.want_to_restore_icon)
 				.setPositiveButton(android.R.string.ok, (d, w) -> {
