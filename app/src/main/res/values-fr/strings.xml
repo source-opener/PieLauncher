@@ -188,11 +188,10 @@
 	<string name="drawer_layout">Disposition de la liste</string>
 	<string name="drawer_layout_vertical">Verticale</string>
 	<string name="drawer_layout_horizontal">Horizontale (expérimental)</string>
-	<string name="section_home_summary">Orientation, zone morte, bouton d\'accueil</string>
-	<string name="section_pie_summary">Menu divisé, cercle, dossiers</string>
-	<string name="section_look_summary">Fond, flou, pack d\'icônes, noms</string>
-	<string name="section_drawer_summary">Tri, clavier, disposition</string>
-	<string name="section_search_summary">Précision, espace, lancement auto</string>
+	<string name="section_pie_summary">Menu divisé, cercle, dossiers, zone morte</string>
+	<string name="section_look_summary">Fond, flou, pack d\'icônes, orientation</string>
+	<string name="section_drawer_summary">Ouverture, disposition, noms, tri</string>
+	<string name="section_search_summary">Clavier, précision, lancement auto</string>
 	<string name="section_apps_summary">Masquées, personnalisées, dossier pro</string>
 	<string name="section_backup_summary">Export, import, synchronisation</string>
 	<string name="section_advanced_summary">Vibrations, relance</string>
@@ -214,4 +213,16 @@
 	<string name="icon_picture">Image</string>
 	<string name="icon_normal">Normal</string>
 	<string name="icon_work_paused">Quand le travail est en pause</string>
+	<string name="category_about">À propos</string>
+	<string name="section_about_summary">Version, développeur d\'origine, confidentialité</string>
+	<string name="about_version">Version %1$s</string>
+	<string name="about_original">Application d\'origine de Markus Fisch</string>
+	<string name="about_original_summary">Pie Launcher, son travail. Touchez pour ouvrir sa page dans le navigateur.</string>
+	<string name="about_fork">Ce fork</string>
+	<string name="about_fork_summary">Ajouts écrits avec Claude Code et relus par un humain. Touchez pour ouvrir sa page dans le navigateur.</string>
+	<string name="about_privacy">Confidentialité</string>
+	<string name="about_privacy_summary">Aucun accès à Internet. Rien n\'est collecté ni envoyé.</string>
+	<string name="about_license">Licence</string>
+	<string name="about_license_summary">Licence MIT, © Markus Fisch</string>
+	<string name="no_browser">Aucune application pour ouvrir les pages web</string>
 </resources>

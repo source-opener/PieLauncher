@@ -188,11 +188,10 @@
 	<string name="drawer_layout">Indeling van de lade</string>
 	<string name="drawer_layout_vertical">Verticaal</string>
 	<string name="drawer_layout_horizontal">Horizontaal (experimenteel)</string>
-	<string name="section_home_summary">Oriëntatie, dode zone, thuisknop</string>
-	<string name="section_pie_summary">Gesplitst menu, cirkelen, mappen</string>
-	<string name="section_look_summary">Achtergrond, vervaging, pictogrampakket, namen</string>
-	<string name="section_drawer_summary">Sortering, toetsenbord, indeling</string>
-	<string name="section_search_summary">Nauwkeurigheid, spatie, automatisch starten</string>
+	<string name="section_pie_summary">Gesplitst menu, cirkelen, mappen, dode zone</string>
+	<string name="section_look_summary">Achtergrond, vervaging, pictogrampakket, oriëntatie</string>
+	<string name="section_drawer_summary">Openen, indeling, namen, sortering</string>
+	<string name="section_search_summary">Toetsenbord, nauwkeurigheid, automatisch starten</string>
 	<string name="section_apps_summary">Verborgen, aangepast, werkmap</string>
 	<string name="section_backup_summary">Exporteren, importeren, synchroniseren</string>
 	<string name="section_advanced_summary">Haptiek, herstarten</string>
@@ -214,4 +213,16 @@
 	<string name="icon_picture">Afbeelding</string>
 	<string name="icon_normal">Normaal</string>
 	<string name="icon_work_paused">Als werk gepauzeerd is</string>
+	<string name="category_about">Over</string>
+	<string name="section_about_summary">Versie, oorspronkelijke ontwikkelaar, privacy</string>
+	<string name="about_version">Versie %1$s</string>
+	<string name="about_original">Originele app van Markus Fisch</string>
+	<string name="about_original_summary">Pie Launcher, zijn werk. Tik om de pagina in de browser te openen.</string>
+	<string name="about_fork">Deze fork</string>
+	<string name="about_fork_summary">Toevoegingen geschreven met Claude Code en nagekeken door een mens. Tik om de pagina in de browser te openen.</string>
+	<string name="about_privacy">Privacy</string>
+	<string name="about_privacy_summary">Geen internettoegang. Er wordt niets verzameld of verstuurd.</string>
+	<string name="about_license">Licentie</string>
+	<string name="about_license_summary">MIT-licentie, © Markus Fisch</string>
+	<string name="no_browser">Geen app om webpagina\'s te openen</string>
 </resources>

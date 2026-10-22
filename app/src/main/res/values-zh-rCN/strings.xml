@@ -188,11 +188,10 @@
 	<string name="drawer_layout">抽屉布局</string>
 	<string name="drawer_layout_vertical">竖向</string>
 	<string name="drawer_layout_horizontal">横向（实验性）</string>
-	<string name="section_home_summary">方向、死区、主页键</string>
-	<string name="section_pie_summary">分割菜单、画圈、文件夹</string>
-	<string name="section_look_summary">背景、模糊、图标包、名称</string>
-	<string name="section_drawer_summary">排序、键盘、布局</string>
-	<string name="section_search_summary">精确度、空格键、自动启动</string>
+	<string name="section_pie_summary">分割菜单、画圈、文件夹、死区</string>
+	<string name="section_look_summary">背景、模糊、图标包、方向</string>
+	<string name="section_drawer_summary">打开、布局、名称、排序</string>
+	<string name="section_search_summary">键盘、精确度、自动启动</string>
 	<string name="section_apps_summary">隐藏、自定义、工作文件夹</string>
 	<string name="section_backup_summary">导出、导入、同步</string>
 	<string name="section_advanced_summary">触感反馈、重启</string>
@@ -214,4 +213,16 @@
 	<string name="icon_picture">图片</string>
 	<string name="icon_normal">普通</string>
 	<string name="icon_work_paused">工作暂停时</string>
+	<string name="category_about">关于</string>
+	<string name="section_about_summary">版本、原作者、隐私</string>
+	<string name="about_version">版本 %1$s</string>
+	<string name="about_original">Markus Fisch 的原版应用</string>
+	<string name="about_original_summary">Pie Launcher，他的作品。轻触以在浏览器中打开其页面。</string>
+	<string name="about_fork">此分支</string>
+	<string name="about_fork_summary">新增内容由 Claude Code 编写并经人工审核。轻触以在浏览器中打开其页面。</string>
+	<string name="about_privacy">隐私</string>
+	<string name="about_privacy_summary">不访问互联网。不收集也不发送任何内容。</string>
+	<string name="about_license">许可证</string>
+	<string name="about_license_summary">MIT 许可证，© Markus Fisch</string>
+	<string name="no_browser">没有可打开网页的应用</string>
 </resources>

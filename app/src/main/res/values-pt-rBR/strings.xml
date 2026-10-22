@@ -188,11 +188,10 @@
 	<string name="drawer_layout">Layout da gaveta</string>
 	<string name="drawer_layout_vertical">Vertical</string>
 	<string name="drawer_layout_horizontal">Horizontal (experimental)</string>
-	<string name="section_home_summary">Orientação, zona morta, botão início</string>
-	<string name="section_pie_summary">Menu dividido, círculo, pastas</string>
-	<string name="section_look_summary">Fundo, desfoque, pacote de ícones, nomes</string>
-	<string name="section_drawer_summary">Ordenação, teclado, layout</string>
-	<string name="section_search_summary">Precisão, espaço, abrir sozinho</string>
+	<string name="section_pie_summary">Menu dividido, círculo, pastas, zona morta</string>
+	<string name="section_look_summary">Fundo, desfoque, pacote de ícones, orientação</string>
+	<string name="section_drawer_summary">Abertura, layout, nomes, ordenação</string>
+	<string name="section_search_summary">Teclado, precisão, abrir sozinho</string>
 	<string name="section_apps_summary">Ocultos, personalizados, pasta de trabalho</string>
 	<string name="section_backup_summary">Exportar, importar, sincronizar</string>
 	<string name="section_advanced_summary">Vibração, reinício</string>
@@ -214,4 +213,16 @@
 	<string name="icon_picture">Imagem</string>
 	<string name="icon_normal">Normal</string>
 	<string name="icon_work_paused">Com o trabalho pausado</string>
+	<string name="category_about">Sobre</string>
+	<string name="section_about_summary">Versão, desenvolvedor original, privacidade</string>
+	<string name="about_version">Versão %1$s</string>
+	<string name="about_original">App original de Markus Fisch</string>
+	<string name="about_original_summary">Pie Launcher, obra dele. Toque para abrir a página no navegador.</string>
+	<string name="about_fork">Este fork</string>
+	<string name="about_fork_summary">Adições escritas com o Claude Code e revisadas por uma pessoa. Toque para abrir a página no navegador.</string>
+	<string name="about_privacy">Privacidade</string>
+	<string name="about_privacy_summary">Sem acesso à internet. Nada é coletado ou enviado.</string>
+	<string name="about_license">Licença</string>
+	<string name="about_license_summary">Licença MIT, © Markus Fisch</string>
+	<string name="no_browser">Nenhum app para abrir páginas da web</string>
 </resources>

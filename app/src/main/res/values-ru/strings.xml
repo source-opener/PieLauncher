@@ -188,11 +188,10 @@
 	<string name="drawer_layout">Расположение списка</string>
 	<string name="drawer_layout_vertical">Вертикально</string>
 	<string name="drawer_layout_horizontal">Горизонтально (экспериментально)</string>
-	<string name="section_home_summary">Ориентация, мёртвая зона, кнопка «Домой»</string>
-	<string name="section_pie_summary">Разделённое меню, круг, папки</string>
-	<string name="section_look_summary">Фон, размытие, значки, названия</string>
-	<string name="section_drawer_summary">Сортировка, клавиатура, расположение</string>
-	<string name="section_search_summary">Точность, пробел, автозапуск</string>
+	<string name="section_pie_summary">Разделённое меню, круг, папки, мёртвая зона</string>
+	<string name="section_look_summary">Фон, размытие, значки, ориентация</string>
+	<string name="section_drawer_summary">Открытие, расположение, названия, сортировка</string>
+	<string name="section_search_summary">Клавиатура, точность, автозапуск</string>
 	<string name="section_apps_summary">Скрытые, изменённые, рабочая папка</string>
 	<string name="section_backup_summary">Экспорт, импорт, синхронизация</string>
 	<string name="section_advanced_summary">Вибрация, перезапуск</string>
@@ -214,4 +213,16 @@
 	<string name="icon_picture">Картинка</string>
 	<string name="icon_normal">Обычный</string>
 	<string name="icon_work_paused">Когда работа на паузе</string>
+	<string name="category_about">О приложении</string>
+	<string name="section_about_summary">Версия, автор оригинала, конфиденциальность</string>
+	<string name="about_version">Версия %1$s</string>
+	<string name="about_original">Оригинальное приложение Маркуса Фиша</string>
+	<string name="about_original_summary">Pie Launcher, его работа. Нажмите, чтобы открыть страницу в браузере.</string>
+	<string name="about_fork">Этот форк</string>
+	<string name="about_fork_summary">Дополнения написаны с Claude Code и проверены человеком. Нажмите, чтобы открыть страницу в браузере.</string>
+	<string name="about_privacy">Конфиденциальность</string>
+	<string name="about_privacy_summary">Нет доступа к интернету. Ничего не собирается и не отправляется.</string>
+	<string name="about_license">Лицензия</string>
+	<string name="about_license_summary">Лицензия MIT, © Markus Fisch</string>
+	<string name="no_browser">Нет приложения для открытия веб-страниц</string>
 </resources>

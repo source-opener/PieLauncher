@@ -188,11 +188,10 @@
 	<string name="drawer_layout">Lådans layout</string>
 	<string name="drawer_layout_vertical">Vertikal</string>
 	<string name="drawer_layout_horizontal">Horisontell (experimentell)</string>
-	<string name="section_home_summary">Orientering, död zon, hemknapp</string>
-	<string name="section_pie_summary">Delad meny, cirklar, mappar</string>
-	<string name="section_look_summary">Bakgrund, oskärpa, ikonpaket, namn</string>
-	<string name="section_drawer_summary">Sortering, tangentbord, layout</string>
-	<string name="section_search_summary">Noggrannhet, mellanslag, autostart</string>
+	<string name="section_pie_summary">Delad meny, cirklar, mappar, död zon</string>
+	<string name="section_look_summary">Bakgrund, oskärpa, ikonpaket, orientering</string>
+	<string name="section_drawer_summary">Öppning, layout, namn, sortering</string>
+	<string name="section_search_summary">Tangentbord, noggrannhet, autostart</string>
 	<string name="section_apps_summary">Dolda, anpassade, jobbmapp</string>
 	<string name="section_backup_summary">Exportera, importera, synka</string>
 	<string name="section_advanced_summary">Haptik, omstart</string>
@@ -214,4 +213,16 @@
 	<string name="icon_picture">Bild</string>
 	<string name="icon_normal">Normal</string>
 	<string name="icon_work_paused">När jobbet är pausat</string>
+	<string name="category_about">Om</string>
+	<string name="section_about_summary">Version, ursprunglig utvecklare, integritet</string>
+	<string name="about_version">Version %1$s</string>
+	<string name="about_original">Originalappen av Markus Fisch</string>
+	<string name="about_original_summary">Pie Launcher, hans verk. Tryck för att öppna sidan i webbläsaren.</string>
+	<string name="about_fork">Denna fork</string>
+	<string name="about_fork_summary">Tillägg skrivna med Claude Code och granskade av en människa. Tryck för att öppna sidan i webbläsaren.</string>
+	<string name="about_privacy">Integritet</string>
+	<string name="about_privacy_summary">Ingen internetåtkomst. Inget samlas in eller skickas.</string>
+	<string name="about_license">Licens</string>
+	<string name="about_license_summary">MIT-licens, © Markus Fisch</string>
+	<string name="no_browser">Ingen app för att öppna webbsidor</string>
 </resources>

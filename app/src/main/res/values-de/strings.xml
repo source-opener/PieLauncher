@@ -188,11 +188,10 @@
 	<string name="drawer_layout">Anordnung der Liste</string>
 	<string name="drawer_layout_vertical">Vertikal</string>
 	<string name="drawer_layout_horizontal">Horizontal (experimentell)</string>
-	<string name="section_home_summary">Ausrichtung, tote Zone, Home-Taste</string>
-	<string name="section_pie_summary">Geteiltes Menü, Kreisen, Ordner</string>
-	<string name="section_look_summary">Hintergrund, Unschärfe, Symbolpaket, Namen</string>
-	<string name="section_drawer_summary">Sortierung, Tastatur, Anordnung</string>
-	<string name="section_search_summary">Genauigkeit, Leertaste, Autostart</string>
+	<string name="section_pie_summary">Geteiltes Menü, Kreisen, Ordner, tote Zone</string>
+	<string name="section_look_summary">Hintergrund, Unschärfe, Symbolpaket, Ausrichtung</string>
+	<string name="section_drawer_summary">Öffnen, Anordnung, Namen, Sortierung</string>
+	<string name="section_search_summary">Tastatur, Genauigkeit, Autostart</string>
 	<string name="section_apps_summary">Versteckt, angepasst, Arbeitsordner</string>
 	<string name="section_backup_summary">Export, Import, Abgleich</string>
 	<string name="section_advanced_summary">Haptik, Neustart</string>
@@ -214,4 +213,16 @@
 	<string name="icon_picture">Bild</string>
 	<string name="icon_normal">Normal</string>
 	<string name="icon_work_paused">Wenn Arbeit pausiert ist</string>
+	<string name="category_about">Über</string>
+	<string name="section_about_summary">Version, ursprünglicher Entwickler, Datenschutz</string>
+	<string name="about_version">Version %1$s</string>
+	<string name="about_original">Original-App von Markus Fisch</string>
+	<string name="about_original_summary">Pie Launcher, sein Werk. Tippen, um die Seite im Browser zu öffnen.</string>
+	<string name="about_fork">Dieser Fork</string>
+	<string name="about_fork_summary">Ergänzungen mit Claude Code geschrieben und von einem Menschen geprüft. Tippen, um die Seite im Browser zu öffnen.</string>
+	<string name="about_privacy">Datenschutz</string>
+	<string name="about_privacy_summary">Kein Internetzugriff. Nichts wird gesammelt oder gesendet.</string>
+	<string name="about_license">Lizenz</string>
+	<string name="about_license_summary">MIT-Lizenz, © Markus Fisch</string>
+	<string name="no_browser">Keine App zum Öffnen von Webseiten</string>
 </resources>
