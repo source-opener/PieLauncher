@@ -65,6 +65,13 @@ public class HomeActivity extends Activity {
 		if (ev == null) {
 			return false;
 		}
+		if (pieView.inListMode() && prefs.horizontalDrawer() &&
+				ev.getActionMasked() == MotionEvent.ACTION_DOWN &&
+				isSearchVisible()) {
+			// The horizontal drawer is laid out above the keyboard, so
+			// bring it back if it was put away.
+			kb.showFor(searchInput);
+		}
 		if (pieView.inListMode() && gestureDetector.onTouchEvent(ev)) {
 			return true;
 		}
@@ -103,13 +110,17 @@ public class HomeActivity extends Activity {
 		initSearchInput();
 
 		SystemBars.listenForWindowInsets(pieView,
-				(left, top, right, bottom) -> pieView.setPadding(
-						left,
-						// Never set a top padding because the list should
-						// appear under the status bar.
-						0,
-						right,
-						bottom));
+				(left, top, right, bottom) -> {
+					pieView.setPadding(
+							left,
+							// Never set a top padding because the list
+							// should appear under the status bar.
+							0,
+							right,
+							bottom);
+					// The insets change when the keyboard comes or goes.
+					pieView.post(pieView::updateKeyboardOverlap);
+				});
 
 		immersiveMode = prefs.getImmersiveMode();
 		SystemBars.setTransparentSystemBars(getWindow(), immersiveMode);
@@ -254,7 +265,11 @@ public class HomeActivity extends Activity {
 
 			@Override
 			public void onDragDown(float alpha) {
-				hideKeyboadAndPrefsButton();
+				if (prefs.horizontalDrawer()) {
+					hidePrefsButton();
+				} else {
+					hideKeyboadAndPrefsButton();
+				}
 				searchInput.setBackgroundColor(0);
 				setAlpha(searchInput, alpha);
 			}
@@ -402,7 +417,7 @@ public class HomeActivity extends Activity {
 		searchInput.setVisibility(View.VISIBLE);
 		prefsButton.setVisibility(View.VISIBLE);
 		setAlpha(searchInput, 1f);
-		if (prefs.displayKeyboard()) {
+		if (prefs.displayKeyboard() || prefs.horizontalDrawer()) {
 			kb.showFor(searchInput);
 		}
 
@@ -515,8 +530,10 @@ public class HomeActivity extends Activity {
 				MotionEvent e2,
 				float velocityX,
 				float velocityY) {
+			// Compare speeds, not velocities: a fling to the left has a
+			// negative velocityX that any drift downwards would beat.
 			if (pieView.appListNotScrolled() &&
-					velocityY > velocityX &&
+					Math.abs(velocityY) > Math.abs(velocityX) &&
 					velocityY >= minimumVelocity &&
 					e1 != null && e2 != null &&
 					e2.getY() - e1.getY() > 0) {

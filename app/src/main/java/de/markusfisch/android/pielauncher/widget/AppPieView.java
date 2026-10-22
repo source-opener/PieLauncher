@@ -181,6 +181,17 @@ public class AppPieView extends View {
 	private int maxScrollY;
 	private int listScrollX;
 	private int maxScrollX;
+	// The horizontal drawer gives pinned folders an area of their own
+	// above the keyboard that scrolls up and down when they don't fit.
+	private int folderScrollY;
+	private int maxFolderScrollY;
+	private int folderAreaTop;
+	private boolean scrollingFolders;
+	// How far the soft keyboard reaches into this view where the window
+	// is not resized for it.
+	private int keyboardOverlap;
+	private final Rect visibleFrame = new Rect();
+	private final int[] screenLocation = new int[2];
 	// Pinned folders lead the list; the horizontal layout gives them a
 	// row of their own.
 	private int pinnedFolderCount;
@@ -371,7 +382,23 @@ public class AppPieView extends View {
 	}
 
 	public boolean appListNotScrolled() {
-		return mode != MODE_LIST || getScrollY() == 0;
+		return mode != MODE_LIST || (getScrollY() == 0 && !scrollingFolders);
+	}
+
+	// Measured on window inset changes rather than on every frame,
+	// because older Android asks the window manager for the frame.
+	public void updateKeyboardOverlap() {
+		if (getWindowToken() == null) {
+			return;
+		}
+		getWindowVisibleDisplayFrame(visibleFrame);
+		getLocationOnScreen(screenLocation);
+		int overlap = Math.max(0,
+				screenLocation[1] + getHeight() - visibleFrame.bottom);
+		if (overlap != keyboardOverlap) {
+			keyboardOverlap = overlap;
+			invalidate();
+		}
 	}
 
 	public boolean inEditMode() {
@@ -398,6 +425,7 @@ public class AppPieView extends View {
 			scrollList(0, false);
 			lastScrollY = 0;
 			listScrollX = 0;
+			folderScrollY = 0;
 		}
 		invalidate();
 	}
@@ -761,7 +789,11 @@ public class AppPieView extends View {
 			private void initScroll(MotionEvent event) {
 				flingRunnable.stop();
 				initVelocityTracker(event);
-				scrollOffset = prefs.horizontalDrawer()
+				scrollingFolders = prefs.horizontalDrawer() &&
+						maxFolderScrollY > 0 && touch.y >= folderAreaTop;
+				scrollOffset = scrollingFolders
+						? folderScrollY
+						: prefs.horizontalDrawer()
 						? listScrollX
 						: getScrollY();
 			}
@@ -781,6 +813,12 @@ public class AppPieView extends View {
 				}
 				if (velocityTracker != null) {
 					velocityTracker.addMovement(event);
+				}
+				if (scrollingFolders) {
+					folderScrollY = clamp(scrollOffset +
+							(tr.scrollRef - Math.round(event.getY(index))),
+							0, maxFolderScrollY);
+					return;
 				}
 				if (prefs.horizontalDrawer()) {
 					int x = Math.round(event.getX(index));
@@ -806,6 +844,11 @@ public class AppPieView extends View {
 			}
 
 			private void keepScrolling(MotionEvent event) {
+				if (scrollingFolders) {
+					scrollingFolders = false;
+					recycleVelocityTracker();
+					return;
+				}
 				if (event.getPointerCount() < 2 && velocityTracker != null) {
 					// 1000 means getYVelocity() will return pixels
 					// per second.
@@ -2004,15 +2047,21 @@ public class AppPieView extends View {
 		paintList.setAlpha(Math.round(f * 255f));
 		paintText.setAlpha(Math.round(f * alphaText));
 
-		// The horizontal layout fills the height above the keyboard and
-		// scrolls sideways. Pinned folders get a row of their own at the
-		// bottom, as many as fit in it; the rest stay in the grid.
+		// The horizontal layout fills the height between the search bar
+		// and the keyboard and scrolls sideways. Pinned folders get an
+		// area of up to two rows right above the keyboard, which scrolls
+		// up and down by itself when there are more.
 		boolean horizontal = prefs.horizontalDrawer();
-		int pinned = horizontal ? Math.min(pinnedFolderCount, columns) : 0;
-		int bottom = viewHeight - getPaddingBottom() - listPadding;
-		int pinnedY = bottom - cellHeight;
-		int rows = Math.max(1,
-				((pinned > 0 ? pinnedY : bottom) - top) / cellHeight);
+		int pinned = horizontal ? pinnedFolderCount : 0;
+		int bottom = viewHeight - listPadding - (horizontal
+				? Math.max(getPaddingBottom(), keyboardOverlap)
+				: getPaddingBottom());
+		int folderRows = (pinned + columns - 1) / columns;
+		int folderArea = Math.min(folderRows, 2) * cellHeight;
+		folderAreaTop = bottom - folderArea;
+		maxFolderScrollY = folderRows * cellHeight - folderArea;
+		folderScrollY = clamp(folderScrollY, 0, maxFolderScrollY);
+		int rows = Math.max(1, (folderAreaTop - top) / cellHeight);
 		int marker = selectedApp > -1 && size > 0
 				? Math.min(selectedApp, size - 1)
 				: -1;
@@ -2039,8 +2088,8 @@ public class AppPieView extends View {
 			int x;
 			int y;
 			if (i < pinned) {
-				x = listPadding + i * cellWidth;
-				y = pinnedY;
+				x = listPadding + i % columns * cellWidth;
+				y = folderAreaTop + i / columns * cellHeight - folderScrollY;
 			} else if (horizontal) {
 				int cell = i - pinned;
 				x = listPadding + cell / rows * cellWidth - listScrollX;
@@ -2050,7 +2099,9 @@ public class AppPieView extends View {
 				y = top + i / columns * cellHeight;
 			}
 			Apps.AppIcon appIcon = appList.get(i);
-			if (horizontal
+			if (i < pinned
+					? y <= folderAreaTop - cellHeight || y >= bottom
+					: horizontal
 					? x <= -cellWidth || x >= viewWidth
 					: y <= viewTop || y >= viewBottom) {
 				// Out of sight, and out of reach of a touch.
@@ -2064,6 +2115,13 @@ public class AppPieView extends View {
 						paintList);
 			}
 			appIcon.hitRect.set(x, y, x + cellWidth, y + cellHeight);
+			if (i < pinned) {
+				// Cut off at the edges of the folder area.
+				appIcon.hitRect.intersect(0, folderAreaTop, viewWidth,
+						bottom);
+				canvas.save();
+				canvas.clipRect(0, folderAreaTop, viewWidth, bottom);
+			}
 			int ix = x + hpad;
 			int iy = y + vpad;
 			int mag = appIcon == highlightedIcon ? magSize : 0;
@@ -2087,6 +2145,9 @@ public class AppPieView extends View {
 						maxTextWidth);
 				canvas.drawText(label, 0, label.length(),
 						x + labelX, y + labelY, paintText);
+			}
+			if (i < pinned) {
+				canvas.restore();
 			}
 		}
 
