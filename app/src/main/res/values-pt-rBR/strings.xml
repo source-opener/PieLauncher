@@ -189,4 +189,13 @@
 	<string name="sync_from_release"><big><font color="#ffffff">Trazer do aplicativo estável</font></big>\nUsar as configurações do aplicativo estável instalado ao lado</string>
 	<string name="sync_settings_confirm">Isso substitui o menu Pie, aplicativos ocultos, mapeamentos de ícones e todas as configurações deste aplicativo (%3$s) pelos de %1$s (%2$s). Continuar?</string>
 	<string name="sync_settings_older">Essas configurações vêm de uma versão mais antiga que este aplicativo.</string>
+	<string name="category_pie_menu">Menu circular</string>
+	<string name="category_look">Aparência</string>
+	<string name="category_search">Pesquisa</string>
+	<string name="category_apps">Apps e pastas</string>
+	<string name="drawer_layout">Layout da gaveta</string>
+	<string name="drawer_layout_vertical">Vertical</string>
+	<string name="drawer_layout_horizontal">Horizontal (experimental)</string>
+	<string name="organise">Organizar</string>
+	<string name="icon_menu">Ícone</string>
 </resources>

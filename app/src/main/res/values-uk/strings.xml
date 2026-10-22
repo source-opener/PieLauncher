@@ -189,4 +189,13 @@
 	<string name="sync_from_release"><big><font color="#ffffff">Взяти зі стабільної версії</font></big>\nВзяти налаштування стабільної версії, встановленої поруч</string>
 	<string name="sync_settings_confirm">Кругове меню, приховані програми, зіставлення іконок і всі налаштування цієї програми (%3$s) будуть замінені налаштуваннями %1$s (%2$s). Продовжити?</string>
 	<string name="sync_settings_older">Ці налаштування зі старішої версії, ніж ця програма.</string>
+	<string name="category_pie_menu">Кругове меню</string>
+	<string name="category_look">Вигляд</string>
+	<string name="category_search">Пошук</string>
+	<string name="category_apps">Застосунки й теки</string>
+	<string name="drawer_layout">Розташування списку</string>
+	<string name="drawer_layout_vertical">Вертикально</string>
+	<string name="drawer_layout_horizontal">Горизонтально (експериментально)</string>
+	<string name="organise">Упорядкувати</string>
+	<string name="icon_menu">Значок</string>
 </resources>

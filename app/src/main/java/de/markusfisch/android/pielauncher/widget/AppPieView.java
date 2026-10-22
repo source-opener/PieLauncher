@@ -179,6 +179,11 @@ public class AppPieView extends View {
 	private float dragDistance;
 	private float dragProgress;
 	private int maxScrollY;
+	private int listScrollX;
+	private int maxScrollX;
+	// Pinned folders lead the list; the horizontal layout gives them a
+	// row of their own.
+	private int pinnedFolderCount;
 	private int lastScrollY;
 	private int lastInsertAt;
 	private int lastSelectedIcon;
@@ -385,12 +390,14 @@ public class AppPieView extends View {
 		}
 		appListIsFiltered = !TextUtils.isEmpty(query);
 		updateFolderBadges();
+		countPinnedFolders();
 		selectedApp = prefs.doubleSpaceLaunch()
 				? (appListIsFiltered ? 0 : -1)
 				: getSelectedAppFromTrailingSpace(query);
 		if (resetScroll) {
 			scrollList(0, false);
 			lastScrollY = 0;
+			listScrollX = 0;
 		}
 		invalidate();
 	}
@@ -413,6 +420,20 @@ public class AppPieView extends View {
 			if (badge != null) {
 				folderBadges.put(icon, badge);
 			}
+		}
+	}
+
+	private void countPinnedFolders() {
+		pinnedFolderCount = 0;
+		if (openFolderId > -1 || appList == null) {
+			return;
+		}
+		for (Apps.AppIcon icon : appList) {
+			if (!Folders.isFolder(icon) ||
+					!PieLauncherApp.folders.isPinned(Folders.idOf(icon))) {
+				break;
+			}
+			++pinnedFolderCount;
 		}
 	}
 
@@ -740,7 +761,9 @@ public class AppPieView extends View {
 			private void initScroll(MotionEvent event) {
 				flingRunnable.stop();
 				initVelocityTracker(event);
-				scrollOffset = getScrollY();
+				scrollOffset = prefs.horizontalDrawer()
+						? listScrollX
+						: getScrollY();
 			}
 
 			private void scroll(MotionEvent event) {
@@ -758,6 +781,16 @@ public class AppPieView extends View {
 				}
 				if (velocityTracker != null) {
 					velocityTracker.addMovement(event);
+				}
+				if (prefs.horizontalDrawer()) {
+					int x = Math.round(event.getX(index));
+					listScrollX = clamp(scrollOffset + (tr.scrollRefX - x),
+							0, maxScrollX);
+					if (listScrollX == 0 || listScrollX == maxScrollX) {
+						tr.scrollRefX = x;
+						scrollOffset = listScrollX;
+					}
+					return;
 				}
 				int y = Math.round(event.getY(index));
 				int scrollY = scrollOffset + (tr.scrollRef - y);
@@ -777,8 +810,9 @@ public class AppPieView extends View {
 					// 1000 means getYVelocity() will return pixels
 					// per second.
 					velocityTracker.computeCurrentVelocity(1000);
-					flingRunnable.start(Math.round(
-							velocityTracker.getYVelocity()));
+					flingRunnable.start(Math.round(prefs.horizontalDrawer()
+							? velocityTracker.getXVelocity()
+							: velocityTracker.getYVelocity()));
 					recycleVelocityTracker();
 				}
 			}
@@ -1166,78 +1200,72 @@ public class AppPieView extends View {
 		}
 		LauncherItemKey key = new LauncherItemKey(icon.componentName,
 				icon.userHandle);
-		ArrayList<String> labels = new ArrayList<>();
-		ArrayList<Runnable> actions = new ArrayList<>();
-		addOption(labels, actions, context.getString(R.string.edit_pie_menu),
-				() -> addIconInteractively(null));
-		addOption(labels, actions, context.getString(R.string.add_to_pie_menu),
-				() -> {
-					addIconInteractively(icon);
-					postDelayed(this::releaseIcon, 100);
-				});
-		addOption(labels, actions, context.getString(R.string.show_app_info),
+		Options options = new Options(context);
+		options.add(R.string.add_to_pie_menu, () -> addToPie(icon));
+		options.add(R.string.edit_pie_menu, () -> addIconInteractively(null));
+		options.add(R.string.organise, () -> {
+			Options organise = new Options(context);
+			organise.add(R.string.rename_app, () -> renameApp(context, icon));
+			organise.add(R.string.app_tags, () -> editTags(context, icon));
+			organise.add(R.string.folders, () -> showFolderList(context, key));
+			organise.add(R.string.hide_app, () -> PickIconActivity.askToHide(
+					context, icon.componentName));
+			if (Apps.isShortcut(icon)) {
+				organise.add(R.string.remove_shortcut,
+						() -> askToRemoveShortcut(context, icon));
+			}
+			organise.show(R.string.organise);
+		});
+		options.add(R.string.icon_menu, () -> showIconMenu(context, icon, key,
+				() -> PieLauncherApp.apps.indexAppsAsync(context)));
+		options.add(R.string.show_app_info,
 				() -> AppLauncher.launchAppInfo(context, icon));
-		addOption(labels, actions, context.getString(R.string.hide_app),
-				() -> PickIconActivity.askToHide(context, icon.componentName));
-		if (Apps.isShortcut(icon)) {
-			addOption(labels, actions,
-					context.getString(R.string.remove_shortcut),
-					() -> askToRemoveShortcut(context, icon));
+		options.show(R.string.edit_app);
+	}
+
+	private void addToPie(Apps.AppIcon icon) {
+		addIconInteractively(icon);
+		postDelayed(this::releaseIcon, 100);
+	}
+
+	// Everything that changes how an app or a folder looks, shared by both
+	// menus. refresh brings the change on screen.
+	private void showIconMenu(
+			Context context,
+			Apps.AppIcon icon,
+			LauncherItemKey key,
+			Runnable refresh) {
+		Options options = new Options(context);
+		if (PieLauncherApp.iconPack.hasPacks()) {
+			options.add(R.string.change_icon, () -> {
+				returnToList();
+				changeIcon(context, icon);
+			});
 		}
-		addOption(labels, actions, context.getString(R.string.rename_app),
-				() -> renameApp(context, icon));
-		addOption(labels, actions, context.getString(R.string.app_tags),
-				() -> editTags(context, icon));
-		addOption(labels, actions, context.getString(R.string.folders),
-				() -> showFolderList(context, key));
-		addOption(labels, actions, context.getString(R.string.pick_image),
+		options.add(R.string.pick_image,
 				() -> PickImageActivity.start(context, key));
 		if (PieLauncherApp.appIcons.has(key)) {
-			addOption(labels, actions, context.getString(R.string.reset_icon),
-					() -> {
-						PieLauncherApp.appIcons.store(context, key, null);
-						PieLauncherApp.apps.indexAppsAsync(context);
-					});
+			options.add(R.string.reset_icon, () -> {
+				PieLauncherApp.appIcons.store(context, key, null);
+				refresh.run();
+			});
 		}
 		if (AppLauncher.hasWorkProfile(context)) {
 			if (PieLauncherApp.iconPack.hasPacks()) {
-				addOption(labels, actions,
-						context.getString(R.string.pick_work_paused_icon),
+				options.add(R.string.pick_work_paused_icon,
 						() -> PickIconActivity.startForWorkPaused(context,
 								key));
 			}
-			addOption(labels, actions,
-					context.getString(R.string.pick_work_paused_image),
+			options.add(R.string.pick_work_paused_image,
 					() -> PickImageActivity.start(context, key, true));
 			if (PieLauncherApp.workPausedIcons.has(key)) {
-				addOption(labels, actions,
-						context.getString(R.string.reset_work_paused_icon),
-						() -> {
-							PieLauncherApp.workPausedIcons.store(context, key,
-									null);
-							PieLauncherApp.apps.indexAppsAsync(context);
-						});
+				options.add(R.string.reset_work_paused_icon, () -> {
+					PieLauncherApp.workPausedIcons.store(context, key, null);
+					refresh.run();
+				});
 			}
 		}
-		if (PieLauncherApp.iconPack.hasPacks()) {
-			addOption(labels, actions, context.getString(R.string.change_icon),
-					() -> {
-						returnToList();
-						changeIcon(context, icon);
-					});
-		}
-		OptionsDialog.show(context, R.string.edit_app,
-				labels.toArray(new CharSequence[0]),
-				(view, which) -> actions.get(which).run());
-	}
-
-	private static void addOption(
-			List<String> labels,
-			List<Runnable> actions,
-			String label,
-			Runnable action) {
-		labels.add(label);
-		actions.add(action);
+		options.show(R.string.icon_menu);
 	}
 
 	private static void askToRemoveShortcut(
@@ -1253,11 +1281,10 @@ public class AppPieView extends View {
 	}
 
 	private void showFolderList(Context context, LauncherItemKey key) {
-		ArrayList<String> labels = new ArrayList<>();
-		ArrayList<Runnable> actions = new ArrayList<>();
+		Options options = new Options(context);
 		for (Folders.Folder folder : PieLauncherApp.folders.getFolders()) {
 			boolean member = PieLauncherApp.folders.contains(folder.id, key);
-			addOption(labels, actions, context.getString(member
+			options.add(context.getString(member
 							? R.string.remove_from_folder
 							: R.string.add_to_folder, folder.name),
 					() -> {
@@ -1271,15 +1298,13 @@ public class AppPieView extends View {
 						resetSearch();
 					});
 		}
-		addOption(labels, actions, context.getString(R.string.new_folder),
+		options.add(R.string.new_folder,
 				() -> askForFolderName(context, null, name -> {
 					PieLauncherApp.folders.add(context,
 							PieLauncherApp.folders.create(context, name), key);
 					resetSearch();
 				}));
-		OptionsDialog.show(context, R.string.folders,
-				labels.toArray(new CharSequence[0]),
-				(view, which) -> actions.get(which).run());
+		options.show(R.string.folders);
 	}
 
 	private void showFolderOptions(Context context, Apps.AppIcon icon) {
@@ -1288,81 +1313,42 @@ public class AppPieView extends View {
 		if (folder == null) {
 			return;
 		}
-		ArrayList<String> labels = new ArrayList<>();
-		ArrayList<Runnable> actions = new ArrayList<>();
-		addOption(labels, actions, context.getString(R.string.add_to_pie_menu),
-				() -> {
-					addIconInteractively(icon);
-					postDelayed(this::releaseIcon, 100);
-				});
-		addOption(labels, actions, context.getString(R.string.rename_folder),
-				() -> askForFolderName(context, folder.name, name -> {
-					PieLauncherApp.folders.update(context, id, name,
-							folder.hideContents, folder.pinned);
-					// The menus hold the icon this replaced.
-					PieLauncherApp.apps.indexAppsAsync(context);
-					resetSearch();
-				}));
-		addOption(labels, actions, context.getString(folder.hideContents
-						? R.string.show_folder_contents
-						: R.string.hide_folder_contents),
-				() -> {
-					PieLauncherApp.folders.update(context, id, folder.name,
-							!folder.hideContents, folder.pinned);
-					resetSearch();
-				});
-		addOption(labels, actions, context.getString(folder.pinned
+		Options options = new Options(context);
+		options.add(R.string.add_to_pie_menu, () -> addToPie(icon));
+		options.add(folder.pinned
 						? R.string.unpin_folder
-						: R.string.pin_folder),
+						: R.string.pin_folder,
 				() -> {
 					PieLauncherApp.folders.update(context, id, folder.name,
 							folder.hideContents, !folder.pinned);
 					resetSearch();
 				});
-		addOption(labels, actions, context.getString(R.string.app_tags),
-				() -> editTags(context, icon));
-		LauncherItemKey key = Folders.keyOf(id);
-		addOption(labels, actions, context.getString(R.string.pick_image),
-				() -> PickImageActivity.start(context, key));
-		if (PieLauncherApp.appIcons.has(key)) {
-			addOption(labels, actions, context.getString(R.string.reset_icon),
-					() -> {
-						PieLauncherApp.appIcons.store(context, key, null);
+		options.add(folder.hideContents
+						? R.string.show_folder_contents
+						: R.string.hide_folder_contents,
+				() -> {
+					PieLauncherApp.folders.update(context, id, folder.name,
+							!folder.hideContents, folder.pinned);
+					resetSearch();
+				});
+		options.add(R.string.organise, () -> {
+			Options organise = new Options(context);
+			organise.add(R.string.rename_folder,
+					() -> askForFolderName(context, folder.name, name -> {
+						PieLauncherApp.folders.update(context, id, name,
+								folder.hideContents, folder.pinned);
+						// The menus hold the icon this replaced.
+						PieLauncherApp.apps.indexAppsAsync(context);
 						resetSearch();
-					});
-		}
-		if (AppLauncher.hasWorkProfile(context)) {
-			if (PieLauncherApp.iconPack.hasPacks()) {
-				addOption(labels, actions,
-						context.getString(R.string.pick_work_paused_icon),
-						() -> PickIconActivity.startForWorkPaused(context,
-								key));
-			}
-			addOption(labels, actions,
-					context.getString(R.string.pick_work_paused_image),
-					() -> PickImageActivity.start(context, key, true));
-			if (PieLauncherApp.workPausedIcons.has(key)) {
-				addOption(labels, actions,
-						context.getString(R.string.reset_work_paused_icon),
-						() -> {
-							PieLauncherApp.workPausedIcons.store(context, key,
-									null);
-							resetSearch();
-						});
-			}
-		}
-		if (PieLauncherApp.iconPack.hasPacks()) {
-			addOption(labels, actions, context.getString(R.string.change_icon),
-					() -> {
-						returnToList();
-						changeIcon(context, icon);
-					});
-		}
-		addOption(labels, actions, context.getString(R.string.delete_folder),
-				() -> askToDeleteFolder(context, id));
-		OptionsDialog.show(context, R.string.edit_folder,
-				labels.toArray(new CharSequence[0]),
-				(view, which) -> actions.get(which).run());
+					}));
+			organise.add(R.string.app_tags, () -> editTags(context, icon));
+			organise.add(R.string.delete_folder,
+					() -> askToDeleteFolder(context, id));
+			organise.show(R.string.organise);
+		});
+		options.add(R.string.icon_menu, () -> showIconMenu(context, icon,
+				Folders.keyOf(id), this::resetSearch));
+		options.show(R.string.edit_folder);
 	}
 
 	private void askToDeleteFolder(Context context, long id) {
@@ -1996,7 +1982,6 @@ public class AppPieView extends View {
 				: 0);
 		int cellWidth = innerWidth / columns;
 		int cellHeight = iconAndTextHeight + iconTextPadding * 2;
-		int wrapX = listPadding + cellWidth * columns;
 		int size = getIconCount();
 
 		// Calculate boundaries and offsets.
@@ -2008,28 +1993,29 @@ public class AppPieView extends View {
 		int scrollY = getScrollY();
 		int viewTop = scrollY - cellHeight;
 		int viewBottom = scrollY + viewHeight;
-		int x = listPadding;
-		int y = searchInputHeight + listPadding;
+		int top = searchInputHeight + listPadding;
 
 		// Slide in/out animation.
 		if (prefs.listAnimationAppearance() ==
 				Preferences.LIST_APPEARANCE_ANIMATION_SLIDE ||
 				isDraggingDownList()) {
-			y += Math.round((1f - f) * listFadeHeight);
+			top += Math.round((1f - f) * listFadeHeight);
 		}
 		paintList.setAlpha(Math.round(f * 255f));
 		paintText.setAlpha(Math.round(f * alphaText));
 
-		// Draw launch marker.
-		if (selectedApp > -1 && size > 0) {
-			int offset = Math.min(selectedApp, size - 1);
-			int ix = x + offset % columns * cellWidth;
-			int iy = y + offset / columns * cellHeight;
-			canvas.drawBitmap(iconLaunchFirst,
-					ix + labelX - iconLaunchFirstHalf,
-					iy - listPadding,
-					paintList);
-		}
+		// The horizontal layout fills the height above the keyboard and
+		// scrolls sideways. Pinned folders get a row of their own at the
+		// bottom, as many as fit in it; the rest stay in the grid.
+		boolean horizontal = prefs.horizontalDrawer();
+		int pinned = horizontal ? Math.min(pinnedFolderCount, columns) : 0;
+		int bottom = viewHeight - getPaddingBottom() - listPadding;
+		int pinnedY = bottom - cellHeight;
+		int rows = Math.max(1,
+				((pinned > 0 ? pinnedY : bottom) - top) / cellHeight);
+		int marker = selectedApp > -1 && size > 0
+				? Math.min(selectedApp, size - 1)
+				: -1;
 
 		// Calculate magnification of hightlighted icon.
 		int magSize = Math.round(Math.max(cellWidth, cellHeight) * .2f);
@@ -2050,44 +2036,78 @@ public class AppPieView extends View {
 
 		// Draw icons.
 		for (int i = 0; i < size; ++i) {
-			if (y > viewTop && y < viewBottom) {
-				Apps.AppIcon appIcon = appList.get(i);
-				appIcon.hitRect.set(x, y, x + cellWidth, y + cellHeight);
-				int ix = x + hpad;
-				int iy = y + vpad;
-				int mag = appIcon == highlightedIcon ? magSize : 0;
-				drawRect.set(ix - mag, iy - mag,
-						ix + iconSize + mag, iy + iconSize + mag);
-				if (mag == 0 && appIcon == touchedIcon) {
-					paintList.setColorFilter(dimFilter);
-				}
-				canvas.drawBitmap(appIcon.bitmap, null, drawRect, paintList);
-				paintList.setColorFilter(null);
-				Bitmap badge = folderBadges.get(appIcon);
-				if (badge != null) {
-					int badgeSize = drawRect.width() * 2 / 5;
-					badgeRect.set(drawRect.right - badgeSize,
-							drawRect.bottom - badgeSize,
-							drawRect.right, drawRect.bottom);
-					canvas.drawBitmap(badge, null, badgeRect, paintList);
-				}
-				if (showAppNames) {
-					CharSequence label = TextUtils.ellipsize(appIcon.label,
-							paintText, maxTextWidth, TextUtils.TruncateAt.END);
-					canvas.drawText(label, 0, label.length(),
-							x + labelX, y + labelY, paintText);
-				}
+			int x;
+			int y;
+			if (i < pinned) {
+				x = listPadding + i * cellWidth;
+				y = pinnedY;
+			} else if (horizontal) {
+				int cell = i - pinned;
+				x = listPadding + cell / rows * cellWidth - listScrollX;
+				y = top + cell % rows * cellHeight;
+			} else {
+				x = listPadding + i % columns * cellWidth;
+				y = top + i / columns * cellHeight;
 			}
-			x += cellWidth;
-			if (x >= wrapX) {
-				x = listPadding;
-				y += cellHeight;
+			Apps.AppIcon appIcon = appList.get(i);
+			if (horizontal
+					? x <= -cellWidth || x >= viewWidth
+					: y <= viewTop || y >= viewBottom) {
+				// Out of sight, and out of reach of a touch.
+				appIcon.hitRect.setEmpty();
+				continue;
+			}
+			if (i == marker) {
+				canvas.drawBitmap(iconLaunchFirst,
+						x + labelX - iconLaunchFirstHalf,
+						y - listPadding,
+						paintList);
+			}
+			appIcon.hitRect.set(x, y, x + cellWidth, y + cellHeight);
+			int ix = x + hpad;
+			int iy = y + vpad;
+			int mag = appIcon == highlightedIcon ? magSize : 0;
+			drawRect.set(ix - mag, iy - mag,
+					ix + iconSize + mag, iy + iconSize + mag);
+			if (mag == 0 && appIcon == touchedIcon) {
+				paintList.setColorFilter(dimFilter);
+			}
+			canvas.drawBitmap(appIcon.bitmap, null, drawRect, paintList);
+			paintList.setColorFilter(null);
+			Bitmap badge = folderBadges.get(appIcon);
+			if (badge != null) {
+				int badgeSize = drawRect.width() * 2 / 5;
+				badgeRect.set(drawRect.right - badgeSize,
+						drawRect.bottom - badgeSize,
+						drawRect.right, drawRect.bottom);
+				canvas.drawBitmap(badge, null, badgeRect, paintList);
+			}
+			if (showAppNames) {
+				CharSequence label = appIcon.fitLabel(paintText,
+						maxTextWidth);
+				canvas.drawText(label, 0, label.length(),
+						x + labelX, y + labelY, paintText);
 			}
 		}
 
-		int maxHeight = y + listPadding + (x > listPadding ? cellHeight : 0);
+		int maxHeight;
+		if (horizontal) {
+			int gridColumns = (size - pinned + rows - 1) / rows;
+			maxScrollX = Math.max(0,
+					listPadding * 2 + gridColumns * cellWidth - viewWidth);
+			if (listScrollX > maxScrollX) {
+				listScrollX = maxScrollX;
+				invalidate = true;
+			}
+			maxHeight = viewHeight;
+		} else {
+			maxHeight = top + (size + columns - 1) / columns * cellHeight +
+					listPadding;
+		}
 		int viewHeightMinusPadding = viewHeight - getPaddingBottom();
-		maxScrollY = Math.max(maxHeight - viewHeightMinusPadding, 0);
+		maxScrollY = horizontal
+				? 0
+				: Math.max(maxHeight - viewHeightMinusPadding, 0);
 		if (scrollY > maxScrollY) {
 			int newScrollY = clamp(scrollY, 0, maxScrollY);
 			lastScrollY = newScrollY;
@@ -2526,6 +2546,7 @@ public class AppPieView extends View {
 
 	private class FlingRunnable implements Runnable {
 		private final OverScroller scroller;
+		private boolean horizontal;
 		private int maxY;
 		private int pps;
 
@@ -2534,14 +2555,19 @@ public class AppPieView extends View {
 			if (mode != MODE_LIST || !scroller.computeScrollOffset()) {
 				return;
 			}
-			if (maxY != maxScrollY) {
-				maxY = maxScrollY;
+			int max = horizontal ? maxScrollX : maxScrollY;
+			if (maxY != max) {
+				maxY = max;
 				// OverScroller.springBack() stops the animation so we
 				// cannot use it and have to start a new fling instead.
 				scroller.forceFinished(true);
-				initFling(getScrollY());
+				initFling(horizontal ? listScrollX : getScrollY());
 			}
-			scrollList(scroller.getCurrY(), true);
+			if (horizontal) {
+				listScrollX = scroller.getCurrX();
+			} else {
+				scrollList(scroller.getCurrY(), true);
+			}
 			update();
 		}
 
@@ -2551,12 +2577,24 @@ public class AppPieView extends View {
 
 		private void start(int pixelsPerSecond) {
 			pps = -pixelsPerSecond;
-			maxY = maxScrollY;
-			initFling(getScrollY());
+			horizontal = prefs.horizontalDrawer();
+			maxY = horizontal ? maxScrollX : maxScrollY;
+			initFling(horizontal ? listScrollX : getScrollY());
 			update();
 		}
 
+		// For a horizontal fling, y and maxY stand for x and the
+		// greatest x.
 		private void initFling(int y) {
+			if (horizontal) {
+				scroller.fling(
+						y, 0,
+						pps, 0,
+						0, maxY,
+						0, 0,
+						listPadding, 0);
+				return;
+			}
 			scroller.fling(
 					0, y,
 					0, pps,
@@ -2580,16 +2618,49 @@ public class AppPieView extends View {
 		}
 	}
 
+	// A list of choices for OptionsDialog. A list with a single choice
+	// is not worth a dialog, so that one is run straight away.
+	private static final class Options {
+		private final ArrayList<CharSequence> labels = new ArrayList<>();
+		private final ArrayList<Runnable> actions = new ArrayList<>();
+		private final Context context;
+
+		private Options(Context context) {
+			this.context = context;
+		}
+
+		private void add(int labelId, Runnable action) {
+			add(context.getString(labelId), action);
+		}
+
+		private void add(CharSequence label, Runnable action) {
+			labels.add(label);
+			actions.add(action);
+		}
+
+		private void show(int titleId) {
+			if (actions.size() == 1) {
+				actions.get(0).run();
+				return;
+			}
+			OptionsDialog.show(context, titleId,
+					labels.toArray(new CharSequence[0]),
+					(view, which) -> actions.get(which).run());
+		}
+	}
+
 	private static final class TouchReference {
 		private final int x;
 		private final int y;
 		private final long time;
 
-		// Required to avoid modifying y, which interferes with isTap().
+		// Required to avoid modifying x and y, which interferes with
+		// isTap().
 		private int scrollRef;
+		private int scrollRefX;
 
 		private TouchReference(float x, float y, long time) {
-			this.x = Math.round(x);
+			this.scrollRefX = this.x = Math.round(x);
 			this.scrollRef = this.y = Math.round(y);
 			this.time = time;
 		}

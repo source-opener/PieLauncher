@@ -189,4 +189,13 @@
 	<string name="sync_from_release"><big><font color="#ffffff">Взять из стабильной версии</font></big>\nВзять настройки стабильной версии, установленной рядом</string>
 	<string name="sync_settings_confirm">Круговое меню, скрытые приложения, сопоставления иконок и все настройки этого приложения (%3$s) будут заменены настройками %1$s (%2$s). Продолжить?</string>
 	<string name="sync_settings_older">Эти настройки из более старой версии, чем это приложение.</string>
+	<string name="category_pie_menu">Круговое меню</string>
+	<string name="category_look">Внешний вид</string>
+	<string name="category_search">Поиск</string>
+	<string name="category_apps">Приложения и папки</string>
+	<string name="drawer_layout">Расположение списка</string>
+	<string name="drawer_layout_vertical">Вертикально</string>
+	<string name="drawer_layout_horizontal">Горизонтально (экспериментально)</string>
+	<string name="organise">Упорядочить</string>
+	<string name="icon_menu">Значок</string>
 </resources>

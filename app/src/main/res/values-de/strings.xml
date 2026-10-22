@@ -189,4 +189,13 @@
 	<string name="sync_from_release"><big><font color="#ffffff">Von der stabilen App übernehmen</font></big>\nDie Einstellungen der daneben installierten stabilen App übernehmen</string>
 	<string name="sync_settings_confirm">Dies ersetzt Pie Menu, versteckte Apps, Icon-Zuordnungen und alle Einstellungen dieser App (%3$s) durch die von %1$s (%2$s). Fortfahren?</string>
 	<string name="sync_settings_older">Diese Einstellungen stammen aus einer älteren Version als diese App.</string>
+	<string name="category_pie_menu">Kreismenü</string>
+	<string name="category_look">Aussehen</string>
+	<string name="category_search">Suche</string>
+	<string name="category_apps">Apps und Ordner</string>
+	<string name="drawer_layout">Anordnung der Liste</string>
+	<string name="drawer_layout_vertical">Vertikal</string>
+	<string name="drawer_layout_horizontal">Horizontal (experimentell)</string>
+	<string name="organise">Organisieren</string>
+	<string name="icon_menu">Symbol</string>
 </resources>

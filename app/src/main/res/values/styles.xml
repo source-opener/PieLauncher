@@ -33,6 +33,13 @@
 	<style name="PreferenceWithSeparator" parent="Preference">
 		<item name="android:background">@drawable/bottom_border</item>
 	</style>
+	<style name="SectionLast" parent="Preference">
+		<item name="android:textColor">@color/text_color</item>
+		<item name="android:textSize">18sp</item>
+	</style>
+	<style name="Section" parent="SectionLast">
+		<item name="android:background">@drawable/bottom_border</item>
+	</style>
 	<style name="Button" parent="@android:style/Widget.Button">
 		<item name="android:layout_width">wrap_content</item>
 		<item name="android:layout_height">wrap_content</item>

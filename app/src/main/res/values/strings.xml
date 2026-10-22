@@ -189,4 +189,13 @@
 	<string name="sync_from_release"><big><font color="#ffffff">Sync from the stable app</font></big>\nTake the settings of the stable app installed alongside this one</string>
 	<string name="sync_settings_confirm">This replaces the pie menu, hidden apps, icon mappings and all preferences of this app (%3$s) with those of %1$s (%2$s). Continue?</string>
 	<string name="sync_settings_older">Those settings come from an older version than this app.</string>
+	<string name="category_pie_menu">Pie menu</string>
+	<string name="category_look">Look</string>
+	<string name="category_search">Search</string>
+	<string name="category_apps">Apps and folders</string>
+	<string name="drawer_layout">Drawer layout</string>
+	<string name="drawer_layout_vertical">Vertical</string>
+	<string name="drawer_layout_horizontal">Horizontal (experimental)</string>
+	<string name="organise">Organise</string>
+	<string name="icon_menu">Icon</string>
 </resources>

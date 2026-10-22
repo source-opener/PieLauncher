@@ -19,6 +19,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.UserHandle;
 import android.os.UserManager;
+import android.text.TextPaint;
+import android.text.TextUtils;
 import android.util.Base64;
 
 import java.util.ArrayList;
@@ -63,6 +65,21 @@ public class Apps {
 		// using these two values instead of starting a launcher activity.
 		public String shortcutId;
 		public String shortcutPackage;
+
+		private CharSequence fittedLabel;
+		private float fittedWidth;
+
+		// Shortening a label measures it character by character, which
+		// is too much to repeat for every icon on every frame of a scroll.
+		// Only called from the UI thread.
+		public CharSequence fitLabel(TextPaint paint, float width) {
+			if (fittedLabel == null || fittedWidth != width) {
+				fittedLabel = TextUtils.ellipsize(label, paint, width,
+						TextUtils.TruncateAt.END);
+				fittedWidth = width;
+			}
+			return fittedLabel;
+		}
 
 		AppIcon(ComponentName componentName,
 				String label,

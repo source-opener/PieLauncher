@@ -1,5 +1,6 @@
 package de.markusfisch.android.pielauncher.activity;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
@@ -51,6 +52,21 @@ public class PreferencesActivity extends Activity {
 	private static final String WELCOME = "welcome";
 	private static final int REQUEST_EXPORT = 1;
 	private static final int REQUEST_IMPORT = 2;
+	// Entry in the section list, its page, and the page's title.
+	private static final int[][] SECTIONS = {
+			{R.id.section_home, R.id.page_home, R.string.category_home},
+			{R.id.section_pie, R.id.page_pie, R.string.category_pie_menu},
+			{R.id.section_look, R.id.page_look, R.string.category_look},
+			{R.id.section_drawer, R.id.page_drawer,
+					R.string.category_app_drawer},
+			{R.id.section_search, R.id.page_search,
+					R.string.category_search},
+			{R.id.section_apps, R.id.page_apps, R.string.category_apps},
+			{R.id.category_backup, R.id.page_backup,
+					R.string.category_backup},
+			{R.id.section_advanced, R.id.page_advanced,
+					R.string.category_advanced},
+	};
 
 	private final Handler handler = new Handler(Looper.getMainLooper());
 	private final ExecutorService executor =
@@ -60,6 +76,9 @@ public class PreferencesActivity extends Activity {
 
 	private Preferences prefs;
 	private ToolbarBackground toolbarBackground;
+	private TextView toolbar;
+	private ScrollWithListenerView scrollView;
+	private View openPage;
 	private View disableBatteryOptimizations;
 	private View defaultLauncherView;
 	private boolean isWelcomeMode = false;
@@ -89,7 +108,8 @@ public class PreferencesActivity extends Activity {
 				prefs.getBackgroundBlurRadius());
 		toolbarBackground = new ToolbarBackground(getResources());
 
-		TextView toolbar = findViewById(R.id.toolbar);
+		toolbar = findViewById(R.id.toolbar);
+		scrollView = findViewById(R.id.content);
 		View skipButton = findViewById(R.id.skip);
 
 		disableBatteryOptimizations = findViewById(
@@ -111,12 +131,13 @@ public class PreferencesActivity extends Activity {
 
 			findViewById(R.id.hide_in_welcome_mode).setVisibility(View.GONE);
 		} else {
-			toolbar.setOnClickListener(v -> finish());
+			toolbar.setOnClickListener(v -> goBack());
 			findViewById(R.id.welcome).setVisibility(View.GONE);
 
 			skipButton.setVisibility(View.GONE);
 
 			initPreferences();
+			initSections();
 			findViewById(R.id.hidden_apps).setOnClickListener((view) -> {
 				HiddenAppsActivity.start(this);
 			});
@@ -128,7 +149,6 @@ public class PreferencesActivity extends Activity {
 		}
 
 		Window window = getWindow();
-		ScrollWithListenerView scrollView = findViewById(R.id.content);
 		scrollView.setOnScrollPositionListener((int y, boolean scrollable) -> {
 			toolbar.setBackgroundColor(toolbarBackground.getColorForY(y));
 			SystemBars.setNavigationBarColor(window,
@@ -173,7 +193,7 @@ public class PreferencesActivity extends Activity {
 			return;
 		}
 
-		onBackInvokedCallback = this::finish;
+		onBackInvokedCallback = this::goBack;
 		getOnBackInvokedDispatcher().registerOnBackInvokedCallback(
 				OnBackInvokedDispatcher.PRIORITY_DEFAULT,
 				onBackInvokedCallback);
@@ -188,6 +208,44 @@ public class PreferencesActivity extends Activity {
 		getOnBackInvokedDispatcher().unregisterOnBackInvokedCallback(
 				onBackInvokedCallback);
 		onBackInvokedCallback = null;
+	}
+
+	@SuppressLint("GestureBackNavigation")
+	@Override
+	public void onBackPressed() {
+		goBack();
+	}
+
+	private void goBack() {
+		if (openPage != null) {
+			showPage(null, R.string.preferences);
+		} else {
+			finish();
+		}
+	}
+
+	private void initSections() {
+		for (int[] section : SECTIONS) {
+			View page = findViewById(section[1]);
+			int title = section[2];
+			findViewById(section[0]).setOnClickListener((v) ->
+					showPage(page, title));
+		}
+	}
+
+	private void showPage(View page, int titleId) {
+		if (openPage != null) {
+			openPage.setVisibility(View.GONE);
+		}
+		openPage = page;
+		findViewById(R.id.sections).setVisibility(page == null
+				? View.VISIBLE
+				: View.GONE);
+		if (page != null) {
+			page.setVisibility(View.VISIBLE);
+		}
+		toolbar.setText(titleId);
+		scrollView.scrollTo(0, 0);
 	}
 
 	private void initWorkFolder() {
@@ -466,6 +524,11 @@ public class PreferencesActivity extends Activity {
 				PreferencesActivity::getListAnimationAppearanceOptions,
 				() -> prefs.listAnimationAppearance(),
 				(value) -> prefs.setListAnimationAppearance(value));
+		initPreference(R.id.drawer_layout,
+				R.string.drawer_layout,
+				PreferencesActivity::getDrawerLayoutOptions,
+				() -> prefs.horizontalDrawer(),
+				(value) -> prefs.setHorizontalDrawer(value));
 		initPreference(R.id.display_keyboard,
 				R.string.display_keyboard,
 				PreferencesActivity::getDisplayKeyboardOptions,
@@ -798,6 +861,13 @@ public class PreferencesActivity extends Activity {
 				R.string.list_animation_appearance_slide);
 		map.put(Preferences.LIST_APPEARANCE_ANIMATION_FADE,
 				R.string.list_animation_appearance_fade);
+		return map;
+	}
+
+	private static Map<Boolean, Integer> getDrawerLayoutOptions() {
+		Map<Boolean, Integer> map = new LinkedHashMap<>();
+		map.put(Boolean.FALSE, R.string.drawer_layout_vertical);
+		map.put(Boolean.TRUE, R.string.drawer_layout_horizontal);
 		return map;
 	}
 
