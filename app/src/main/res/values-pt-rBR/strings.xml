@@ -203,7 +203,6 @@
 	<string name="action_hide">Ocultar</string>
 	<string name="action_edit_pie">Editar menu</string>
 	<string name="action_remove">Remover</string>
-	<string name="action_more">Mais</string>
 	<string name="action_pin">Fixar</string>
 	<string name="action_unpin">Soltar</string>
 	<string name="action_show_apps">Mostrar apps</string>

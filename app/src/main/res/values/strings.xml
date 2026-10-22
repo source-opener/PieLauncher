@@ -203,7 +203,6 @@
 	<string name="action_hide">Hide</string>
 	<string name="action_edit_pie">Edit pie</string>
 	<string name="action_remove">Remove</string>
-	<string name="action_more">More</string>
 	<string name="action_pin">Pin</string>
 	<string name="action_unpin">Unpin</string>
 	<string name="action_show_apps">Show apps</string>

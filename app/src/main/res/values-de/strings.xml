@@ -203,7 +203,6 @@
 	<string name="action_hide">Verstecken</string>
 	<string name="action_edit_pie">Kreis ändern</string>
 	<string name="action_remove">Entfernen</string>
-	<string name="action_more">Mehr</string>
 	<string name="action_pin">Anheften</string>
 	<string name="action_unpin">Lösen</string>
 	<string name="action_show_apps">Apps zeigen</string>

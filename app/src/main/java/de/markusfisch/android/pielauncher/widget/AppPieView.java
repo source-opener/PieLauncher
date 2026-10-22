@@ -1244,25 +1244,25 @@ public class AppPieView extends View {
 		LauncherItemKey key = new LauncherItemKey(icon.componentName,
 				icon.userHandle);
 		ItemPanel panel = new ItemPanel(context, icon.bitmap, icon.label);
-		panel.add(R.drawable.ic_add, R.string.action_pie,
+		panel.add(R.drawable.ic_section_pie, R.string.action_pie,
 				() -> addToPie(icon));
 		panel.add(R.drawable.ic_section_folders, R.string.action_folder,
 				() -> showFolderList(context, key));
-		panel.add(R.drawable.ic_edit, R.string.action_rename,
+		panel.add(R.drawable.ic_rename, R.string.action_rename,
 				() -> renameApp(context, icon));
-		panel.add(R.drawable.ic_section_look, R.string.action_icon,
+		panel.add(R.drawable.ic_palette, R.string.action_icon,
 				() -> showIconMenu(context, icon, key,
 						() -> PieLauncherApp.apps.updateIconsAsync(context)));
 		panel.add(R.drawable.ic_info, R.string.action_info,
 				() -> AppLauncher.launchAppInfo(context, icon));
 		panel.add(R.drawable.ic_hide, R.string.action_hide,
 				() -> PickIconActivity.askToHide(context, icon.componentName));
-		panel.addMore(R.drawable.ic_tag, R.string.app_tags,
+		panel.add(R.drawable.ic_tag, R.string.app_tags,
 				() -> editTags(context, icon));
-		panel.addMore(R.drawable.ic_section_pie, R.string.action_edit_pie,
+		panel.add(R.drawable.ic_edit, R.string.action_edit_pie,
 				() -> addIconInteractively(null));
 		if (Apps.isShortcut(icon)) {
-			panel.addMore(R.drawable.ic_remove, R.string.action_remove,
+			panel.add(R.drawable.ic_remove, R.string.action_remove,
 					() -> askToRemoveShortcut(context, icon));
 		}
 		panel.show();
@@ -1284,6 +1284,13 @@ public class AppPieView extends View {
 		ItemPanel panel = new ItemPanel(context, icon.bitmap, icon.label);
 		boolean packs = PieLauncherApp.iconPack.hasPacks();
 		boolean work = AppLauncher.hasWorkProfile(context);
+		Bitmap workIcon = work
+				? PieLauncherApp.workPausedIcons.get(key)
+				: null;
+		if (workIcon != null) {
+			panel.addHeaderIcon(workIcon, R.string.icon_work_paused,
+					R.string.icon_normal);
+		}
 		if (work) {
 			panel.heading(R.string.icon_normal);
 		}
@@ -1296,7 +1303,7 @@ public class AppPieView extends View {
 			refresh.run();
 		});
 		if (packs) {
-			panel.add(R.drawable.ic_section_look, R.string.icon_pack, () -> {
+			panel.add(R.drawable.ic_shapes, R.string.icon_pack, () -> {
 				returnToList();
 				changeIcon(context, icon);
 			});
@@ -1310,7 +1317,7 @@ public class AppPieView extends View {
 				refresh.run();
 			});
 			if (packs) {
-				panel.add(R.drawable.ic_section_look, R.string.icon_pack,
+				panel.add(R.drawable.ic_shapes, R.string.icon_pack,
 						() -> PickIconActivity.startForWorkPaused(context,
 								key));
 			}
@@ -1366,7 +1373,7 @@ public class AppPieView extends View {
 			return;
 		}
 		ItemPanel panel = new ItemPanel(context, icon.bitmap, folder.name);
-		panel.add(R.drawable.ic_add, R.string.action_pie,
+		panel.add(R.drawable.ic_section_pie, R.string.action_pie,
 				() -> addToPie(icon));
 		panel.add(R.drawable.ic_pin, folder.pinned
 						? R.string.action_unpin
@@ -1387,7 +1394,7 @@ public class AppPieView extends View {
 							!folder.hideContents, folder.pinned);
 					resetSearch();
 				});
-		panel.add(R.drawable.ic_edit, R.string.action_rename,
+		panel.add(R.drawable.ic_rename, R.string.action_rename,
 				() -> askForFolderName(context, folder.name, name -> {
 					PieLauncherApp.folders.update(context, id, name,
 							folder.hideContents, folder.pinned);
@@ -1395,12 +1402,12 @@ public class AppPieView extends View {
 					PieLauncherApp.apps.indexAppsAsync(context);
 					resetSearch();
 				}));
-		panel.add(R.drawable.ic_section_look, R.string.action_icon,
+		panel.add(R.drawable.ic_palette, R.string.action_icon,
 				() -> showIconMenu(context, icon, Folders.keyOf(id),
 						this::resetSearch));
-		panel.addMore(R.drawable.ic_tag, R.string.app_tags,
+		panel.add(R.drawable.ic_tag, R.string.app_tags,
 				() -> editTags(context, icon));
-		panel.addMore(R.drawable.ic_delete, R.string.action_delete,
+		panel.add(R.drawable.ic_delete, R.string.action_delete,
 				() -> askToDeleteFolder(context, id));
 		panel.show();
 	}

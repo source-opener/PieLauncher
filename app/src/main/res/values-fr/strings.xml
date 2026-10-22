@@ -203,7 +203,6 @@
 	<string name="action_hide">Masquer</string>
 	<string name="action_edit_pie">Modifier le menu</string>
 	<string name="action_remove">Retirer</string>
-	<string name="action_more">Plus</string>
 	<string name="action_pin">Épingler</string>
 	<string name="action_unpin">Détacher</string>
 	<string name="action_show_apps">Afficher les apps</string>

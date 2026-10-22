@@ -203,7 +203,6 @@
 	<string name="action_hide">隐藏</string>
 	<string name="action_edit_pie">编辑菜单</string>
 	<string name="action_remove">移除</string>
-	<string name="action_more">更多</string>
 	<string name="action_pin">固定</string>
 	<string name="action_unpin">取消固定</string>
 	<string name="action_show_apps">显示应用</string>

@@ -21,8 +21,8 @@ import de.markusfisch.android.pielauncher.app.PieLauncherApp;
 import de.markusfisch.android.pielauncher.graphics.Converter;
 
 // What a long press on an app or a folder opens: its icon and name over
-// big buttons with a picture and a word each, and the rarer ones behind
-// More. Plain views in a dialog, built when needed.
+// big buttons with a picture and a word each. Plain views in a dialog,
+// built when needed.
 public class ItemPanel {
 	private static final int COLUMNS = 4;
 
@@ -39,10 +39,11 @@ public class ItemPanel {
 	}
 
 	private final List<Entry> entries = new ArrayList<>();
-	private final List<Entry> more = new ArrayList<>();
 	private final Context context;
 	private final Dialog dialog;
 	private final LinearLayout body;
+	private final LinearLayout icons;
+	private final TextView firstIcon;
 	private final boolean light;
 	private final int textColor;
 	private final float dp;
@@ -61,14 +62,13 @@ public class ItemPanel {
 		int padding = px(16);
 		body.setPadding(padding, padding, padding, padding);
 
+		icons = new LinearLayout(context);
+		icons.setGravity(Gravity.CENTER);
+		firstIcon = newIcon(icon, null);
+		icons.addView(firstIcon);
+		body.addView(icons);
 		TextView header = newText(title, 18);
-		header.setPadding(0, 0, 0, px(12));
-		if (icon != null) {
-			Drawable d = new BitmapDrawable(context.getResources(), icon);
-			d.setBounds(0, 0, px(56), px(56));
-			header.setCompoundDrawables(null, d, null, null);
-			header.setCompoundDrawablePadding(px(8));
-		}
+		header.setPadding(0, px(4), 0, px(12));
 		body.addView(header);
 
 		dialog = new Dialog(context);
@@ -80,8 +80,13 @@ public class ItemPanel {
 		entries.add(new Entry(iconId, labelId, action));
 	}
 
-	public void addMore(int iconId, int labelId, Runnable action) {
-		more.add(new Entry(iconId, labelId, action));
+	// Shows a second icon next to the first, for example the one used
+	// while the work profile is paused, and names both.
+	public void addHeaderIcon(Bitmap icon, int captionId, int firstCaptionId) {
+		firstIcon.setText(firstCaptionId);
+		TextView second = newIcon(icon, context.getString(captionId));
+		second.setPadding(px(24), 0, 0, 0);
+		icons.addView(second);
 	}
 
 	// A small title over the buttons added after it.
@@ -91,16 +96,6 @@ public class ItemPanel {
 
 	public void show() {
 		addGrid(entries);
-		if (!more.isEmpty()) {
-			List<Entry> toggle = new ArrayList<>();
-			toggle.add(new Entry(R.drawable.ic_more, R.string.action_more,
-					null));
-			LinearLayout moreRow = addGrid(toggle);
-			moreRow.getChildAt(0).setOnClickListener((v) -> {
-				body.removeView(moreRow);
-				addGrid(more);
-			});
-		}
 		Window window = dialog.getWindow();
 		if (window != null) {
 			window.setBackgroundDrawable(new ColorDrawable(0));
@@ -111,8 +106,7 @@ public class ItemPanel {
 		dialog.show();
 	}
 
-	// Returns the last row, which is what the More toggle needs.
-	private LinearLayout addGrid(List<Entry> list) {
+	private void addGrid(List<Entry> list) {
 		LinearLayout row = null;
 		for (Entry entry : list) {
 			if (entry.iconId == 0) {
@@ -133,7 +127,17 @@ public class ItemPanel {
 			row.addView(newButton(entry), new LinearLayout.LayoutParams(
 					0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
 		}
-		return row;
+	}
+
+	private TextView newIcon(Bitmap icon, CharSequence caption) {
+		TextView tv = newText(caption, 12);
+		if (icon != null) {
+			Drawable d = new BitmapDrawable(context.getResources(), icon);
+			d.setBounds(0, 0, px(56), px(56));
+			tv.setCompoundDrawables(null, d, null, null);
+			tv.setCompoundDrawablePadding(px(4));
+		}
+		return tv;
 	}
 
 	private TextView newButton(Entry entry) {
