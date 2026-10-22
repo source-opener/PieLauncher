@@ -146,8 +146,6 @@
 	<string name="app_tags_hint">Palavras adicionais para encontrar este aplicativo</string>
 	<string name="pick_image">Escolher imagem</string>
 	<string name="reset_icon">Redefinir ícone</string>
-	<string name="pick_work_paused_icon">Escolher ícone para perfil de trabalho pausado</string>
-	<string name="pick_work_paused_image">Escolher imagem para perfil de trabalho pausado</string>
 	<string name="reset_work_paused_icon">Redefinir ícone do perfil de trabalho pausado</string>
 	<string name="move_work_apps">Mover apps de trabalho para uma pasta</string>
 	<string name="work_folder_name">Trabalho</string>
@@ -169,14 +167,8 @@
 	<string name="folder_name">Nome da pasta</string>
 	<string name="add_to_folder">Adicionar a %1$s</string>
 	<string name="remove_from_folder">Remover de %1$s</string>
-	<string name="edit_folder">Editar pasta</string>
-	<string name="rename_folder">Renomear pasta</string>
 	<string name="delete_folder">Excluir pasta</string>
 	<string name="want_to_delete_folder">Deseja excluir esta pasta? Os aplicativos nela são mantidos.</string>
-	<string name="hide_folder_contents">Ocultar conteúdo da lista</string>
-	<string name="show_folder_contents">Mostrar conteúdo na lista</string>
-	<string name="pin_folder">Fixar no topo</string>
-	<string name="unpin_folder">Desafixar do topo</string>
 	<string name="remove_shortcut">Remover atalho</string>
 	<string name="want_to_remove_shortcut">Deseja remover este atalho?</string>
 	<string name="folder_dwell">Segurar para abrir a pasta</string>
@@ -196,8 +188,6 @@
 	<string name="drawer_layout">Layout da gaveta</string>
 	<string name="drawer_layout_vertical">Vertical</string>
 	<string name="drawer_layout_horizontal">Horizontal (experimental)</string>
-	<string name="organise">Organizar</string>
-	<string name="icon_menu">Ícone</string>
 	<string name="section_home_summary">Orientação, zona morta, botão início</string>
 	<string name="section_pie_summary">Menu dividido, círculo, pastas</string>
 	<string name="section_look_summary">Fundo, desfoque, pacote de ícones, nomes</string>
@@ -206,4 +196,22 @@
 	<string name="section_apps_summary">Ocultos, personalizados, pasta de trabalho</string>
 	<string name="section_backup_summary">Exportar, importar, sincronizar</string>
 	<string name="section_advanced_summary">Vibração, reinício</string>
+	<string name="action_pie">Menu</string>
+	<string name="action_folder">Pasta</string>
+	<string name="action_rename">Renomear</string>
+	<string name="action_icon">Ícone</string>
+	<string name="action_info">Info</string>
+	<string name="action_hide">Ocultar</string>
+	<string name="action_edit_pie">Editar menu</string>
+	<string name="action_remove">Remover</string>
+	<string name="action_more">Mais</string>
+	<string name="action_pin">Fixar</string>
+	<string name="action_unpin">Soltar</string>
+	<string name="action_show_apps">Mostrar apps</string>
+	<string name="action_hide_apps">Ocultar apps</string>
+	<string name="action_delete">Excluir</string>
+	<string name="icon_original">Original</string>
+	<string name="icon_picture">Imagem</string>
+	<string name="icon_normal">Normal</string>
+	<string name="icon_work_paused">Com o trabalho pausado</string>
 </resources>

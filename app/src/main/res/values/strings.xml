@@ -146,8 +146,6 @@
 	<string name="app_tags_hint">Extra words to find this app by</string>
 	<string name="pick_image">Pick image</string>
 	<string name="reset_icon">Reset icon</string>
-	<string name="pick_work_paused_icon">Pick icon for paused work profile</string>
-	<string name="pick_work_paused_image">Pick image for paused work profile</string>
 	<string name="reset_work_paused_icon">Reset icon for paused work profile</string>
 	<string name="move_work_apps">Move work apps to a folder</string>
 	<string name="work_folder_name">Work</string>
@@ -169,14 +167,8 @@
 	<string name="folder_name">Folder name</string>
 	<string name="add_to_folder">Add to %1$s</string>
 	<string name="remove_from_folder">Remove from %1$s</string>
-	<string name="edit_folder">Edit folder</string>
-	<string name="rename_folder">Rename folder</string>
 	<string name="delete_folder">Delete folder</string>
 	<string name="want_to_delete_folder">Do you want to delete this folder? The apps in it are kept.</string>
-	<string name="hide_folder_contents">Hide contents from drawer</string>
-	<string name="show_folder_contents">Show contents in drawer</string>
-	<string name="pin_folder">Pin to top</string>
-	<string name="unpin_folder">Unpin from top</string>
 	<string name="remove_shortcut">Remove shortcut</string>
 	<string name="want_to_remove_shortcut">Do you want to remove this shortcut?</string>
 	<string name="folder_dwell">Hold to open folder</string>
@@ -196,8 +188,6 @@
 	<string name="drawer_layout">Drawer layout</string>
 	<string name="drawer_layout_vertical">Vertical</string>
 	<string name="drawer_layout_horizontal">Horizontal (experimental)</string>
-	<string name="organise">Organise</string>
-	<string name="icon_menu">Icon</string>
 	<string name="section_home_summary">Orientation, dead zone, home button</string>
 	<string name="section_pie_summary">Split menu, circling, folders</string>
 	<string name="section_look_summary">Background, blur, icon pack, names</string>
@@ -206,4 +196,22 @@
 	<string name="section_apps_summary">Hidden, customised, work folder</string>
 	<string name="section_backup_summary">Export, import, sync</string>
 	<string name="section_advanced_summary">Haptics, relaunch</string>
+	<string name="action_pie">Pie</string>
+	<string name="action_folder">Folder</string>
+	<string name="action_rename">Rename</string>
+	<string name="action_icon">Icon</string>
+	<string name="action_info">Info</string>
+	<string name="action_hide">Hide</string>
+	<string name="action_edit_pie">Edit pie</string>
+	<string name="action_remove">Remove</string>
+	<string name="action_more">More</string>
+	<string name="action_pin">Pin</string>
+	<string name="action_unpin">Unpin</string>
+	<string name="action_show_apps">Show apps</string>
+	<string name="action_hide_apps">Hide apps</string>
+	<string name="action_delete">Delete</string>
+	<string name="icon_original">Original</string>
+	<string name="icon_picture">Picture</string>
+	<string name="icon_normal">Normal</string>
+	<string name="icon_work_paused">While work is paused</string>
 </resources>

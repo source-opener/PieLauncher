@@ -146,8 +146,6 @@
 	<string name="app_tags_hint">用于查找此应用的额外关键词</string>
 	<string name="pick_image">选择图片</string>
 	<string name="reset_icon">重置图标</string>
-	<string name="pick_work_paused_icon">为已暂停的工作资料选择图标</string>
-	<string name="pick_work_paused_image">为已暂停的工作资料选择图片</string>
 	<string name="reset_work_paused_icon">重置已暂停工作资料的图标</string>
 	<string name="move_work_apps">将工作应用移到文件夹</string>
 	<string name="work_folder_name">工作</string>
@@ -169,14 +167,8 @@
 	<string name="folder_name">文件夹名称</string>
 	<string name="add_to_folder">添加到 %1$s</string>
 	<string name="remove_from_folder">从 %1$s 中移除</string>
-	<string name="edit_folder">编辑文件夹</string>
-	<string name="rename_folder">重命名文件夹</string>
 	<string name="delete_folder">删除文件夹</string>
 	<string name="want_to_delete_folder">要删除此文件夹吗？其中的应用会保留。</string>
-	<string name="hide_folder_contents">在列表中隐藏内容</string>
-	<string name="show_folder_contents">在列表中显示内容</string>
-	<string name="pin_folder">置顶</string>
-	<string name="unpin_folder">取消置顶</string>
 	<string name="remove_shortcut">移除快捷方式</string>
 	<string name="want_to_remove_shortcut">要移除此快捷方式吗？</string>
 	<string name="folder_dwell">长按打开文件夹</string>
@@ -196,8 +188,6 @@
 	<string name="drawer_layout">抽屉布局</string>
 	<string name="drawer_layout_vertical">竖向</string>
 	<string name="drawer_layout_horizontal">横向（实验性）</string>
-	<string name="organise">整理</string>
-	<string name="icon_menu">图标</string>
 	<string name="section_home_summary">方向、死区、主页键</string>
 	<string name="section_pie_summary">分割菜单、画圈、文件夹</string>
 	<string name="section_look_summary">背景、模糊、图标包、名称</string>
@@ -206,4 +196,22 @@
 	<string name="section_apps_summary">隐藏、自定义、工作文件夹</string>
 	<string name="section_backup_summary">导出、导入、同步</string>
 	<string name="section_advanced_summary">触感反馈、重启</string>
+	<string name="action_pie">饼状菜单</string>
+	<string name="action_folder">文件夹</string>
+	<string name="action_rename">重命名</string>
+	<string name="action_icon">图标</string>
+	<string name="action_info">信息</string>
+	<string name="action_hide">隐藏</string>
+	<string name="action_edit_pie">编辑菜单</string>
+	<string name="action_remove">移除</string>
+	<string name="action_more">更多</string>
+	<string name="action_pin">固定</string>
+	<string name="action_unpin">取消固定</string>
+	<string name="action_show_apps">显示应用</string>
+	<string name="action_hide_apps">隐藏应用</string>
+	<string name="action_delete">删除</string>
+	<string name="icon_original">原始</string>
+	<string name="icon_picture">图片</string>
+	<string name="icon_normal">普通</string>
+	<string name="icon_work_paused">工作暂停时</string>
 </resources>

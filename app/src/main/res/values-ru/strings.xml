@@ -146,8 +146,6 @@
 	<string name="app_tags_hint">Дополнительные слова для поиска этого приложения</string>
 	<string name="pick_image">Выбрать изображение</string>
 	<string name="reset_icon">Сбросить иконку</string>
-	<string name="pick_work_paused_icon">Выбрать значок для приостановленного рабочего профиля</string>
-	<string name="pick_work_paused_image">Выбрать изображение для приостановленного рабочего профиля</string>
 	<string name="reset_work_paused_icon">Сбросить значок для приостановленного рабочего профиля</string>
 	<string name="move_work_apps">Переместить рабочие приложения в папку</string>
 	<string name="work_folder_name">Работа</string>
@@ -169,14 +167,8 @@
 	<string name="folder_name">Название папки</string>
 	<string name="add_to_folder">Добавить в %1$s</string>
 	<string name="remove_from_folder">Убрать из %1$s</string>
-	<string name="edit_folder">Изменить папку</string>
-	<string name="rename_folder">Переименовать папку</string>
 	<string name="delete_folder">Удалить папку</string>
 	<string name="want_to_delete_folder">Удалить эту папку? Приложения в ней сохранятся.</string>
-	<string name="hide_folder_contents">Скрыть содержимое из списка</string>
-	<string name="show_folder_contents">Показывать содержимое в списке</string>
-	<string name="pin_folder">Закрепить вверху</string>
-	<string name="unpin_folder">Открепить сверху</string>
 	<string name="remove_shortcut">Удалить ярлык</string>
 	<string name="want_to_remove_shortcut">Удалить этот ярлык?</string>
 	<string name="folder_dwell">Открывать папку удержанием</string>
@@ -196,8 +188,6 @@
 	<string name="drawer_layout">Расположение списка</string>
 	<string name="drawer_layout_vertical">Вертикально</string>
 	<string name="drawer_layout_horizontal">Горизонтально (экспериментально)</string>
-	<string name="organise">Упорядочить</string>
-	<string name="icon_menu">Значок</string>
 	<string name="section_home_summary">Ориентация, мёртвая зона, кнопка «Домой»</string>
 	<string name="section_pie_summary">Разделённое меню, круг, папки</string>
 	<string name="section_look_summary">Фон, размытие, значки, названия</string>
@@ -206,4 +196,22 @@
 	<string name="section_apps_summary">Скрытые, изменённые, рабочая папка</string>
 	<string name="section_backup_summary">Экспорт, импорт, синхронизация</string>
 	<string name="section_advanced_summary">Вибрация, перезапуск</string>
+	<string name="action_pie">Меню</string>
+	<string name="action_folder">Папка</string>
+	<string name="action_rename">Переименовать</string>
+	<string name="action_icon">Значок</string>
+	<string name="action_info">Сведения</string>
+	<string name="action_hide">Скрыть</string>
+	<string name="action_edit_pie">Изменить меню</string>
+	<string name="action_remove">Убрать</string>
+	<string name="action_more">Ещё</string>
+	<string name="action_pin">Закрепить</string>
+	<string name="action_unpin">Открепить</string>
+	<string name="action_show_apps">Показать</string>
+	<string name="action_hide_apps">Скрыть все</string>
+	<string name="action_delete">Удалить</string>
+	<string name="icon_original">Исходный</string>
+	<string name="icon_picture">Картинка</string>
+	<string name="icon_normal">Обычный</string>
+	<string name="icon_work_paused">Когда работа на паузе</string>
 </resources>

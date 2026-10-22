@@ -146,8 +146,6 @@
 	<string name="app_tags_hint">Додаткові слова для пошуку цієї програми</string>
 	<string name="pick_image">Вибрати зображення</string>
 	<string name="reset_icon">Скинути іконку</string>
-	<string name="pick_work_paused_icon">Вибрати значок для призупиненого робочого профілю</string>
-	<string name="pick_work_paused_image">Вибрати зображення для призупиненого робочого профілю</string>
 	<string name="reset_work_paused_icon">Скинути значок для призупиненого робочого профілю</string>
 	<string name="move_work_apps">Перемістити робочі застосунки в теку</string>
 	<string name="work_folder_name">Робота</string>
@@ -169,14 +167,8 @@
 	<string name="folder_name">Назва теки</string>
 	<string name="add_to_folder">Додати до %1$s</string>
 	<string name="remove_from_folder">Вилучити з %1$s</string>
-	<string name="edit_folder">Змінити теку</string>
-	<string name="rename_folder">Перейменувати теку</string>
 	<string name="delete_folder">Видалити теку</string>
 	<string name="want_to_delete_folder">Видалити цю теку? Програми в ній буде збережено.</string>
-	<string name="hide_folder_contents">Приховати вміст зі списку</string>
-	<string name="show_folder_contents">Показувати вміст у списку</string>
-	<string name="pin_folder">Закріпити вгорі</string>
-	<string name="unpin_folder">Відкріпити зверху</string>
 	<string name="remove_shortcut">Вилучити ярлик</string>
 	<string name="want_to_remove_shortcut">Вилучити цей ярлик?</string>
 	<string name="folder_dwell">Відкривати теку утриманням</string>
@@ -196,8 +188,6 @@
 	<string name="drawer_layout">Розташування списку</string>
 	<string name="drawer_layout_vertical">Вертикально</string>
 	<string name="drawer_layout_horizontal">Горизонтально (експериментально)</string>
-	<string name="organise">Упорядкувати</string>
-	<string name="icon_menu">Значок</string>
 	<string name="section_home_summary">Орієнтація, мертва зона, кнопка «Додому»</string>
 	<string name="section_pie_summary">Розділене меню, коло, теки</string>
 	<string name="section_look_summary">Тло, розмиття, значки, назви</string>
@@ -206,4 +196,22 @@
 	<string name="section_apps_summary">Приховані, змінені, робоча тека</string>
 	<string name="section_backup_summary">Експорт, імпорт, синхронізація</string>
 	<string name="section_advanced_summary">Вібрація, перезапуск</string>
+	<string name="action_pie">Меню</string>
+	<string name="action_folder">Тека</string>
+	<string name="action_rename">Перейменувати</string>
+	<string name="action_icon">Значок</string>
+	<string name="action_info">Відомості</string>
+	<string name="action_hide">Сховати</string>
+	<string name="action_edit_pie">Змінити меню</string>
+	<string name="action_remove">Прибрати</string>
+	<string name="action_more">Ще</string>
+	<string name="action_pin">Закріпити</string>
+	<string name="action_unpin">Відкріпити</string>
+	<string name="action_show_apps">Показати</string>
+	<string name="action_hide_apps">Сховати всі</string>
+	<string name="action_delete">Видалити</string>
+	<string name="icon_original">Початковий</string>
+	<string name="icon_picture">Зображення</string>
+	<string name="icon_normal">Звичайний</string>
+	<string name="icon_work_paused">Коли робота на паузі</string>
 </resources>

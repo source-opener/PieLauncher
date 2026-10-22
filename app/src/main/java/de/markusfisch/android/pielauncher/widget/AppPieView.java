@@ -1243,27 +1243,29 @@ public class AppPieView extends View {
 		}
 		LauncherItemKey key = new LauncherItemKey(icon.componentName,
 				icon.userHandle);
-		Options options = new Options(context);
-		options.add(R.string.add_to_pie_menu, () -> addToPie(icon));
-		options.add(R.string.edit_pie_menu, () -> addIconInteractively(null));
-		options.add(R.string.organise, () -> {
-			Options organise = new Options(context);
-			organise.add(R.string.rename_app, () -> renameApp(context, icon));
-			organise.add(R.string.app_tags, () -> editTags(context, icon));
-			organise.add(R.string.folders, () -> showFolderList(context, key));
-			organise.add(R.string.hide_app, () -> PickIconActivity.askToHide(
-					context, icon.componentName));
-			if (Apps.isShortcut(icon)) {
-				organise.add(R.string.remove_shortcut,
-						() -> askToRemoveShortcut(context, icon));
-			}
-			organise.show(R.string.organise);
-		});
-		options.add(R.string.icon_menu, () -> showIconMenu(context, icon, key,
-				() -> PieLauncherApp.apps.indexAppsAsync(context)));
-		options.add(R.string.show_app_info,
+		ItemPanel panel = new ItemPanel(context, icon.bitmap, icon.label);
+		panel.add(R.drawable.ic_add, R.string.action_pie,
+				() -> addToPie(icon));
+		panel.add(R.drawable.ic_section_folders, R.string.action_folder,
+				() -> showFolderList(context, key));
+		panel.add(R.drawable.ic_edit, R.string.action_rename,
+				() -> renameApp(context, icon));
+		panel.add(R.drawable.ic_section_look, R.string.action_icon,
+				() -> showIconMenu(context, icon, key,
+						() -> PieLauncherApp.apps.updateIconsAsync(context)));
+		panel.add(R.drawable.ic_info, R.string.action_info,
 				() -> AppLauncher.launchAppInfo(context, icon));
-		options.show(R.string.edit_app);
+		panel.add(R.drawable.ic_hide, R.string.action_hide,
+				() -> PickIconActivity.askToHide(context, icon.componentName));
+		panel.addMore(R.drawable.ic_tag, R.string.app_tags,
+				() -> editTags(context, icon));
+		panel.addMore(R.drawable.ic_section_pie, R.string.action_edit_pie,
+				() -> addIconInteractively(null));
+		if (Apps.isShortcut(icon)) {
+			panel.addMore(R.drawable.ic_remove, R.string.action_remove,
+					() -> askToRemoveShortcut(context, icon));
+		}
+		panel.show();
 	}
 
 	private void addToPie(Apps.AppIcon icon) {
@@ -1271,44 +1273,51 @@ public class AppPieView extends View {
 		postDelayed(this::releaseIcon, 100);
 	}
 
-	// Everything that changes how an app or a folder looks, shared by both
-	// menus. refresh brings the change on screen.
+	// The ways to change an icon as pictures: back to the original, one
+	// from the icon pack, or a picture. With a work profile there is a
+	// second set for while work is paused. refresh shows the result.
 	private void showIconMenu(
 			Context context,
 			Apps.AppIcon icon,
 			LauncherItemKey key,
 			Runnable refresh) {
-		Options options = new Options(context);
-		if (PieLauncherApp.iconPack.hasPacks()) {
-			options.add(R.string.change_icon, () -> {
+		ItemPanel panel = new ItemPanel(context, icon.bitmap, icon.label);
+		boolean packs = PieLauncherApp.iconPack.hasPacks();
+		boolean work = AppLauncher.hasWorkProfile(context);
+		if (work) {
+			panel.heading(R.string.icon_normal);
+		}
+		panel.add(R.drawable.ic_restore, R.string.icon_original, () -> {
+			PieLauncherApp.appIcons.store(context, key, null);
+			if (PieLauncherApp.iconPack.hasMapping(key.componentName)) {
+				PieLauncherApp.iconPack.removeMapping(key.componentName);
+				PieLauncherApp.iconPack.storeMappings(context);
+			}
+			refresh.run();
+		});
+		if (packs) {
+			panel.add(R.drawable.ic_section_look, R.string.icon_pack, () -> {
 				returnToList();
 				changeIcon(context, icon);
 			});
 		}
-		options.add(R.string.pick_image,
+		panel.add(R.drawable.ic_image, R.string.icon_picture,
 				() -> PickImageActivity.start(context, key));
-		if (PieLauncherApp.appIcons.has(key)) {
-			options.add(R.string.reset_icon, () -> {
-				PieLauncherApp.appIcons.store(context, key, null);
+		if (work) {
+			panel.heading(R.string.icon_work_paused);
+			panel.add(R.drawable.ic_restore, R.string.icon_original, () -> {
+				PieLauncherApp.workPausedIcons.store(context, key, null);
 				refresh.run();
 			});
-		}
-		if (AppLauncher.hasWorkProfile(context)) {
-			if (PieLauncherApp.iconPack.hasPacks()) {
-				options.add(R.string.pick_work_paused_icon,
+			if (packs) {
+				panel.add(R.drawable.ic_section_look, R.string.icon_pack,
 						() -> PickIconActivity.startForWorkPaused(context,
 								key));
 			}
-			options.add(R.string.pick_work_paused_image,
+			panel.add(R.drawable.ic_image, R.string.icon_picture,
 					() -> PickImageActivity.start(context, key, true));
-			if (PieLauncherApp.workPausedIcons.has(key)) {
-				options.add(R.string.reset_work_paused_icon, () -> {
-					PieLauncherApp.workPausedIcons.store(context, key, null);
-					refresh.run();
-				});
-			}
 		}
-		options.show(R.string.icon_menu);
+		panel.show();
 	}
 
 	private static void askToRemoveShortcut(
@@ -1356,42 +1365,44 @@ public class AppPieView extends View {
 		if (folder == null) {
 			return;
 		}
-		Options options = new Options(context);
-		options.add(R.string.add_to_pie_menu, () -> addToPie(icon));
-		options.add(folder.pinned
-						? R.string.unpin_folder
-						: R.string.pin_folder,
+		ItemPanel panel = new ItemPanel(context, icon.bitmap, folder.name);
+		panel.add(R.drawable.ic_add, R.string.action_pie,
+				() -> addToPie(icon));
+		panel.add(R.drawable.ic_pin, folder.pinned
+						? R.string.action_unpin
+						: R.string.action_pin,
 				() -> {
 					PieLauncherApp.folders.update(context, id, folder.name,
 							folder.hideContents, !folder.pinned);
 					resetSearch();
 				});
-		options.add(folder.hideContents
-						? R.string.show_folder_contents
-						: R.string.hide_folder_contents,
+		panel.add(folder.hideContents
+						? R.drawable.ic_section_drawer
+						: R.drawable.ic_hide,
+				folder.hideContents
+						? R.string.action_show_apps
+						: R.string.action_hide_apps,
 				() -> {
 					PieLauncherApp.folders.update(context, id, folder.name,
 							!folder.hideContents, folder.pinned);
 					resetSearch();
 				});
-		options.add(R.string.organise, () -> {
-			Options organise = new Options(context);
-			organise.add(R.string.rename_folder,
-					() -> askForFolderName(context, folder.name, name -> {
-						PieLauncherApp.folders.update(context, id, name,
-								folder.hideContents, folder.pinned);
-						// The menus hold the icon this replaced.
-						PieLauncherApp.apps.indexAppsAsync(context);
-						resetSearch();
-					}));
-			organise.add(R.string.app_tags, () -> editTags(context, icon));
-			organise.add(R.string.delete_folder,
-					() -> askToDeleteFolder(context, id));
-			organise.show(R.string.organise);
-		});
-		options.add(R.string.icon_menu, () -> showIconMenu(context, icon,
-				Folders.keyOf(id), this::resetSearch));
-		options.show(R.string.edit_folder);
+		panel.add(R.drawable.ic_edit, R.string.action_rename,
+				() -> askForFolderName(context, folder.name, name -> {
+					PieLauncherApp.folders.update(context, id, name,
+							folder.hideContents, folder.pinned);
+					// The menus hold the icon this replaced.
+					PieLauncherApp.apps.indexAppsAsync(context);
+					resetSearch();
+				}));
+		panel.add(R.drawable.ic_section_look, R.string.action_icon,
+				() -> showIconMenu(context, icon, Folders.keyOf(id),
+						this::resetSearch));
+		panel.addMore(R.drawable.ic_tag, R.string.app_tags,
+				() -> editTags(context, icon));
+		panel.addMore(R.drawable.ic_delete, R.string.action_delete,
+				() -> askToDeleteFolder(context, id));
+		panel.show();
 	}
 
 	private void askToDeleteFolder(Context context, long id) {

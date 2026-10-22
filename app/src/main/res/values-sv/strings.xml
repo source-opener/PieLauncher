@@ -146,8 +146,6 @@
 	<string name="app_tags_hint">Extra ord för att hitta appen</string>
 	<string name="pick_image">Välj bild</string>
 	<string name="reset_icon">Återställ ikon</string>
-	<string name="pick_work_paused_icon">Välj ikon för pausad jobbprofil</string>
-	<string name="pick_work_paused_image">Välj bild för pausad jobbprofil</string>
 	<string name="reset_work_paused_icon">Återställ ikon för pausad jobbprofil</string>
 	<string name="move_work_apps">Flytta jobbappar till en mapp</string>
 	<string name="work_folder_name">Jobb</string>
@@ -169,14 +167,8 @@
 	<string name="folder_name">Mappnamn</string>
 	<string name="add_to_folder">Lägg till i %1$s</string>
 	<string name="remove_from_folder">Ta bort från %1$s</string>
-	<string name="edit_folder">Redigera mapp</string>
-	<string name="rename_folder">Byt namn på mapp</string>
 	<string name="delete_folder">Ta bort mapp</string>
 	<string name="want_to_delete_folder">Vill du ta bort den här mappen? Apparna i den behålls.</string>
-	<string name="hide_folder_contents">Dölj innehållet i listan</string>
-	<string name="show_folder_contents">Visa innehållet i listan</string>
-	<string name="pin_folder">Fäst överst</string>
-	<string name="unpin_folder">Lossa från toppen</string>
 	<string name="remove_shortcut">Ta bort genväg</string>
 	<string name="want_to_remove_shortcut">Vill du ta bort den här genvägen?</string>
 	<string name="folder_dwell">Håll kvar för att öppna mapp</string>
@@ -196,8 +188,6 @@
 	<string name="drawer_layout">Lådans layout</string>
 	<string name="drawer_layout_vertical">Vertikal</string>
 	<string name="drawer_layout_horizontal">Horisontell (experimentell)</string>
-	<string name="organise">Organisera</string>
-	<string name="icon_menu">Ikon</string>
 	<string name="section_home_summary">Orientering, död zon, hemknapp</string>
 	<string name="section_pie_summary">Delad meny, cirklar, mappar</string>
 	<string name="section_look_summary">Bakgrund, oskärpa, ikonpaket, namn</string>
@@ -206,4 +196,22 @@
 	<string name="section_apps_summary">Dolda, anpassade, jobbmapp</string>
 	<string name="section_backup_summary">Exportera, importera, synka</string>
 	<string name="section_advanced_summary">Haptik, omstart</string>
+	<string name="action_pie">Meny</string>
+	<string name="action_folder">Mapp</string>
+	<string name="action_rename">Byt namn</string>
+	<string name="action_icon">Ikon</string>
+	<string name="action_info">Info</string>
+	<string name="action_hide">Dölj</string>
+	<string name="action_edit_pie">Ändra meny</string>
+	<string name="action_remove">Ta bort</string>
+	<string name="action_more">Mer</string>
+	<string name="action_pin">Fäst</string>
+	<string name="action_unpin">Lossa</string>
+	<string name="action_show_apps">Visa appar</string>
+	<string name="action_hide_apps">Dölj appar</string>
+	<string name="action_delete">Radera</string>
+	<string name="icon_original">Original</string>
+	<string name="icon_picture">Bild</string>
+	<string name="icon_normal">Normal</string>
+	<string name="icon_work_paused">När jobbet är pausat</string>
 </resources>
