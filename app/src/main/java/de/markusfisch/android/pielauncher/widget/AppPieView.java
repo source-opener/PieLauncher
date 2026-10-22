@@ -421,6 +421,13 @@ public class AppPieView extends View {
 		selectedApp = prefs.doubleSpaceLaunch()
 				? (appListIsFiltered ? 0 : -1)
 				: getSelectedAppFromTrailingSpace(query);
+		if (selectedApp > -1 && prefs.horizontalDrawer()) {
+			// Pinned folders lead the list here, but the first result is
+			// what a search is after.
+			selectedApp = pinnedFolderCount < getIconCount()
+					? selectedApp + pinnedFolderCount
+					: -1;
+		}
 		if (resetScroll) {
 			scrollList(0, false);
 			lastScrollY = 0;
@@ -456,6 +463,10 @@ public class AppPieView extends View {
 		if (openFolderId > -1 || appList == null) {
 			return;
 		}
+		if (prefs.horizontalDrawer()) {
+			keepAllPinnedFolders();
+			return;
+		}
 		for (Apps.AppIcon icon : appList) {
 			if (!Folders.isFolder(icon) ||
 					!PieLauncherApp.folders.isPinned(Folders.idOf(icon))) {
@@ -463,6 +474,29 @@ public class AppPieView extends View {
 			}
 			++pinnedFolderCount;
 		}
+	}
+
+	// The horizontal drawer keeps every pinned folder above the keyboard
+	// whatever is searched for, so put all of them in front of the
+	// results instead of only the matching ones.
+	private void keepAllPinnedFolders() {
+		List<Apps.AppIcon> list = new ArrayList<>();
+		for (Folders.Folder folder : PieLauncherApp.folders.getFolders()) {
+			Apps.AppIcon icon = folder.pinned
+					? PieLauncherApp.folders.getIcon(folder.id)
+					: null;
+			if (icon != null) {
+				list.add(icon);
+			}
+		}
+		pinnedFolderCount = list.size();
+		for (Apps.AppIcon icon : appList) {
+			if (!Folders.isFolder(icon) ||
+					!PieLauncherApp.folders.isPinned(Folders.idOf(icon))) {
+				list.add(icon);
+			}
+		}
+		appList = list;
 	}
 
 	public void launchSelectedAppFromList() {
