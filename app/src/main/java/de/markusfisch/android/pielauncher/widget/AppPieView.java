@@ -35,7 +35,9 @@ import android.widget.EditText;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.markusfisch.android.pielauncher.R;
 import de.markusfisch.android.pielauncher.activity.PickIconActivity;
@@ -107,6 +109,9 @@ public class AppPieView extends View {
 	private final TextPaint paintText = new TextPaint(Paint.ANTI_ALIAS_FLAG);
 	private final Point touch = new Point();
 	private final Rect drawRect = new Rect();
+	private final Rect badgeRect = new Rect();
+	private final Map<Apps.AppIcon, Bitmap> folderBadges =
+			new IdentityHashMap<>();
 	private final Rect iconStartRect = new Rect();
 	private final Rect iconCenterRect = new Rect();
 	private final Rect iconEndRect = new Rect();
@@ -379,6 +384,7 @@ public class AppPieView extends View {
 			appList = newAppList;
 		}
 		appListIsFiltered = !TextUtils.isEmpty(query);
+		updateFolderBadges();
 		selectedApp = prefs.doubleSpaceLaunch()
 				? (appListIsFiltered ? 0 : -1)
 				: getSelectedAppFromTrailingSpace(query);
@@ -387,6 +393,27 @@ public class AppPieView extends View {
 			lastScrollY = 0;
 		}
 		invalidate();
+	}
+
+	// Apps hidden in a folder only turn up in a search, where they carry
+	// a small icon of that folder.
+	private void updateFolderBadges() {
+		folderBadges.clear();
+		if (!appListIsFiltered || openFolderId > -1 || appList == null) {
+			return;
+		}
+		Map<LauncherItemKey, Bitmap> badges =
+				PieLauncherApp.folders.getHiddenItemBadges();
+		if (badges.isEmpty()) {
+			return;
+		}
+		for (Apps.AppIcon icon : appList) {
+			Bitmap badge = badges.get(new LauncherItemKey(
+					icon.componentName, icon.userHandle));
+			if (badge != null) {
+				folderBadges.put(icon, badge);
+			}
+		}
 	}
 
 	public void launchSelectedAppFromList() {
@@ -2036,6 +2063,14 @@ public class AppPieView extends View {
 				}
 				canvas.drawBitmap(appIcon.bitmap, null, drawRect, paintList);
 				paintList.setColorFilter(null);
+				Bitmap badge = folderBadges.get(appIcon);
+				if (badge != null) {
+					int badgeSize = drawRect.width() * 2 / 5;
+					badgeRect.set(drawRect.right - badgeSize,
+							drawRect.bottom - badgeSize,
+							drawRect.right, drawRect.bottom);
+					canvas.drawBitmap(badge, null, badgeRect, paintList);
+				}
 				if (showAppNames) {
 					CharSequence label = TextUtils.ellipsize(appIcon.label,
 							paintText, maxTextWidth, TextUtils.TruncateAt.END);

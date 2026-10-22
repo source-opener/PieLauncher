@@ -131,6 +131,25 @@ public class Folders {
 				: new HashSet<>(keys);
 	}
 
+	// The icon of the hidden folder each app is in, for badging search
+	// results. An app in more than one shows the first folder's.
+	public synchronized Map<LauncherItemKey, Bitmap> getHiddenItemBadges() {
+		Map<LauncherItemKey, Bitmap> badges = new HashMap<>();
+		for (Folder folder : folders) {
+			Set<LauncherItemKey> keys = items.get(folder.id);
+			Apps.AppIcon icon = getIcon(folder.id);
+			if (!folder.hideContents || keys == null || icon == null) {
+				continue;
+			}
+			for (LauncherItemKey key : keys) {
+				if (!badges.containsKey(key)) {
+					badges.put(key, icon.bitmap);
+				}
+			}
+		}
+		return badges;
+	}
+
 	public synchronized Set<LauncherItemKey> getHiddenItems() {
 		Set<LauncherItemKey> hidden = new HashSet<>();
 		for (Folder folder : folders) {
