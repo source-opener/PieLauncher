@@ -398,6 +398,13 @@ public class AppPieView extends View {
 				!scrollingFolders && !arranging);
 	}
 
+	// Search results in the horizontal drawer start at the bottom right,
+	// closest to the thumb, and grow up and then to the left.
+	private boolean resultsFromRight() {
+		return appListIsFiltered && openFolderId < 0 &&
+				prefs.horizontalDrawer();
+	}
+
 	public boolean isArranging() {
 		return arranging;
 	}
@@ -1009,8 +1016,9 @@ public class AppPieView extends View {
 				}
 				if (prefs.horizontalDrawer()) {
 					int x = Math.round(event.getX(index));
-					listScrollX = clamp(scrollOffset + (tr.scrollRefX - x),
-							0, maxScrollX);
+					int dx = tr.scrollRefX - x;
+					listScrollX = clamp(scrollOffset +
+							(resultsFromRight() ? -dx : dx), 0, maxScrollX);
 					if (listScrollX == 0 || listScrollX == maxScrollX) {
 						tr.scrollRefX = x;
 						scrollOffset = listScrollX;
@@ -1040,9 +1048,12 @@ public class AppPieView extends View {
 					// 1000 means getYVelocity() will return pixels
 					// per second.
 					velocityTracker.computeCurrentVelocity(1000);
-					flingRunnable.start(Math.round(prefs.horizontalDrawer()
+					float velocity = prefs.horizontalDrawer()
 							? velocityTracker.getXVelocity()
-							: velocityTracker.getYVelocity()));
+							: velocityTracker.getYVelocity();
+					flingRunnable.start(Math.round(resultsFromRight()
+							? -velocity
+							: velocity));
 					recycleVelocityTracker();
 				}
 			}
@@ -2301,6 +2312,7 @@ public class AppPieView extends View {
 		maxFolderScrollY = folderRows * cellHeight - folderArea;
 		folderScrollY = clamp(folderScrollY, 0, maxFolderScrollY);
 		int rows = Math.max(1, (folderAreaTop - top) / cellHeight);
+		boolean fromRight = horizontal && resultsFromRight();
 		int marker = selectedApp > -1 && size > 0
 				? Math.min(selectedApp, size - 1)
 				: -1;
@@ -2330,6 +2342,11 @@ public class AppPieView extends View {
 				x = listPadding + i % columns * cellWidth;
 				y = folderAreaTop + i / columns * cellHeight - folderScrollY +
 						slide;
+			} else if (fromRight) {
+				int cell = i - pinned;
+				x = viewWidth - listPadding - (cell / rows + 1) * cellWidth +
+						listScrollX;
+				y = top + (rows - 1 - cell % rows) * cellHeight + slide;
 			} else if (horizontal) {
 				int cell = i - pinned;
 				x = listPadding + cell / rows * cellWidth - listScrollX;
