@@ -234,4 +234,7 @@
 	<string name="folder_drag_hint">Dra appar för att flytta dem</string>
 	<string name="action_arrange">Ordna</string>
 	<string name="app_sorting_custom">För hand</string>
+	<string name="persistent_keyboard">Tangentbord i vågrät låda</string>
+	<string name="persistent_keyboard_on">Alltid öppet</string>
+	<string name="persistent_keyboard_off">Kan döljas</string>
 </resources>

@@ -578,6 +578,11 @@ public class PreferencesActivity extends Activity {
 		} else {
 			findViewById(R.id.cloud_backup).setVisibility(View.GONE);
 		}
+		initPreference(R.id.persistent_keyboard,
+				R.string.persistent_keyboard,
+				PreferencesActivity::getPersistentKeyboardOptions,
+				() -> prefs.persistentKeyboard(),
+				(value) -> prefs.setPersistentKeyboard(value));
 		initPreference(R.id.drawer_layout,
 				R.string.drawer_layout,
 				PreferencesActivity::getDrawerLayoutOptions,
@@ -922,6 +927,13 @@ public class PreferencesActivity extends Activity {
 		Map<Boolean, Integer> map = new LinkedHashMap<>();
 		map.put(Boolean.FALSE, R.string.cloud_backup_blocked);
 		map.put(Boolean.TRUE, R.string.cloud_backup_allowed);
+		return map;
+	}
+
+	private static Map<Boolean, Integer> getPersistentKeyboardOptions() {
+		Map<Boolean, Integer> map = new LinkedHashMap<>();
+		map.put(Boolean.TRUE, R.string.persistent_keyboard_on);
+		map.put(Boolean.FALSE, R.string.persistent_keyboard_off);
 		return map;
 	}
 

@@ -85,6 +85,7 @@ public class Preferences {
 	private static final String LIST_ANIMATION_APPEARANCE = "list_animation_appearance";
 	private static final String DISPLAY_KEYBOARD = "display_keyboard";
 	private static final String HORIZONTAL_DRAWER = "horizontal_drawer";
+	private static final String PERSISTENT_KEYBOARD = "persistent_keyboard";
 	private static final String CLOUD_BACKUP = "cloud_backup";
 	private static final String DOUBLE_SPACE_LAUNCH = "space_action_double_launch";
 	private static final String AUTO_LAUNCH_MATCHING = "auto_launch_matching";
@@ -124,6 +125,7 @@ public class Preferences {
 	private int listAnimationAppearance = LIST_APPEARANCE_ANIMATION_SLIDE;
 	private boolean displayKeyboard = true;
 	private boolean horizontalDrawer = false;
+	private boolean persistentKeyboard = true;
 	private boolean cloudBackup = false;
 	private boolean doubleSpaceLaunch = false;
 	private boolean autoLaunchMatching = false;
@@ -215,6 +217,8 @@ public class Preferences {
 				displayKeyboard);
 		horizontalDrawer = preferences.getBoolean(HORIZONTAL_DRAWER,
 				horizontalDrawer);
+		persistentKeyboard = preferences.getBoolean(PERSISTENT_KEYBOARD,
+				persistentKeyboard);
 		cloudBackup = preferences.getBoolean(CLOUD_BACKUP, cloudBackup);
 		doubleSpaceLaunch = preferences.getBoolean(DOUBLE_SPACE_LAUNCH,
 				doubleSpaceLaunch);
@@ -400,6 +404,15 @@ public class Preferences {
 	public void setCloudBackup(boolean cloudBackup) {
 		this.cloudBackup = cloudBackup;
 		put(CLOUD_BACKUP, cloudBackup).apply();
+	}
+
+	public boolean persistentKeyboard() {
+		return persistentKeyboard;
+	}
+
+	public void setPersistentKeyboard(boolean persistentKeyboard) {
+		this.persistentKeyboard = persistentKeyboard;
+		put(PERSISTENT_KEYBOARD, persistentKeyboard).apply();
 	}
 
 	public boolean horizontalDrawer() {

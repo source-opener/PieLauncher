@@ -234,4 +234,7 @@
 	<string name="folder_drag_hint">Apps zum Verschieben ziehen</string>
 	<string name="action_arrange">Anordnen</string>
 	<string name="app_sorting_custom">Von Hand</string>
+	<string name="persistent_keyboard">Tastatur in horizontaler Liste</string>
+	<string name="persistent_keyboard_on">Immer offen</string>
+	<string name="persistent_keyboard_off">Kann weggelegt werden</string>
 </resources>

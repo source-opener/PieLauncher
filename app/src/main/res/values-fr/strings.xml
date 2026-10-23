@@ -234,4 +234,7 @@
 	<string name="folder_drag_hint">Faites glisser les apps pour les déplacer</string>
 	<string name="action_arrange">Organiser</string>
 	<string name="app_sorting_custom">À la main</string>
+	<string name="persistent_keyboard">Clavier dans la liste horizontale</string>
+	<string name="persistent_keyboard_on">Toujours ouvert</string>
+	<string name="persistent_keyboard_off">Peut être masqué</string>
 </resources>
