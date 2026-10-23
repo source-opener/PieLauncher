@@ -398,11 +398,10 @@ public class AppPieView extends View {
 				!scrollingFolders && !arranging);
 	}
 
-	// Search results in the horizontal drawer start at the bottom right,
-	// closest to the thumb, and grow up and then to the left.
-	private boolean resultsFromRight() {
-		return appListIsFiltered && openFolderId < 0 &&
-				prefs.horizontalDrawer();
+	// The horizontal drawer starts at the bottom right, closest to the
+	// thumb, and grows up and then to the left.
+	private boolean fromRight() {
+		return prefs.horizontalDrawer();
 	}
 
 	public boolean isArranging() {
@@ -495,10 +494,12 @@ public class AppPieView extends View {
 		int edge = Math.round(48f * dp);
 		int step = Math.round(12f * dp);
 		if (prefs.horizontalDrawer()) {
+			// The list starts at the right edge, so it scrolls to the left
+			// by growing listScrollX.
 			if (x < edge) {
-				listScrollX = Math.max(0, listScrollX - step);
-			} else if (x > viewWidth - edge) {
 				listScrollX = Math.min(maxScrollX, listScrollX + step);
+			} else if (x > viewWidth - edge) {
+				listScrollX = Math.max(0, listScrollX - step);
 			}
 		} else {
 			int scrollY = getScrollY();
@@ -1018,7 +1019,7 @@ public class AppPieView extends View {
 					int x = Math.round(event.getX(index));
 					int dx = tr.scrollRefX - x;
 					listScrollX = clamp(scrollOffset +
-							(resultsFromRight() ? -dx : dx), 0, maxScrollX);
+							(fromRight() ? -dx : dx), 0, maxScrollX);
 					if (listScrollX == 0 || listScrollX == maxScrollX) {
 						tr.scrollRefX = x;
 						scrollOffset = listScrollX;
@@ -1051,7 +1052,7 @@ public class AppPieView extends View {
 					float velocity = prefs.horizontalDrawer()
 							? velocityTracker.getXVelocity()
 							: velocityTracker.getYVelocity();
-					flingRunnable.start(Math.round(resultsFromRight()
+					flingRunnable.start(Math.round(fromRight()
 							? -velocity
 							: velocity));
 					recycleVelocityTracker();
@@ -2312,7 +2313,6 @@ public class AppPieView extends View {
 		maxFolderScrollY = folderRows * cellHeight - folderArea;
 		folderScrollY = clamp(folderScrollY, 0, maxFolderScrollY);
 		int rows = Math.max(1, (folderAreaTop - top) / cellHeight);
-		boolean fromRight = horizontal && resultsFromRight();
 		int marker = selectedApp > -1 && size > 0
 				? Math.min(selectedApp, size - 1)
 				: -1;
@@ -2342,15 +2342,11 @@ public class AppPieView extends View {
 				x = listPadding + i % columns * cellWidth;
 				y = folderAreaTop + i / columns * cellHeight - folderScrollY +
 						slide;
-			} else if (fromRight) {
+			} else if (horizontal) {
 				int cell = i - pinned;
 				x = viewWidth - listPadding - (cell / rows + 1) * cellWidth +
 						listScrollX;
 				y = top + (rows - 1 - cell % rows) * cellHeight + slide;
-			} else if (horizontal) {
-				int cell = i - pinned;
-				x = listPadding + cell / rows * cellWidth - listScrollX;
-				y = top + cell % rows * cellHeight + slide;
 			} else {
 				x = listPadding + i % columns * cellWidth;
 				y = top + i / columns * cellHeight + slide;

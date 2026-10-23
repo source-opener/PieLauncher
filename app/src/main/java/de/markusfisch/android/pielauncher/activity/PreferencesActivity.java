@@ -34,7 +34,6 @@ import java.util.concurrent.Executors;
 
 import de.markusfisch.android.pielauncher.R;
 import de.markusfisch.android.pielauncher.app.PieLauncherApp;
-import de.markusfisch.android.pielauncher.content.AppLauncher;
 import de.markusfisch.android.pielauncher.graphics.BackgroundBlur;
 import de.markusfisch.android.pielauncher.graphics.ToolbarBackground;
 import de.markusfisch.android.pielauncher.io.SettingsBackup;
@@ -43,10 +42,10 @@ import de.markusfisch.android.pielauncher.os.BatteryOptimization;
 import de.markusfisch.android.pielauncher.os.DefaultLauncher;
 import de.markusfisch.android.pielauncher.preference.Preferences;
 import de.markusfisch.android.pielauncher.view.SystemBars;
+import de.markusfisch.android.pielauncher.widget.CategoryFolderDialog;
 import de.markusfisch.android.pielauncher.widget.Dialog;
 import de.markusfisch.android.pielauncher.widget.OptionsDialog;
 import de.markusfisch.android.pielauncher.widget.ScrollWithListenerView;
-import de.markusfisch.android.pielauncher.widget.WorkFolderDialog;
 
 public class PreferencesActivity extends Activity {
 	private static final String WELCOME = "welcome";
@@ -157,7 +156,7 @@ public class PreferencesActivity extends Activity {
 			findViewById(R.id.customised_apps).setOnClickListener((view) -> {
 				CustomisedAppsActivity.start(this);
 			});
-			initWorkFolder();
+			initCategoryFolders();
 			initBackup();
 		}
 
@@ -292,12 +291,12 @@ public class PreferencesActivity extends Activity {
 		scrollView.scrollTo(0, 0);
 	}
 
-	private void initWorkFolder() {
-		View view = findViewById(R.id.work_folder);
-		if (AppLauncher.findWorkProfileUser(this) == null) {
+	private void initCategoryFolders() {
+		View view = findViewById(R.id.category_folders);
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
 			view.setVisibility(View.GONE);
 		} else {
-			view.setOnClickListener((v) -> WorkFolderDialog.show(this));
+			view.setOnClickListener((v) -> CategoryFolderDialog.show(this));
 		}
 	}
 
