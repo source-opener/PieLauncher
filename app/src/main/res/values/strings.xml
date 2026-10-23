@@ -234,4 +234,7 @@
 	<string name="folder_drag_hint">Drag apps to move them</string>
 	<string name="action_arrange">Arrange</string>
 	<string name="app_sorting_custom">By hand</string>
+	<string name="persistent_keyboard">Keyboard in horizontal drawer</string>
+	<string name="persistent_keyboard_on">Always open</string>
+	<string name="persistent_keyboard_off">Can be put away</string>
 </resources>

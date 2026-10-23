@@ -234,4 +234,7 @@
 	<string name="folder_drag_hint">Sleep apps om ze te verplaatsen</string>
 	<string name="action_arrange">Ordenen</string>
 	<string name="app_sorting_custom">Met de hand</string>
+	<string name="persistent_keyboard">Toetsenbord in horizontale lade</string>
+	<string name="persistent_keyboard_on">Altijd open</string>
+	<string name="persistent_keyboard_off">Kan worden weggezet</string>
 </resources>

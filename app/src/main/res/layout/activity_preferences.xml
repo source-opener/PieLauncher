@@ -144,6 +144,10 @@
 						android:text="@string/drawer_layout_vertical" />
 					<de.markusfisch.android.pielauncher.widget.PreferenceView
 						style="@style/PreferenceWithSeparator"
+						android:id="@+id/persistent_keyboard"
+						android:text="@string/persistent_keyboard_on" />
+					<de.markusfisch.android.pielauncher.widget.PreferenceView
+						style="@style/PreferenceWithSeparator"
 						android:id="@+id/list_animation_appearance"
 						android:text="@string/list_animation_appearance_slide" />
 					<de.markusfisch.android.pielauncher.widget.PreferenceView

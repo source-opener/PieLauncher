@@ -234,4 +234,7 @@
 	<string name="folder_drag_hint">Перетягуйте застосунки</string>
 	<string name="action_arrange">Розставити</string>
 	<string name="app_sorting_custom">Вручну</string>
+	<string name="persistent_keyboard">Клавіатура в горизонтальному списку</string>
+	<string name="persistent_keyboard_on">Завжди відкрита</string>
+	<string name="persistent_keyboard_off">Можна прибрати</string>
 </resources>

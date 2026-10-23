@@ -10,6 +10,7 @@ import android.graphics.drawable.Drawable;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -102,6 +103,9 @@ public class ItemPanel {
 			int width = context.getResources().getDisplayMetrics().widthPixels;
 			window.setLayout(Math.min(width - px(32), px(420)),
 					LinearLayout.LayoutParams.WRAP_CONTENT);
+			// Nothing here is typed into, so leave the keyboard where it
+			// is instead of taking it away.
+			window.addFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
 		}
 		dialog.show();
 	}

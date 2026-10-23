@@ -15,7 +15,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.window.OnBackInvokedCallback;
 import android.window.OnBackInvokedDispatcher;
@@ -29,6 +28,7 @@ import de.markusfisch.android.pielauncher.view.SoftKeyboard;
 import de.markusfisch.android.pielauncher.view.SystemBars;
 import de.markusfisch.android.pielauncher.widget.AppPieView;
 import de.markusfisch.android.pielauncher.widget.FolderPanelView;
+import de.markusfisch.android.pielauncher.widget.SearchInput;
 
 public class HomeActivity extends Activity {
 	private Preferences prefs;
@@ -38,7 +38,7 @@ public class HomeActivity extends Activity {
 	private AppPieView pieView;
 	private FolderPanelView folderPanel;
 	private View arrangeBar;
-	private EditText searchInput;
+	private SearchInput searchInput;
 	private ImageView prefsButton;
 	private boolean updateAfterTextChange = true;
 	private boolean showAllAppsOnResume = false;
@@ -50,6 +50,13 @@ public class HomeActivity extends Activity {
 	@Override
 	public void onBackPressed() {
 		handleBack();
+	}
+
+	// With the persistent keyboard, the horizontal drawer keeps the
+	// keyboard up for as long as the drawer shows.
+	private boolean keepsKeyboard() {
+		return pieView.inListMode() && prefs.horizontalDrawer() &&
+				prefs.persistentKeyboard() && isSearchVisible();
 	}
 
 	private void handleBack() {
@@ -75,11 +82,10 @@ public class HomeActivity extends Activity {
 		if (ev == null) {
 			return false;
 		}
-		if (pieView.inListMode() && prefs.horizontalDrawer() &&
-				ev.getActionMasked() == MotionEvent.ACTION_DOWN &&
-				isSearchVisible()) {
+		if (keepsKeyboard() &&
+				ev.getActionMasked() == MotionEvent.ACTION_DOWN) {
 			// The horizontal drawer is laid out above the keyboard, so
-			// bring it back if it was put away.
+			// bring it back if it was put away somehow.
 			kb.showFor(searchInput);
 		}
 		// The folder panel takes all touches while it shows, including
@@ -358,6 +364,17 @@ public class HomeActivity extends Activity {
 	}
 
 	private void initSearchInput() {
+		searchInput.setBackListener(new SearchInput.BackListener() {
+			@Override
+			public boolean keepsKeyboard() {
+				return HomeActivity.this.keepsKeyboard();
+			}
+
+			@Override
+			public void onBack() {
+				handleBack();
+			}
+		});
 		searchInput.addTextChangedListener(new TextWatcher() {
 			@Override
 			public void onTextChanged(CharSequence s, int start,

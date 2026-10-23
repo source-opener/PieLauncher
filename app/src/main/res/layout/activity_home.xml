@@ -6,7 +6,7 @@
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:scrollbars="vertical"/>
-	<EditText
+	<de.markusfisch.android.pielauncher.widget.SearchInput
 		tools:ignore="LabelFor"
 		android:id="@+id/search"
 		android:background="@android:color/transparent"

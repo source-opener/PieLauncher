@@ -234,4 +234,7 @@
 	<string name="folder_drag_hint">拖动应用以移动</string>
 	<string name="action_arrange">排列</string>
 	<string name="app_sorting_custom">手动</string>
+	<string name="persistent_keyboard">横向抽屉中的键盘</string>
+	<string name="persistent_keyboard_on">始终打开</string>
+	<string name="persistent_keyboard_off">可以收起</string>
 </resources>
