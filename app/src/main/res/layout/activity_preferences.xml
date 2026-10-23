@@ -248,8 +248,8 @@
 						android:text="@string/show_customised_apps" />
 					<de.markusfisch.android.pielauncher.widget.PreferenceView
 						style="@style/Preference"
-						android:id="@+id/work_folder"
-						android:text="@string/move_work_apps" />
+						android:id="@+id/category_folders"
+						android:text="@string/category_folders" />
 				</LinearLayout>
 				<LinearLayout
 					style="@style/Card"
