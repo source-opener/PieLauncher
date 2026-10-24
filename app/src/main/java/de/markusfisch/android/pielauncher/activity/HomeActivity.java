@@ -219,6 +219,12 @@ public class HomeActivity extends Activity {
 		// an invalidate here triggers a redraw when the window regains focus.
 		if (hasFocus) {
 			getWindow().getDecorView().invalidate();
+			// Coming back from settings or a dialog that was typed into
+			// takes the keyboard away, and asking for it before the
+			// window has focus again does nothing.
+			if (keepsKeyboard()) {
+				kb.showFor(searchInput);
+			}
 		}
 	}
 
